@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:saumil_s_application/controller/authController.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/home_page/home_page.dart';
 import 'package:saumil_s_application/presentation/logout_popup_dialog/logout_popup_dialog.dart';
@@ -20,6 +22,8 @@ class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key? key}) : super(key: key);
 
   GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
+  var controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,8 @@ class SettingsScreen extends StatelessWidget {
                                 SizedBox(height: 28.v),
                                 GestureDetector(
                                     onTap: () {
-                                      onTapTxtLargeLabelMedium(context);
+                                      // onTapTxtLargeLabelMedium(context);
+                                      controller.signOut();
                                     },
                                     child: Text("Logout",
                                         style: CustomTextStyles
@@ -314,8 +319,5 @@ class SettingsScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               insetPadding: const EdgeInsets.only(left: 0),
             ));
-
-
-
   }
 }

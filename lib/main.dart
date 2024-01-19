@@ -9,6 +9,7 @@ var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);

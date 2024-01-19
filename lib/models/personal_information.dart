@@ -29,11 +29,15 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:path/path.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/util/colors.dart';
+import 'package:saumil_s_application/util/common_methos.dart';
 
 final FirebaseStorage _storage = FirebaseStorage.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -47,33 +51,66 @@ class StoreData {
     return downloadUrl;
   }
 
-  Future<String> uploadImage(File file) async {
-    try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageReference =
-          FirebaseStorage.instance.ref().child('images/$fileName');
-      UploadTask uploadTask = storageReference.putFile(file);
+  // Future<String> uploadImage(File file) async {
+  //   try {
+  //     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //     Reference storageReference =
+  //         FirebaseStorage.instance.ref().child('images/$fileName');
+  //     UploadTask uploadTask = storageReference.putFile(file);
 
-      await uploadTask.whenComplete(() => print('Image Uploaded'));
+  //     await uploadTask.whenComplete(() => print('Image Uploaded'));
 
-      return await storageReference.getDownloadURL();
-    } catch (e) {
-      print('Error uploading image: $e');
-      return '';
-    }
+  //     return await storageReference.getDownloadURL();
+  //   } catch (e) {
+  //     print('Error uploading image: $e');
+  //     return '';
+  //   }
+  // }
+
+  // Future<String> uploadImageToFirebaseStorage(String imagePath) async {
+  //   Reference storageReference = FirebaseStorage.instance
+  //       .ref()
+  //       .child('images/${DateTime.now().millisecondsSinceEpoch}');
+  //   UploadTask uploadTask = storageReference.putFile(File(imagePath));
+  //   TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+  //   return await taskSnapshot.ref.getDownloadURL();
+  // }
+
+  Future<String> uploadImage(File imageFile) async {
+    String fileName = basename(imageFile.path);
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child('images/$fileName');
+    UploadTask uploadTask = storageReference.putFile(imageFile);
+
+    await uploadTask.whenComplete(() => print('Image uploaded successfully'));
+
+    String downloadUrl = await storageReference.getDownloadURL();
+    return downloadUrl;
   }
 
-  Future<String> uploadImageToFirebaseStorage(String imagePath) async {
-    Reference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('images/${DateTime.now().millisecondsSinceEpoch}');
-    UploadTask uploadTask = storageReference.putFile(File(imagePath));
-    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
-    return await taskSnapshot.ref.getDownloadURL();
+  Future<void> addOrUpdateUserData(UserModel userModel) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
+    // Check if the user document already exists
+    DocumentSnapshot userSnapshot = await users.doc(userModel.id).get();
+
+    // Convert UserModel object to a map without null values
+    Map<String, dynamic> userDataMap = userModel.toUpdateMap();
+    log(("------userDataMap----->> ${userDataMap.toString()}"));
+    if (userSnapshot.exists) {
+      // User document exists, update the username field
+      await users.doc(userModel.id).update(userModel.toMap());
+    } else {
+      // User document doesn't exist, create a new document
+      await users.doc(userModel.id).set(userModel.toMap());
+    }
+    CommonMethod()
+        .getXSnackBar("Success", "Profile upadate successfully", success);
   }
 
   Future<String> saveDate({
     // void int id,
+    required String userId,
     required String fname,
     required String lname,
     required String email,
@@ -83,6 +120,8 @@ class StoreData {
   }) async {
     log("----saveProfileCalledInside-----");
 
+    CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
+
     String resp = " Some Error Occurred";
     // try{
     if (fname.isNotEmpty ||
@@ -90,14 +129,13 @@ class StoreData {
         email.isNotEmpty ||
         phonenumber.isNotEmpty ||
         address.isNotEmpty) {
-      log("----file-----");
       log("----file-----${file.path}");
       // String imageUrl = await uploadImageToStorage('profileImage', file);
       // log("----imageUrl-----${imageUrl}");
-      String imageUrl = await uploadImageToFirebaseStorage(file.path);
+      String imageUrl = await uploadImage(File(file.path));
       log("----imageUrl-----${imageUrl}");
 
-      await _firestore.collection('userProfile').add({
+      await _firestore.collection('Users').add({
         // 'id': id,
         'fname': fname,
         'lname': lname,
@@ -106,7 +144,9 @@ class StoreData {
         'address': address,
         'imageLink': imageUrl,
       });
-      log("----collection-----}");
+
+      CommonMethod()
+          .getXSnackBar("Success", "Profile upadate successfully", success);
 
       resp = 'Success';
       // }

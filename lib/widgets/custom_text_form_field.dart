@@ -17,6 +17,7 @@ class CustomTextFormField extends StatelessWidget {
     this.maxLines,
     this.hintText,
     this.hintStyle,
+    this.readOnly,
     this.prefix,
     this.prefixConstraints,
     this.suffix,
@@ -71,6 +72,7 @@ class CustomTextFormField extends StatelessWidget {
   final Color? fillColor;
 
   final bool? filled;
+  final bool? readOnly;
 
   final FormFieldValidator<String>? validator;
 
@@ -87,6 +89,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget textFormFieldWidget(BuildContext context) => SizedBox(
         width: width ?? double.maxFinite,
         child: TextFormField(
+          readOnly: readOnly != null && readOnly! ? true : false,
           scrollPadding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           controller: controller,

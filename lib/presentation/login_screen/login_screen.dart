@@ -47,6 +47,9 @@ class LoginScreen extends StatelessWidget {
                               SizedBox(height: 31.v),
                               CustomOutlinedButton(
                                   text: "Continue with Google",
+                                  onPressed: () {
+                                    controller.handleSignInGoogle();
+                                  },
                                   leftIcon: Container(
                                       margin: EdgeInsets.only(right: 12.h),
                                       child: CustomImageView(

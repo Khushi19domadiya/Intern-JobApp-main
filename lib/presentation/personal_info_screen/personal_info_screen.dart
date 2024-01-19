@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:saumil_s_application/controller/authController.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/personal_information.dart';
 import 'package:saumil_s_application/presentation/personal_info_screen/selectImage.dart';
@@ -44,6 +45,50 @@ class PersonalInfoScreen extends StatefulWidget {
 
 class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   File? _image;
+  String? _userProfileUrl;
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final userRepo = Get.put(UserRepository());
+
+  var collection = FirebaseFirestore.instance.collection("personalinfo");
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
+  var authController = Get.put(AuthController());
+  @override
+  void initState() {
+    refreshPage();
+    super.initState();
+  }
+
+  Future refreshPage() async {
+    currentUser = await authController.getCurrentUser();
+    if (currentUser != null) {
+      UserModel? user = await authController.getUserById(currentUser!.uid);
+      if (user != null) {
+        emailController.text = currentUser!.email.toString();
+        if (user.fname != null) {
+          firstNameController.text = user.fname.toString();
+        }
+        if (user.lname != null) {
+          lastNameController.text = user.lname.toString();
+        }
+        if (user.phonenumber != null) {
+          phoneController.text = user.phonenumber.toString();
+        }
+        if (user.address != null) {
+          addressController.text = user.address.toString();
+        }
+        if (user.profileUrl != null) {
+          _userProfileUrl = user.profileUrl.toString();
+        }
+      }
+      setState(() {});
+    }
+  }
 
   void selectImage() async {
     File? img = await pickImage(ImageSource.gallery);
@@ -54,18 +99,38 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     } else {
       CommonMethod().getXSnackBar("Error", "image selection error", Colors.red);
     }
+
+    // showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         content: Container(
+    //           height: 120,
+    //           child: Column(
+    //             children: [
+    //               ListTile(
+    //                 onTap: () {},
+    //                 leading: Icon(
+    //                   Icons.camera,
+    //                   color: Colors.black,
+    //                 ),
+    //                 title: Text("Camera"),
+    //               ),
+    //               ListTile(
+    //                 onTap: () {},
+    //                 leading: Icon(
+    //                   Icons.image,
+    //                   color: Colors.black,
+    //                 ),
+    //                 title: Text("Gallery"),
+    //               )
+    //             ],
+    //           ),
+    //         ),
+    //       );
+    //     });
   }
 
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final userRepo = Get.put(UserRepository());
-
-  var collection = FirebaseFirestore.instance.collection("personalinfo");
-  User? userId = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +165,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                   : CircleAvatar(
                                       radius: 64,
                                       backgroundImage: NetworkImage(
-                                          'https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png'),
+                                          _userProfileUrl != null
+                                              ? _userProfileUrl!
+                                              : 'https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png'),
                                     ),
                               Positioned(
                                 child: IconButton(
@@ -216,6 +283,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         CustomTextFormField(
           controller: emailController,
           hintText: "xyz@gmail.com",
+          readOnly: true,
           textInputType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -288,14 +356,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     String email = emailController.text;
     String phonenumber = phoneController.text;
     String address = addressController.text;
+    String? imageUrl;
 
-    String resp = await StoreData().saveDate(
-        fname: fname,
-        lname: lname,
-        email: email,
-        phonenumber: phonenumber,
-        address: address,
-        file: _image!);
+    CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
+    if (_image != null) {
+      imageUrl = await StoreData().uploadImage(_image!);
+    }
+
+    // String resp = await StoreData().saveDate(
+    //     fname: fname,
+    //     lname: lname,
+    //     email: email,
+    //     phonenumber: phonenumber,
+    //     address: address,
+    //     file: _image!);
+    if (currentUser != null) {
+      await StoreData().addOrUpdateUserData(UserModel(
+          id: currentUser!.uid,
+          email: email,
+          fname: fname,
+          lname: lname,
+          phonenumber: phonenumber,
+          address: address,
+          profileUrl: imageUrl!));
+    }
 
     // Get.to(() => SettingsScreen());
   }

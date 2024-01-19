@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +10,7 @@ import 'package:saumil_s_application/presentation/sign_up_complete_account_scree
 
 import '../models/user_model.dart';
 import '../presentation/login_screen/login_screen.dart';
+import '../presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
 import '../user_repository/user_repository.dart';
 import '../util/colors.dart';
 import '../util/common_methos.dart';
@@ -24,7 +28,6 @@ class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final userRepo = Get.put(UserRepository());
-
 
   Future clearForm() async {
     emailController.clear();
@@ -46,27 +49,24 @@ class AuthController extends GetxController {
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text,
-
       );
 
-      if(userCredential.user != null) {
+      if (userCredential.user != null) {
         User user = userCredential.user!;
         // Send email verification
-        await userCredential.user!
-            .sendEmailVerification()
-            .whenComplete(() async =>
+        await userCredential.user!.sendEmailVerification().whenComplete(
+            () async => saveUserDetails(UserModel(
+                id: user.uid.toString(),
+                email: user.email.toString().trim(),
+                password: passwordController.text)));
 
-         saveUserDetails(UserModel(id: user.uid.toString(),
-            email:user.email.toString().trim(), password: passwordController.text,
-             confirmpassword: confirmPasswordController.text)));
-
-        await CommonMethod().getXSnackBar(
-          "Success",
-          'Verification email sent to ${userCredential.user!.email}',
-          Colors.green,
-        )
-            .then((value) => Get.to(() => LoginScreen())
-            );
+        await CommonMethod()
+            .getXSnackBar(
+              "Success",
+              'Verification email sent to ${userCredential.user!.email}',
+              Colors.green,
+            )
+            .then((value) => Get.to(() => LoginScreen()));
       }
     } on FirebaseAuthException catch (e) {
       // Handle specific error cases
@@ -93,11 +93,11 @@ class AuthController extends GetxController {
     }
   }
 
-
   Future saveUserDetails(UserModel user) async {
     userRepo.createUser(user);
     // controller.registerWithEmailAndPassword(context);
   }
+
   // Sign in with email and password
   Future<String?> signInWithEmailAndPassword(BuildContext context) async {
     try {
@@ -168,17 +168,58 @@ class AuthController extends GetxController {
         // Handle other errors
         await CommonMethod()
             .getXSnackBar("Error", 'Error signing in with Google: $error', red);
+        log("----errorGoogle--->> " + error.toString());
       }
       return null;
     }
+  }
+
+  // Check if the user is currently signed in
+  Future<bool> isUserSignedIn() async {
+    return _auth.currentUser != null;
   }
 
   // Sign out
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+      Get.offAll(() => SignUpCreateAcountScreen());
     } catch (e) {
       CommonMethod().getXSnackBar("Error", 'Error signing out: $e', red);
+    }
+  }
+
+  Future<User?> getCurrentUser() async {
+    User? user = await _auth.currentUser;
+
+    if (user != null) {
+      String userId = user.uid;
+      print('-----Current User ID: $userId');
+      return user;
+    } else {
+      print('----User is not signed in.');
+    }
+  }
+
+  Future<UserModel?> getUserById(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
+
+      if (userSnapshot.exists) {
+        // User document exists, create a UserModel instance
+        UserModel userData =
+            UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+        return userData;
+      } else {
+        // User document doesn't exist
+        return null;
+      }
+    } catch (e) {
+      print("Error retrieving user data: $e");
+      return null;
     }
   }
 }

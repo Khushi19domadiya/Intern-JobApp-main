@@ -15,7 +15,7 @@ class UserRepository extends GetxController {
   createUser(UserModel user) async {
     log("----createUser----");
     log("----createUser1111---- $user");
-    await _db.collection("Users").add(user.toJson()).then(
+    await _db.collection("Users").add(user.toMap()).then(
       (value) {
         Get.snackbar(
           "Success",
