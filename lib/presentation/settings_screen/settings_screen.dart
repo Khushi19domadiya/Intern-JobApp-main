@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/home_page/home_page.dart';
+import 'package:saumil_s_application/presentation/logout_popup_dialog/logout_popup_dialog.dart';
 import 'package:saumil_s_application/presentation/message_page/message_page.dart';
 import 'package:saumil_s_application/presentation/profile_page/profile_page.dart';
 import 'package:saumil_s_application/presentation/saved_page/saved_page.dart';
@@ -9,6 +10,10 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_bottom_bar.dart';
 import 'package:saumil_s_application/presentation/logout_popup_dialog/logout_popup_dialog.dart';
+
+import '../logout_popup_dialog/logout_popup_dialog.dart';
+import '../logout_popup_dialog/logout_popup_dialog.dart';
+import '../logout_popup_dialog/logout_popup_dialog.dart';
 
 // ignore_for_file: must_be_immutable
 class SettingsScreen extends StatelessWidget {
@@ -309,5 +314,8 @@ class SettingsScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               insetPadding: const EdgeInsets.only(left: 0),
             ));
+
+
+
   }
 }

@@ -16,8 +16,6 @@ class SignUpCompleteAccountScreen extends StatelessWidget {
 
   TextEditingController lastNameController = TextEditingController();
 
-  TextEditingController passwordController = TextEditingController();
-
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 
@@ -27,7 +25,7 @@ class SignUpCompleteAccountScreen extends StatelessWidget {
         child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: _buildAppBar(
-                 context
+                context
             ),
             body: SizedBox(
                 width: SizeUtils.width,
@@ -57,9 +55,9 @@ class SignUpCompleteAccountScreen extends StatelessWidget {
                               SizedBox(height: 18.v),
                               _buildInputFieldLastName(context),
                               SizedBox(height: 18.v),
-                              _buildInputFieldPassword(context),
-                              SizedBox(height: 16.v),
-                              _buildDropdown(context),
+                              // _buildInputFieldPassword(context),
+                              // SizedBox(height: 16.v),
+                              // _buildDropdown(context),
                               SizedBox(height: 40.v),
                               CustomElevatedButton(text: "Continue with Email",
                                 onPressed: (){
@@ -176,7 +174,7 @@ class SignUpCompleteAccountScreen extends StatelessWidget {
           Text("Password", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
           CustomTextFormField(
-              controller: passwordController,
+            // controller: passwordController,
               hintText: "Create a password",
               textInputAction: TextInputAction.done,
               textInputType: TextInputType.visiblePassword,

@@ -2,8 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
+import 'package:saumil_s_application/presentation/job_type_screen/job_type_screen.dart';
 import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
 
+import '../models/user_model.dart';
+import '../presentation/login_screen/login_screen.dart';
+import '../user_repository/user_repository.dart';
 import '../util/colors.dart';
 import '../util/common_methos.dart';
 import 'package:get/get.dart';
@@ -16,14 +20,24 @@ class AuthController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+  final userRepo = Get.put(UserRepository());
+
 
   Future clearForm() async {
     emailController.clear();
     passwordController.clear();
     passwordController.clear();
   }
+
+  // Future<void> saveProfileInfo(InfoModel profile) async {
+  //
+  //     saveProfileInfo(firstname : firstNameController.text, lastname : lastNameController.text,
+  //   email : emailController.text, phoneno : phoneController.text, address:locationController.text);
+  //   userRepo.createProfile(profile);
+  // }
 
   // Register with email and password
   Future<void> registerWithEmailAndPassword(BuildContext context) async {
@@ -32,17 +46,28 @@ class AuthController extends GetxController {
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text,
+
       );
 
-      // Send email verification
-      await userCredential.user!
-          .sendEmailVerification()
-          .whenComplete(() async => await CommonMethod().getXSnackBar(
-                "Success",
-                'Verification email sent to ${userCredential.user!.email}',
-                Colors.green,
-              ))
-          .then((value) => Get.to(() => SignUpCompleteAccountScreen()));
+      if(userCredential.user != null) {
+        User user = userCredential.user!;
+        // Send email verification
+        await userCredential.user!
+            .sendEmailVerification()
+            .whenComplete(() async =>
+
+         saveUserDetails(UserModel(id: user.uid.toString(),
+            email:user.email.toString().trim(), password: passwordController.text,
+             confirmpassword: confirmPasswordController.text)));
+
+        await CommonMethod().getXSnackBar(
+          "Success",
+          'Verification email sent to ${userCredential.user!.email}',
+          Colors.green,
+        )
+            .then((value) => Get.to(() => LoginScreen())
+            );
+      }
     } on FirebaseAuthException catch (e) {
       // Handle specific error cases
       if (e.code == 'email-already-in-use') {
@@ -68,6 +93,11 @@ class AuthController extends GetxController {
     }
   }
 
+
+  Future saveUserDetails(UserModel user) async {
+    userRepo.createUser(user);
+    // controller.registerWithEmailAndPassword(context);
+  }
   // Sign in with email and password
   Future<String?> signInWithEmailAndPassword(BuildContext context) async {
     try {
@@ -79,7 +109,7 @@ class AuthController extends GetxController {
         // User is signed in and email is verified
         await CommonMethod()
             .getXSnackBar("Success", 'Sign-in successfully', success)
-            .whenComplete(() => Get.to(() => HomeContainerScreen()));
+            .whenComplete(() => Get.to(() => JobTypeScreen()));
       } else {
         // Email is not verified, handle accordingly
         await CommonMethod().getXSnackBar(
@@ -125,7 +155,7 @@ class AuthController extends GetxController {
         // Successfully signed in with Google
         await CommonMethod()
             .getXSnackBar("Success", 'Signed in: ${user.displayName}', success)
-            .whenComplete(() => Get.to(() => HomeContainerScreen()));
+            .whenComplete(() => Get.to(() => JobTypeScreen()));
       }
 
       return user;
@@ -142,9 +172,6 @@ class AuthController extends GetxController {
       return null;
     }
   }
-
-
- 
 
   // Sign out
   Future<void> signOut() async {

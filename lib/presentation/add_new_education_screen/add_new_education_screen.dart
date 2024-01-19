@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
@@ -7,19 +11,30 @@ import 'package:saumil_s_application/widgets/custom_drop_down.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_text_form_field.dart';
 
+import '../../user_repository/user_repository.dart';
+
 // ignore_for_file: must_be_immutable
 class AddNewEducationScreen extends StatelessWidget {
   AddNewEducationScreen({Key? key}) : super(key: key);
 
-  TextEditingController frameOneController = TextEditingController();
+  TextEditingController clgController = TextEditingController();
 
   List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
 
-  TextEditingController frameOneController1 = TextEditingController();
+  TextEditingController fieldController = TextEditingController();
 
-  TextEditingController frameOneController2 = TextEditingController();
+  TextEditingController startdateController = TextEditingController();
 
-  TextEditingController frameOneController3 = TextEditingController();
+  TextEditingController gradeController = TextEditingController();
+
+  TextEditingController descController = TextEditingController();
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final userRepo = Get.put(UserRepository());
+
+  var collection = FirebaseFirestore.instance.collection("education");
+  User? userId = FirebaseAuth.instance.currentUser;
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +58,7 @@ class AddNewEducationScreen extends StatelessWidget {
                                         style: theme.textTheme.titleSmall)),
                                 SizedBox(height: 9.v),
                                 CustomTextFormField(
-                                    controller: frameOneController,
+                                    controller: clgController,
                                     hintText: "Ex: Harvard University"),
                                 SizedBox(height: 20.v),
                                 _buildInputField1(context),
@@ -89,7 +104,7 @@ class AddNewEducationScreen extends StatelessWidget {
           hintText: "Ex: Bachelor",
           items: dropdownItemList,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.h, vertical: 15.v),
+          EdgeInsets.symmetric(horizontal: 16.h, vertical: 15.v),
           onChanged: (value) {})
     ]);
   }
@@ -100,7 +115,7 @@ class AddNewEducationScreen extends StatelessWidget {
       Text("Field of study", style: theme.textTheme.titleSmall),
       SizedBox(height: 7.v),
       CustomTextFormField(
-          controller: frameOneController1, hintText: "Ex: Business")
+          controller: fieldController, hintText: "Ex: Business")
     ]);
   }
 
@@ -110,7 +125,7 @@ class AddNewEducationScreen extends StatelessWidget {
       Text("Grade", style: theme.textTheme.titleSmall),
       SizedBox(height: 9.v),
       CustomTextFormField(
-          controller: frameOneController2, hintText: "Ex: Business")
+          controller: gradeController, hintText: "Ex: Business")
     ]);
   }
 
@@ -120,12 +135,12 @@ class AddNewEducationScreen extends StatelessWidget {
       Text("Description", style: theme.textTheme.titleSmall),
       SizedBox(height: 7.v),
       CustomTextFormField(
-          controller: frameOneController3,
+          controller: descController,
           hintText: "Lorem ipsun",
           textInputAction: TextInputAction.done,
           maxLines: 6,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.h, vertical: 20.v))
+          EdgeInsets.symmetric(horizontal: 16.h, vertical: 20.v))
     ]);
   }
 
@@ -136,15 +151,16 @@ class AddNewEducationScreen extends StatelessWidget {
         margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 37.v),
         onPressed: () {
           onTapSaveChanges(context);
+
         });
   }
 
   /// Common widget
   Widget _buildInputField4(
-    BuildContext context, {
-    required String endDateLabel,
-    required String selectDateLabel,
-  }) {
+      BuildContext context, {
+        required String endDateLabel,
+        required String selectDateLabel,
+      }) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(endDateLabel,
           style: theme.textTheme.titleSmall!
@@ -155,7 +171,7 @@ class AddNewEducationScreen extends StatelessWidget {
           decoration: AppDecoration.outlineGray
               .copyWith(borderRadius: BorderRadiusStyle.roundedBorder24),
           child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Padding(
                 padding: EdgeInsets.only(top: 2.v),
                 child: Text(selectDateLabel,
