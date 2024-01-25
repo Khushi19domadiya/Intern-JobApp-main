@@ -25,6 +25,8 @@ import 'package:saumil_s_application/presentation/language_screen/language_scree
 import 'package:saumil_s_application/presentation/notifications_screen/notifications_screen.dart';
 import 'package:saumil_s_application/presentation/app_navigation_screen/app_navigation_screen.dart';
 
+import '../presentation/post_job/post_job.dart';
+
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
 
@@ -72,6 +74,10 @@ class AppRoutes {
 
   static const String applyJobScreen = '/apply_job_screen';
 
+
+
+  static const String postJob = '/post_job';
+
   static const String appliedJobPage = '/applied_job_page';
 
   static const String notificationsGeneralPage = '/notifications_general_page';
@@ -118,6 +124,7 @@ class AppRoutes {
     messageActionScreen: (context) => MessageActionScreen(),
     chatScreen: (context) => ChatScreen(),
     applyJobScreen: (context) => ApplyJobScreen(),
+    postJob: (context) => PostJob(),
     notificationsMyProposalsTabContainerScreen: (context) =>
         NotificationsMyProposalsTabContainerScreen(),
     settingsScreen: (context) => SettingsScreen(),

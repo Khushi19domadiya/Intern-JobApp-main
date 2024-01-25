@@ -41,15 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               CustomImageView(
                 imagePath: ImageConstant.imgClarityEmployeeSolid,
-                height: 102.adaptSize,
-                width: 102.adaptSize,
+                height:300.adaptSize,
+                width: 300.adaptSize,
               ),
-              SizedBox(height: 24.v),
-              Text(
-                "Hired",
-                style: theme.textTheme.headlineLarge,
-              ),
-              SizedBox(height: 5.v),
             ],
           ),
         ),

@@ -1,3 +1,6 @@
+import 'package:saumil_s_application/presentation/post_job/post_job.dart';
+
+import '../../widgets/custom_elevated_button.dart';
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +12,10 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart'
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
 
-// ignore_for_file: must_be_immutable
+import '../sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
+
 class HomePage extends StatelessWidget {
-  HomePage({Key? key})
-      : super(
-          key: key,
-        );
+  HomePage({Key? key}) : super(key: key);
 
   TextEditingController searchController = TextEditingController();
 
@@ -27,7 +28,6 @@ class HomePage extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              // width: double.maxFinite,
               child: ListView(
                 children: [
                   Column(
@@ -42,6 +42,32 @@ class HomePage extends StatelessWidget {
                             controller: searchController,
                             hintText: "Search...",
                             alignment: Alignment.center,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15.v), // Add spacing between search box and button
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(horizontal: 24.h),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PostJob()),
+                                        );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 25.h),
+                              onPrimary: Colors.white,
+                            ),
+                            child: Text(
+                              "Post Job",
+                              style: TextStyle(fontSize: 15.0),
+                            ),
                           ),
                         ),
                       ),
@@ -76,7 +102,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 74.h,
@@ -111,45 +136,32 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildFrame(BuildContext context) {
-    return Align(
-        alignment: Alignment.centerRight,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-                10,
-                (index) => Padding(
-                      padding: EdgeInsets.only(left: 16.h),
-                      child: FrameItemWidget(),
-                    )),
-          ),
-        )
-
-        // SizedBox(
-        //   height: 176.v,
-        //   child: ListView.separated(
-        //     padding: EdgeInsets.only(left: 24.h),
-        //     scrollDirection: Axis.horizontal,
-        //     separatorBuilder: (
-        //       context,
-        //       index,
-        //     ) {
-        //       return SizedBox(
-        //         width: 16.h,
-        //       );
-        //     },
-        //     itemCount: 2,
-        //     itemBuilder: (context, index) {
-        //       return FrameItemWidget();
-        //     },
-        //   ),
-        // ),
-        );
+  Widget _buildSaveChanges(BuildContext context) {
+    return CustomElevatedButton(
+      text: "Save Changes",
+      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 37.v),
+      onPressed: () {},
+    );
   }
 
-  /// Section Widget
+  Widget _buildFrame(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(
+            10,
+                (index) => Padding(
+              padding: EdgeInsets.only(left: 16.h),
+              child: FrameItemWidget(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEightyEight(BuildContext context) {
     return Align(
       alignment: Alignment.center,
@@ -159,9 +171,9 @@ class HomePage extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           separatorBuilder: (
-            context,
-            index,
-          ) {
+              context,
+              index,
+              ) {
             return SizedBox(
               height: 16.v,
             );

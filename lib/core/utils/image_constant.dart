@@ -4,7 +4,7 @@ class ImageConstant {
 
   // Splash Screen images
   static String imgClarityEmployeeSolid =
-      '$imagePath/img_clarity_employee_solid.svg';
+      '$imagePath/job.svg';
 
   // Onboarding Three images
   static String imgOnboardingThree = '$imagePath/img_onboarding_three.png';

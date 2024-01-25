@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
@@ -7,11 +9,15 @@ import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_outlined_button.dart';
 import 'package:saumil_s_application/widgets/custom_text_form_field.dart';
 
+import '../../controller/authController.dart';
+
 // ignore_for_file: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
   TextEditingController emailController = TextEditingController();
+
+  var controller = Get.put(AuthController());
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -90,7 +96,12 @@ class LoginScreen extends StatelessWidget {
                               SizedBox(height: 28.v),
                               _buildInputField(context),
                               SizedBox(height: 40.v),
-                              CustomElevatedButton(text: "Continue with Email"),
+                              CustomElevatedButton(text: "Continue with Email",
+                              onPressed: ()async{
+                                controller
+                                    .signInWithEmailAndPassword(context);
+                              },),
+
                               SizedBox(height: 26.v),
                               Padding(
                                   padding:
@@ -177,20 +188,37 @@ class LoginScreen extends StatelessWidget {
   }
 
   /// Section Widget
+  /// Section Widget
   Widget _buildInputField(BuildContext context) {
     return Container(
-        decoration:
-            BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      decoration: BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text("Email", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
           CustomTextFormField(
-              controller: emailController,
-              hintText: "Enter your email address",
-              textInputAction: TextInputAction.done,
-              textInputType: TextInputType.emailAddress)
-        ]));
+            controller: emailController,
+            hintText: "Enter your email address",
+            textInputAction: TextInputAction.next,
+            textInputType: TextInputType.emailAddress,
+          ),
+          SizedBox(height: 16.v),
+          Text("Password", style: theme.textTheme.titleSmall),
+          SizedBox(height: 9.v),
+          CustomTextFormField(
+            // You can use a different controller for the password field if needed
+            // passwordController,
+            hintText: "Enter your password",
+            textInputAction: TextInputAction.done,
+            textInputType: TextInputType.visiblePassword,
+            obscureText: true,
+          ),
+        ],
+      ),
+    );
   }
+
 
   /// Navigates back to the previous screen.
   onTapImage(BuildContext context) {

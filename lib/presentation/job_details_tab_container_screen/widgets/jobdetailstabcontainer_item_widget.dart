@@ -12,7 +12,7 @@ class JobdetailstabcontainerItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 67.h,
+      width: 80.h,
       child: Column(
         children: [
           CustomIconButton(
@@ -24,12 +24,12 @@ class JobdetailstabcontainerItemWidget extends StatelessWidget {
               imagePath: ImageConstant.imgWallet,
             ),
           ),
-          SizedBox(height: 9.v),
+          SizedBox(height: 1.v),
           Text(
             "Salary",
             style: CustomTextStyles.labelLargeGray500_1,
           ),
-          SizedBox(height: 9.v),
+          SizedBox(height: 8.v),
           Text(
             "6k - 11k",
             style: CustomTextStyles.titleSmallSemiBold,

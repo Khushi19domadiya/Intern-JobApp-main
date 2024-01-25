@@ -8,8 +8,8 @@ import '../sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
 class OnboardingThreeScreen extends StatelessWidget {
   OnboardingThreeScreen({Key? key})
       : super(
-          key: key,
-        );
+    key: key,
+  );
 
   PageController pageController = PageController();
 
@@ -74,9 +74,9 @@ class OnboardingThreeScreen extends StatelessWidget {
                                           vertical: 32.v,
                                         ),
                                         decoration:
-                                            AppDecoration.white.copyWith(
+                                        AppDecoration.white.copyWith(
                                           borderRadius:
-                                              BorderRadiusStyle.roundedBorder32,
+                                          BorderRadiusStyle.roundedBorder32,
                                         ),
                                         child: Expanded(
                                           child: ListView(
@@ -84,7 +84,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                               Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   Container(
                                                     width: 214.h,
@@ -95,7 +95,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                "Application surely viewed by ",
+                                                            "Application surely viewed by ",
                                                             style: theme.textTheme
                                                                 .headlineSmall,
                                                           ),
@@ -112,7 +112,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                   Container(
                                                     width: 243.h,
                                                     margin:
-                                                        EdgeInsets.only(top: 14.v),
+                                                    EdgeInsets.only(top: 14.v),
                                                     child: Text(
                                                       "Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem . ",
                                                       maxLines: 3,
@@ -142,7 +142,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                     width: 156.h,
                                                     text: "Next",
                                                     margin:
-                                                        EdgeInsets.only(top: 69.v),
+                                                    EdgeInsets.only(top: 69.v),
                                                   ),
                                                 ],
                                               ),
@@ -161,24 +161,24 @@ class OnboardingThreeScreen extends StatelessWidget {
                       Column(
                         children: [
                           Container(
-                            height: 718.v,
-                            width: double.maxFinite,
-                            padding: EdgeInsets.symmetric(horizontal: 24.h),
+                            height: 699.v,
+                            width: 327.h,
+                            padding: EdgeInsets.only(bottom: 2.v),
                             child: Stack(
                               alignment: Alignment.bottomCenter,
                               children: [
                                 CustomImageView(
                                   imagePath: ImageConstant.imgImage361x283,
-                                  height: 361.v,
-                                  width: 283.h,
+                                  height: 422.v,
+                                  width: 313.h,
                                   alignment: Alignment.topCenter,
                                 ),
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Container(
-                                    height: 335.v,
+                                    height: 367.v,
                                     width: 327.h,
-                                    margin: EdgeInsets.only(bottom: 5.v),
+                                    margin: EdgeInsets.only(bottom: 2.v),
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Container(
@@ -187,9 +187,9 @@ class OnboardingThreeScreen extends StatelessWidget {
                                           vertical: 32.v,
                                         ),
                                         decoration:
-                                            AppDecoration.white.copyWith(
+                                        AppDecoration.white.copyWith(
                                           borderRadius:
-                                              BorderRadiusStyle.roundedBorder32,
+                                          BorderRadiusStyle.roundedBorder32,
                                         ),
                                         child: Column(
                                           children: [
@@ -199,8 +199,8 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                   Column(
                                                     // mainAxisSize: MainAxisSize.min,
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                    MainAxisAlignment
+                                                        .center,
                                                     children: [
                                                       SizedBox(
                                                         width: 246.h,
@@ -209,14 +209,14 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                             children: [
                                                               TextSpan(
                                                                 text:
-                                                                    "The best app for ",
+                                                                "The best app for ",
                                                                 style: theme
                                                                     .textTheme
                                                                     .headlineSmall,
                                                               ),
                                                               TextSpan(
                                                                 text:
-                                                                    "Find Your Dream Job",
+                                                                "Find Your Dream Job",
                                                                 style: theme
                                                                     .textTheme
                                                                     .headlineSmall,
@@ -224,24 +224,24 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                             ],
                                                           ),
                                                           textAlign:
-                                                              TextAlign.center,
+                                                          TextAlign.center,
                                                         ),
                                                       ),
                                                       Container(
                                                         width: 243.h,
                                                         margin: EdgeInsets.only(
-                                                            top: 18.v),
+                                                            top: 20.v),
                                                         child: Text(
                                                           "Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem . ",
                                                           maxLines: 3,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           textAlign:
-                                                              TextAlign.center,
+                                                          TextAlign.center,
                                                           style: CustomTextStyles
                                                               .titleSmallGray500SemiBold_1
                                                               .copyWith(
-                                                            height: 1.57,
+                                                            height: 1.59,
                                                           ),
                                                         ),
                                                       ),
@@ -259,10 +259,10 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                   curve: Curves.easeInOut,
                                                 );
                                               },
-                                              width: 101.h,
+                                              width: 156.h,
                                               text: "Next",
                                               margin:
-                                                  EdgeInsets.only(top: 10.v),
+                                              EdgeInsets.only(bottom:30.v),
                                             ),
                                           ],
                                         ),
@@ -278,38 +278,37 @@ class OnboardingThreeScreen extends StatelessWidget {
                       Column(
                         children: [
                           Container(
-                            height: 713.v,
-                            width: double.maxFinite,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 24.h,
-                              vertical: 1.v,
+                            height: 699.v,
+                            width: 327.h,
+                            padding: EdgeInsets.only(
+                              bottom: 5.v,
                             ),
                             child: Stack(
                               alignment: Alignment.bottomCenter,
                               children: [
                                 CustomImageView(
                                   imagePath: ImageConstant.imgImage369x306,
-                                  height: 369.v,
-                                  width: 306.h,
+                                  height: 422.v,
+                                  width: 313.h,
                                   alignment: Alignment.topCenter,
                                 ),
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Container(
-                                    height: 335.v,
+                                    height: 367.v,
                                     width: 327.h,
                                     margin: EdgeInsets.only(bottom: 5.v),
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
-                                          horizontal: 24.h,
+                                          horizontal: 41.h,
                                           vertical: 32.v,
                                         ),
                                         decoration:
-                                            AppDecoration.white.copyWith(
+                                        AppDecoration.white.copyWith(
                                           borderRadius:
-                                              BorderRadiusStyle.roundedBorder32,
+                                          BorderRadiusStyle.roundedBorder32,
                                         ),
                                         child: Expanded(
                                           child: ListView(
@@ -317,12 +316,12 @@ class OnboardingThreeScreen extends StatelessWidget {
                                               Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   Container(
-                                                    width: 273.h,
+                                                    width: 214.h,
                                                     margin:
-                                                        EdgeInsets.only(left: 6.h),
+                                                    EdgeInsets.symmetric(horizontal:14.h),
                                                     child: RichText(
                                                       text: TextSpan(
                                                         children: [
@@ -333,7 +332,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                           ),
                                                           TextSpan(
                                                             text:
-                                                                "future is starting from you",
+                                                            "future is starting from you",
                                                             style: theme.textTheme
                                                                 .headlineSmall,
                                                           ),
@@ -372,7 +371,7 @@ class OnboardingThreeScreen extends StatelessWidget {
                                                     width: 156.h,
                                                     text: "Get Started",
                                                     margin:
-                                                        EdgeInsets.only(top: 59.v),
+                                                    EdgeInsets.only(top: 69.v),
                                                   ),
                                                 ],
                                               ),
