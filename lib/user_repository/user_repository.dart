@@ -90,6 +90,7 @@ class UserRepository extends GetxController {
     );
   }
 
+
   postJob(postjobModel job) async {
   log("----postJob----");
   log("----postJob1111---- $job");
@@ -115,9 +116,17 @@ class UserRepository extends GetxController {
     },
   );
  }
-  // Future<List<postjobModel>> allPost() async {
-  //   final snapshot = await _db.collection("postJob").get();
-  //   final jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e)).toList();
+
+  // Future<UserModel> getPostData(String email) async {
+  //   final snapshot = await _db.collection("Users").where("Email", isEqualTo: email).get();
+  //   final jobData = snapshot.docs.map((e) => UserModel.fromMap(e)).single;
   //   return jobData;
   // }
+
+  Future<List<postjobModel>> allPost() async {
+    final snapshot = await _db.collection("postJob").get();
+    final jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e.data())).toList();
+    return jobData;
+  }
+
 }

@@ -9,8 +9,8 @@ class SearchlistItemWidget extends StatelessWidget {
     Key? key,
     this.onTapSettings,
   }) : super(
-          key: key,
-        );
+    key: key,
+  );
 
   VoidCallback? onTapSettings;
 

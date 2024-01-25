@@ -7,20 +7,20 @@ import 'package:saumil_s_application/user_repository/user_repository.dart';
 
 class jobController extends GetxController{
 
-  RxList<postjobModel> jobDataList = <postjobModel>[].obs;
+  // RxList<postjobModel> jobDataList = <postjobModel>[].obs;
+
   Future<List<postjobModel>> fetchJobDataFromFirestore() async {
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('postJob').get();
+    final snapshot = await FirebaseFirestore.instance.collection('postJob').get();
+    print("------------ ${snapshot.docs} ----------");
+    // List<postjobModel> jobdata = [];
 
-    List<postjobModel> jobData = querySnapshot.docs.map((doc) {
+    List<postjobModel>  jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e.data())).toList();
 
-      return postjobModel.fromJson({
-        ...doc.data() as Map<String, dynamic>,
-        'id': doc.id,
-      });
-    }).toList();
-    jobDataList.value = jobData;
-    update();
+    // print("done");
+    // jobDataList.value = jobData;
+    // print("done ....");
+    // update();
     log("----fetchJobDataFromFirestore----");
     log("----jobData----" + jobData.length.toString());
 

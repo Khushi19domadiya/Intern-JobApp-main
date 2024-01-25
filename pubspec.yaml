@@ -1,10 +1,10 @@
 name: saumil_s_application
 description: A new Flutter project.
 version: 1.0.0+1
-environment: 
+environment:
   sdk: '>=2.12.0 <3.0.0'
-dependencies: 
-  flutter: 
+dependencies:
+  flutter:
     sdk: flutter
   get_storage: ^2.0.3
 
@@ -24,19 +24,21 @@ dependencies:
   cloud_firestore: ^4.14.0
   firebase_auth: ^4.16.0
   firebase_storage: ^11.6.0
+  file_picker:
   get:
   google_sign_in:
-dev_dependencies: 
-  flutter_test: 
+  flutter_pdfview: any
+dev_dependencies:
+  flutter_test:
     sdk: flutter
-flutter: 
+flutter:
   uses-material-design: true
-  assets: 
+  assets:
     - assets/
     - assets/images/
-  fonts: 
+  fonts:
     - family: Plus Jakarta Sans
-      fonts: 
+      fonts:
         - asset: assets/fonts/PlusJakartaSansBold.ttf
           weight: 700
         - asset: assets/fonts/PlusJakartaSansSemiBold.ttf

@@ -1,172 +1,217 @@
-import 'package:dotted_border/dotted_border.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:saumil_s_application/core/app_export.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
-import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
+import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_text_form_field.dart';
-import 'package:saumil_s_application/presentation/apply_job_popup_dialog/apply_job_popup_dialog.dart';
+import '../../theme/theme_helper.dart';
+import '../../util/colors.dart';
+import '../../util/common_methos.dart';
+import '../home_container_screen/home_container_screen.dart';
 
-// ignore_for_file: must_be_immutable
-class ApplyJobScreen extends StatelessWidget {
-  ApplyJobScreen({Key? key}) : super(key: key);
+class ApplyJobScreen extends StatefulWidget {
+  @override
+  _ApplyJobScreenState createState() => _ApplyJobScreenState();
+}
 
+class _ApplyJobScreenState extends State<ApplyJobScreen> {
   TextEditingController fullNameController = TextEditingController();
-
   TextEditingController emailController = TextEditingController();
-
   TextEditingController frameOneController = TextEditingController();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  File? cvFile;
+
+  Future<void> _uploadCV() async {
+    if (cvFile != null) {
+      try {
+        String userId = 'unique_user_id'; // Replace with your user ID or fetch dynamically
+        String cvFileName = 'cv_$userId.pdf';
+
+        // Upload CV to Firebase Cloud Storage
+        Reference storageReference =
+        FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
+        UploadTask uploadTask = storageReference.putFile(cvFile!);
+        await uploadTask.whenComplete(() => print('CV Uploaded'));
+
+        // Get the download URL of the uploaded CV
+        String downloadURL = await storageReference.getDownloadURL();
+
+        // Store user data including CV download URL in Firestore
+        await FirebaseFirestore.instance.collection('job_applications').add({
+          'full_name': fullNameController.text,
+          'email': emailController.text,
+          'website_portfolio': frameOneController.text,
+          'cv_url': downloadURL,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        print('Job application data stored successfully');
+      } catch (error) {
+        print('Error uploading CV or storing data: $error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: _buildAppBar(context),
-            body: SizedBox(
-                width: SizeUtils.width,
-                child: SingleChildScrollView(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: Form(
-                        key: _formKey,
-                        child: Container(
-                            width: double.maxFinite,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24.h, vertical: 31.v),
-                            child: Column(children: [
-                              _buildInputField1(context),
-                              SizedBox(height: 26.v),
-                              _buildInputField2(context),
-                              SizedBox(height: 28.v),
-                              _buildCvFields(context),
-                              SizedBox(height: 28.v),
-                              _buildInputField3(context),
-                              SizedBox(height: 5.v)
-                            ]))))),
-            bottomNavigationBar: _buildContinueButton(context)));
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text('Apply Job'),
+        ),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildPersonalInfoFullName(context),
+                  SizedBox(height: 18.0),
+                  _buildPersonalInfoEmail(context),
+                  SizedBox(height: 18.0),
+                  _buildPersonalInfoWebsite(context),
+                  SizedBox(height: 18.0),
+                  _buildCvFields(),
+                  SizedBox(height: 16.0),
+                  SizedBox(height: 270.0),
+                  _buildContinueButton(),
+                  // Adjusted spacing
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  /// Section Widget
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return CustomAppBar(
-        height: 51.v,
-        leadingWidth: 48.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgComponent1,
-            margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 14.v),
-            onTap: () {
-              onTapImage(context);
-            }),
-        centerTitle: true,
-        title: AppbarTitle(text: "Apply Job"),
-        actions: [
-          AppbarTrailingImage(
-              imagePath: ImageConstant.imgComponent3,
-              margin: EdgeInsets.fromLTRB(16.h, 13.v, 16.h, 14.v))
-        ]);
+  Widget _buildPersonalInfoFullName(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Full Name", style: theme.textTheme.titleSmall),
+        SizedBox(height: 9.0),
+        CustomTextFormField(
+          controller: fullNameController,
+          hintText: "Enter Your Full Name",
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your full name';
+            } else if (!value.startsWith(RegExp(r'[A-Z]'))) {
+              return 'First character should start with a capital letter';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
   }
 
-  /// Section Widget
-  Widget _buildInputField1(BuildContext context) {
-    return Container(
-        decoration:
-            BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("Full Name", style: theme.textTheme.titleSmall),
-          SizedBox(height: 9.v),
-          CustomTextFormField(
-              controller: fullNameController, hintText: "Brooklyn Simmons")
-        ]));
+  Widget _buildPersonalInfoEmail(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Email", style: theme.textTheme.titleSmall),
+        SizedBox(height: 9.0),
+        CustomTextFormField(
+          controller: emailController,
+          hintText: "xyz@gmail.com",
+          readOnly: false,
+          textInputType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your email';
+            } else if (!GetUtils.isEmail(value)) {
+              return 'Please enter a valid email address';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
   }
 
-  /// Section Widget
-  Widget _buildInputField2(BuildContext context) {
-    return Container(
-        decoration:
-            BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("Email Address", style: theme.textTheme.titleSmall),
-          SizedBox(height: 9.v),
-          CustomTextFormField(
-              controller: emailController,
-              hintText: "xyz@gmail.com",
-              textInputType: TextInputType.emailAddress)
-        ]));
+  Widget _buildPersonalInfoWebsite(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Website, Blog, or Portfolio", style: theme.textTheme.titleSmall),
+        SizedBox(height: 9.0),
+        CustomTextFormField(
+          controller: frameOneController,
+          hintText: "Website, Blog, or Portfolio",
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your Website, Blog, or Portfolio name';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
   }
 
-  /// Section Widget
-  Widget _buildCvFields(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text("Upload CV", style: theme.textTheme.titleSmall),
-      SizedBox(height: 7.v),
-      DottedBorder(
-          color: appTheme.gray300,
-          padding:
-              EdgeInsets.only(left: 1.h, top: 1.v, right: 1.h, bottom: 1.v),
-          strokeWidth: 1.h,
-          radius: Radius.circular(24),
-          borderType: BorderType.RRect,
-          dashPattern: [6, 6],
-          child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 124.h, vertical: 39.v),
-              decoration: AppDecoration.outlineGray300
-                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder24),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                CustomImageView(
-                    imagePath: ImageConstant.imgCloudUpload1,
-                    height: 40.adaptSize,
-                    width: 40.adaptSize),
-                SizedBox(height: 8.v),
-                Text("Upload File", style: CustomTextStyles.titleSmallSemiBold)
-              ])))
-    ]);
+  Widget _buildCvFields() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Upload CV', style: theme.textTheme.titleSmall), // Adjusted label
+        SizedBox(height: 7.0),
+        ElevatedButton(
+          onPressed: () async {
+            FilePickerResult? result;
+            try {
+              result = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: ['pdf'],
+              );
+            } on Exception catch (e) {
+              // Handle exception, if any
+              print('File picker error: $e');
+            }
+            if (result != null) {
+              //setState(() {
+              cvFile = File(result!.files.single.path!);
+            }
+            else if(cvFile != null)
+            {
+              Text(
+                'Please select a CV file',
+                style: TextStyle(color: Colors.red),
+              );
+            }
+          },
+          child: Text('Select CV'),
+        ),
+        // if (cvFile != null)
+        //   Text('Selected CV: ${cvFile!.path}'),
+      ],
+    );
   }
 
-  /// Section Widget
-  Widget _buildInputField3(BuildContext context) {
-    return Container(
-        decoration:
-            BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("Website, Blog, or Portfolio",
-              style: theme.textTheme.titleSmall),
-          SizedBox(height: 7.v),
-          CustomTextFormField(
-              controller: frameOneController,
-              hintText: "http://...",
-              textInputAction: TextInputAction.done)
-        ]));
-  }
 
-  /// Section Widget
-  Widget _buildContinueButton(BuildContext context) {
+  Widget _buildContinueButton() {
     return CustomElevatedButton(
-        text: "Continue",
-        margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),
-        onPressed: () {
-          onTapContinueButton(context);
-        });
+      text: 'Continue',
+      onPressed: () async {
+        if (_formKey.currentState?.validate() ?? false) {
+          // Validate successful, perform the CV upload and data storage
+          await _uploadCV();
+        }
+      },
+    );
   }
 
-  /// Navigates back to the previous screen.
-  onTapImage(BuildContext context) {
-    Navigator.pop(context);
-  }
 
-  /// Displays a dialog with the [ApplyJobPopupDialog] content.
-  onTapContinueButton(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: ApplyJobPopupDialog(),
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              insetPadding: const EdgeInsets.only(left: 0),
-            ));
-  }
 }

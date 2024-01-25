@@ -35,10 +35,19 @@ class AuthController extends GetxController {
     passwordController.clear();
   }
 
+
   String? getLoggedInUserEmail() {
     User? user = _auth.currentUser;
     return user?.email;
   }
+
+
+  // Future<void> saveProfileInfo(InfoModel profile) async {
+  //
+  //     saveProfileInfo(firstname : firstNameController.text, lastname : lastNameController.text,
+  //   email : emailController.text, phoneno : phoneController.text, address:locationController.text);
+  //   userRepo.createProfile(profile);
+  // }
 
 
   // Register with email and password

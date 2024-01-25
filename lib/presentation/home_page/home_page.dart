@@ -1,5 +1,9 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
 
+import '../../controller/jobController.dart';
+import '../../models/user_model.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
@@ -18,6 +22,8 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
   TextEditingController searchController = TextEditingController();
+
+  jobController controller = Get.put(jobController());
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +87,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 17.v),
-                      _buildFrame(context),
+                      SingleChildScrollView(scrollDirection: Axis.horizontal,child: _buildFrame(context)),
                       SizedBox(height: 22.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -106,12 +112,13 @@ class HomePage extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 74.h,
+      height: 85.h,
       leading: AppbarLeadingCircleimage(
         imagePath: ImageConstant.imgImage50x50,
         margin: EdgeInsets.only(left: 24.h),
       ),
       title: Padding(
-        padding: EdgeInsets.only(left: 10.h),
+        padding: EdgeInsets.only(left: 10.h,top: 10.h),
         child: Column(
           children: [
             AppbarSubtitle(
@@ -148,20 +155,58 @@ class HomePage extends StatelessWidget {
   Widget _buildFrame(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List.generate(
-            10,
-            (index) => Padding(
-              padding: EdgeInsets.only(left: 16.h),
-              child: FrameItemWidget(),
-            ),
+      child: Row(
+        children: [
+          FutureBuilder<List<postjobModel>>(
+            future: controller.fetchJobDataFromFirestore(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                print("-----------has data---------");
+                return
+Row(
+  children: [
+    ...List.generate(snapshot.data!.length, (index) =>  Padding(
+      padding: const EdgeInsets.only(left:20),
+      child: FrameItemWidget(
+        onTapBag: () {
+          onTapBag(context);
+        },
+        model: snapshot.data[index],
+      ),
+    ))
+  ],
+);
+
+
+                  ListView.separated(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 12.v);
+                    },
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      postjobModel model = snapshot.data[index];
+                      return FrameItemWidget(
+                        onTapBag: () {
+                          onTapBag(context);
+                        },
+                        model: model,
+                      );
+                    },
+                  );
+              } else {
+                print("--------- else  ---------");
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
           ),
-        ),
+        ],
       ),
     );
   }
+
 
   Widget _buildEightyEight(BuildContext context) {
     return Align(
@@ -186,5 +231,8 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+  onTapBag(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
   }
 }

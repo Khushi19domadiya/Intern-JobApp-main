@@ -106,7 +106,7 @@ class postjobModel {
   final String deadline;
   final String? jobType;
   final String? gender;
-  final List<String> selectedSkills;
+  final List<dynamic> selectedSkills;
 
   postjobModel({
     required this.id,
@@ -137,16 +137,18 @@ class postjobModel {
       'selectedSkills': selectedSkills,
     };
   }
-  factory postjobModel.fromJson(Map<String, dynamic> json){
-    return postjobModel(
-        id: json["id"],
-        title: json["title"],
-        lowestsalary: json["lowestsalary"],
-        highestsalary: json["highestsalary"],
-        address: json["address"],
-        experience: json["experience"],
-        about: json["about"],
-        deadline: json["deadline"],
-        selectedSkills: json["selectedSkills"]);
-  }
+  factory postjobModel.fromSnapshot(Map<String, dynamic> data) =>
+      postjobModel(
+        id: data["id"],
+        title: data["title"],
+        lowestsalary: data["lowestsalary"],
+        highestsalary: data["highestsalary"],
+        address: data["address"],
+        experience: data["experience"],
+        about: data["about"],
+        deadline: data["deadline"],
+        jobType: data["jobType"],
+        gender: data["gender"],
+        selectedSkills: data["selectedSkills"],
+    );
 }

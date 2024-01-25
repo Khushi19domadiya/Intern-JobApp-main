@@ -1,3 +1,4 @@
+import '../../../models/user_model.dart';
 import 'fulltime7_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
@@ -5,14 +6,19 @@ import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class SavedItemWidget extends StatelessWidget {
+
+
   SavedItemWidget({
     Key? key,
     this.onTapBag,
+    required this.model,
   }) : super(
-          key: key,
+          key: key
         );
 
   VoidCallback? onTapBag;
+
+  postjobModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +40,11 @@ class SavedItemWidget extends StatelessWidget {
                 top: 1.v,
                 bottom: 67.v,
               ),
-              child: CustomIconButton(
-                height: 48.adaptSize,
-                width: 48.adaptSize,
-                padding: EdgeInsets.all(8.h),
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgBag,
-                ),
-              ),
+
             ),
             Padding(
               padding: EdgeInsets.only(
-                left: 12.h,
+                // left: 0.h,
                 top: 4.v,
               ),
 
@@ -53,38 +52,43 @@ class SavedItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "UX Designer",
+                    model.title,
                     style: CustomTextStyles.titleMediumBold_1,
                   ),
                   SizedBox(height: 5.v),
                   Text(
-                    "Motorola",
+                    "Experience: ${model.experience} Year",
                     style: CustomTextStyles.labelLargeGray500,
                   ),
-                  SizedBox(height: 12.v),
+                  // SizedBox(height: 12.v),
                   Text(
-                    "560 - 12.000/Month",
+                    "Salary: (${model.highestsalary} - ${model.lowestsalary})",
                     style: theme.textTheme.labelLarge,
                   ),
-                  SizedBox(height: 13.v),
+                  // SizedBox(height: 12.v),
+                  Text(
+                    "Gender: ${model.gender} ",
+                    style: theme.textTheme.labelLarge,
+                  ),
+                  Text(
+                    "DeadLine: ${model.deadline} ",
+                    style: theme.textTheme.labelLarge,
+                  ),
+                  Text(
+                    "Skills: ${model.selectedSkills} ",
+                    style: theme.textTheme.labelLarge,
+                  ),
+                  SizedBox(height: 5.v),
                   Wrap(
                     runSpacing: 8.v,
                     spacing: 8.h,
                     children: List<Widget>.generate(
-                        2, (index) => Fulltime7ItemWidget()),
+                        1, (index) => Fulltime7ItemWidget(model: model,)),
                   ),
                 ],
               ),
             ),
-            CustomImageView(
-              imagePath: ImageConstant.imgComponent3,
-              height: 24.adaptSize,
-              width: 24.adaptSize,
-              margin: EdgeInsets.only(
-                left: 30.h,
-                bottom: 92.v,
-              ),
-            ),
+
           ],
         ),
       ),

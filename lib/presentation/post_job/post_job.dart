@@ -105,14 +105,22 @@ class _PostJobState extends State<PostJob> {
         children: [
           Text("Title", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
-          CustomTextFormField(            controller: titleController,
+          CustomTextFormField(
+            controller: titleController,
             hintText: "Enter Job Title",
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your Job Title';
+              } else if (!value.startsWith(RegExp(r'[A-Z]'))) {
+                return 'Title should start with a capital letter';
+              }
+              return null;
+            },
           ),
         ],
       ),
     );
   }
-
   Widget _buildInputField2(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
@@ -125,12 +133,26 @@ class _PostJobState extends State<PostJob> {
             controller: lsalaryController,
             hintText: "Enter your lowest salary",
             textInputType: TextInputType.text,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the lowest salary';
+              }
+              // Convert the entered value to a double for comparison
+              double salary = double.tryParse(value) ?? 0;
+              if (salary < 0) {
+                return 'Salary cannot be below 0';
+              }
+              if (value.length > 8) {
+                return 'Salary cannot be more than 8 digits';
+              }
+              return null;
+            },
+
           ),
         ],
       ),
     );
   }
-
   Widget _buildInputField3(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
@@ -143,6 +165,20 @@ class _PostJobState extends State<PostJob> {
             controller: hsalaryController,
             hintText: "Enter your highest salary",
             textInputType: TextInputType.text,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the highest salary';
+              }
+              // Convert the entered value to a double for comparison
+              double salary = double.tryParse(value) ?? 0;
+              if (salary < 0) {
+                return 'Salary cannot be below 0';
+              }
+              if (value.length > 8) {
+                return 'Salary cannot be more than 8 digits';
+              }
+              return null;
+            },
           ),
         ],
       ),
@@ -161,11 +197,24 @@ class _PostJobState extends State<PostJob> {
             controller: addressController,
             hintText: "address",
             textInputType: TextInputType.text,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your address';
+              }
+              return null;
+            },
             maxLines: 6,
           ),
         ],
       ),
     );
+  }
+
+  String? _validateRadio() {
+    if (_selectedRadio == null) {
+      return 'Please select Job Type';
+    }
+    return null;
   }
 
   Widget _buildInputField5(BuildContext context) {
@@ -181,7 +230,7 @@ class _PostJobState extends State<PostJob> {
               Row(
                 children: [
                   Radio(
-                    value: 'Full Time', // Change value to string
+                    value: 'Full Time',
                     groupValue: _selectedRadio,
                     onChanged: (value) {
                       _handleRadioValueChange(value.toString());
@@ -193,7 +242,7 @@ class _PostJobState extends State<PostJob> {
               Row(
                 children: [
                   Radio(
-                    value: 'Part Time', // Change value to string
+                    value: 'Part Time',
                     groupValue: _selectedRadio,
                     onChanged: (value) {
                       _handleRadioValueChange(value.toString());
@@ -204,6 +253,14 @@ class _PostJobState extends State<PostJob> {
               ),
             ],
           ),
+          if (_validateRadio() != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              // child: Text(
+              //   _validateRadio() ?? "",
+              //   style: TextStyle(color: Colors.red),
+              // ),
+            ),
         ],
       ),
     );
@@ -317,6 +374,13 @@ class _PostJobState extends State<PostJob> {
     );
   }
 
+  String? _validateGender() {
+    if (_selectGender == null) {
+      return 'Please select Gender';
+    }
+    return null;
+  }
+
   Widget _buildInputField7(BuildContext context) {
     return Container(
       child: Column(
@@ -353,10 +417,20 @@ class _PostJobState extends State<PostJob> {
               ),
             ],
           ),
+          if (_validateGender() != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              // child: Text(
+              //   _validateGender() ?? "",
+              //   style: TextStyle(color: Colors.red),
+              // ),
+
+            ),
         ],
       ),
     );
   }
+
   Widget _buildInputField8(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadiusStyle.roundedBorder8),
@@ -368,7 +442,18 @@ class _PostJobState extends State<PostJob> {
           CustomTextFormField(
             controller: experienceController,
             hintText: "Experience",
-            textInputType: TextInputType.emailAddress,
+            textInputType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the experience';
+              }
+              // Use a regular expression to validate the numeric format
+              RegExp regex = RegExp(r'^\d[0,50](\.\d[0,11])?$');
+              if (!regex.hasMatch(value)) {
+                return 'Invalid experience format';
+              }
+              return null;
+            },
           ),
         ],
       ),
@@ -386,7 +471,13 @@ class _PostJobState extends State<PostJob> {
           CustomTextFormField(
             controller: aboutController,
             hintText: "About",
-            textInputType: TextInputType.emailAddress,
+            textInputType: TextInputType.text,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'This is required';
+              }
+              return null;
+            },
             maxLines: 4,
           ),
           SizedBox(height: 1.v),
@@ -400,16 +491,21 @@ class _PostJobState extends State<PostJob> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // Set the first date to the current date
       lastDate: DateTime(2101),
     );
 
     if (picked != null && picked != selectedDate) {
-      final formattedDate = DateFormat('yyyy-MM-dd').format(picked);
-      setState(() {
-        selectedDate = picked;
-        datePickerController.text = formattedDate;
-      });
+      if (picked.isBefore(DateTime.now())) {
+        // Show an error message if the selected date is in the past
+        CommonMethod().getXSnackBar("Error", "Please select a future date", red);
+      } else {
+        final formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+        setState(() {
+          selectedDate = picked;
+          datePickerController.text = formattedDate;
+        });
+      }
     }
   }
 
@@ -456,12 +552,32 @@ class _PostJobState extends State<PostJob> {
     );
   }
 
-
   Widget _buildContinueButton(BuildContext context) {
     return CustomElevatedButton(
-        text: "POST",
-        margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),
-        onPressed: () async {
+      text: "POST",
+      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),
+      onPressed: () async {
+        // Validate the job type field
+        if (_validateRadio() != null) {
+          // If validation fails, show an error message
+          CommonMethod().getXSnackBar("Error", _validateRadio() ?? "", red);
+        }
+        else if (_validateGender() != null) {
+          // If validation fails, show an error message
+          CommonMethod().getXSnackBar("Error", _validateGender() ?? "", red);
+        }
+        // Validate the select skills field
+        else if (_selectedItems.isEmpty) {
+          // If no skills are selected, show an error message
+          CommonMethod().getXSnackBar("Error", "Please select at least one skill", red);
+        }
+        else if (datePickerController.text.isEmpty) {
+          // Show an error message if the deadline is empty
+          CommonMethod().getXSnackBar("Error", "Please select a deadline", red);
+        }
+        // Proceed with form validation if all previous validations pass
+        else if (_formKey.currentState?.validate() ?? false) {
+          // All fields are valid
           saveJobPost(
             title: titleController.text,
             lowestsalary: lsalaryController.text,
@@ -472,10 +588,10 @@ class _PostJobState extends State<PostJob> {
             deadline: datePickerController.text,
             selectedSkills: _selectedItems, // Pass the selected skills
           );
-
           // Redirect to the settings page only if all fields are valid
           Get.to(() => HomeContainerScreen());
         }
+      },
     );
   }
 
