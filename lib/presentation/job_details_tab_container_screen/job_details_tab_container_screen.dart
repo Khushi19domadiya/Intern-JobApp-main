@@ -10,8 +10,8 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 class JobDetailsTabContainerScreen extends StatefulWidget {
   const JobDetailsTabContainerScreen({Key? key})
       : super(
-    key: key,
-  );
+          key: key,
+        );
 
   @override
   JobDetailsTabContainerScreenState createState() =>
@@ -110,7 +110,7 @@ class JobDetailsTabContainerScreenState
   /// Section Widget
   Widget _buildCardanoOne(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 24.h),
+      margin: EdgeInsets.only(right: 24.h),
       padding: EdgeInsets.symmetric(
         horizontal: 71.h,
         vertical: 23.v,
@@ -150,7 +150,7 @@ class JobDetailsTabContainerScreenState
             runSpacing: 9.v,
             spacing: 9.h,
             children:
-            List<Widget>.generate(2, (index) => FramefiveItemWidget()),
+                List<Widget>.generate(2, (index) => FramefiveItemWidget()),
           ),
         ],
       ),
@@ -168,9 +168,9 @@ class JobDetailsTabContainerScreenState
         ),
         scrollDirection: Axis.horizontal,
         separatorBuilder: (
-            context,
-            index,
-            ) {
+          context,
+          index,
+        ) {
           return SizedBox(
             width: 54.h,
           );

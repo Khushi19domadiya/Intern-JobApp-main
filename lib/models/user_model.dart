@@ -1,27 +1,65 @@
-import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String? id;
+  final String id;
   final String email;
-  final String password;
-  final String confirmpassword;
+  final String? password;
+  final String? fname;
+  final String? lname;
+  final String? phonenumber;
+  final String? address;
+  final String? profileUrl;
 
-  const UserModel( {
-    this.id,
+  const UserModel({
+    required this.id,
     required this.email,
-    required this.password,
-    required this.confirmpassword,
-});
-  toJson(){
-    return{
-      "id": id,
-      "Email": email,
-      "Password": password,
-      "Confirm Password": confirmpassword,
+    this.password,
+    this.fname,
+    this.lname,
+    this.phonenumber,
+    this.address,
+    this.profileUrl,
+  });
+
+  factory UserModel.fromMap(Map<String, dynamic> data) {
+    return UserModel(
+      id: data['id'],
+      email: data['email'],
+      password: data['password'],
+      fname: data['fname'],
+      lname: data['lname'],
+      phonenumber: data['phonenumber'],
+      address: data['address'],
+      profileUrl: data['profileUrl'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) "id": id,
+      if (email != null) "email": email,
+      if (password != null) "password": password,
+      if (fname != null) "fname": fname,
+      if (lname != null) "lname": lname,
+      if (phonenumber != null) "phonenumber": phonenumber,
+      if (address != null) "address": address,
+      if (profileUrl != null) "profileUrl": profileUrl,
     };
   }
-}
 
+  // Map<String, dynamic> toUpdateMap() {
+  //   Map<String, dynamic> map = toMap();
+  //   map.removeWhere((key, value) => value == null);
+  //   return map;
+  // }
+
+  Map<String, dynamic> toUpdateMap() {
+    Map<String, dynamic> map = toMap();
+    map.removeWhere(
+        (key, value) => value == null || value is List && value.isEmpty);
+    return map;
+  }
+}
 
 class educationModel{
   final String? id;
@@ -41,7 +79,7 @@ class educationModel{
     required this.startdate,
     required this.enddate,
     required this.grade,
-    required this.description,
+    required this.description
   });
   toJson()
   {
@@ -98,5 +136,17 @@ class postjobModel {
       'gender': gender,
       'selectedSkills': selectedSkills,
     };
+  }
+  factory postjobModel.fromJson(Map<String, dynamic> json){
+    return postjobModel(
+        id: json["id"],
+        title: json["title"],
+        lowestsalary: json["lowestsalary"],
+        highestsalary: json["highestsalary"],
+        address: json["address"],
+        experience: json["experience"],
+        about: json["about"],
+        deadline: json["deadline"],
+        selectedSkills: json["selectedSkills"]);
   }
 }

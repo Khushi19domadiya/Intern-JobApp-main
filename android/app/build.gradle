@@ -69,4 +69,12 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.7.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'androidx.multidex:multidex:2.0.1'
+    dependencies { implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0' }
+        implementation("com.google.firebase:firebase-appcheck-playintegrity")
+
+  implementation('com.google.firebase:firebase-auth') {
+        exclude module: "play-services-safetynet"
+    }
+
+
 }

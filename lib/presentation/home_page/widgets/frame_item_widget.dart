@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
-// ignore: must_be_immutable
+
 class FrameItemWidget extends StatelessWidget {
   const FrameItemWidget({Key? key})
       : super(
-          key: key,
-        );
+    key: key,
+  );
+
 
   @override
   Widget build(BuildContext context) {

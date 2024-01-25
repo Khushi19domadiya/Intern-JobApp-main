@@ -25,7 +25,7 @@ class JobDetailsPageState extends State<JobDetailsPage>
         child: Padding(
             padding: EdgeInsets.only(top: 419.v),
             child: Column(children: [
-              SizedBox(height: 10.v),
+              SizedBox(height: 20.v),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Align(
                     alignment: Alignment.centerLeft,

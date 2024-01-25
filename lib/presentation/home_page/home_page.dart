@@ -45,7 +45,9 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15.v), // Add spacing between search box and button
+                      SizedBox(
+                          height: 15
+                              .v), // Add spacing between search box and button
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -54,11 +56,10 @@ class HomePage extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PostJob()),
-                                        );
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PostJob()),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 25.h),
@@ -152,7 +153,7 @@ class HomePage extends StatelessWidget {
         child: Row(
           children: List.generate(
             10,
-                (index) => Padding(
+            (index) => Padding(
               padding: EdgeInsets.only(left: 16.h),
               child: FrameItemWidget(),
             ),
@@ -171,9 +172,9 @@ class HomePage extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           separatorBuilder: (
-              context,
-              index,
-              ) {
+            context,
+            index,
+          ) {
             return SizedBox(
               height: 16.v,
             );

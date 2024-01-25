@@ -26,8 +26,8 @@ class JobTypeScreen extends StatelessWidget {
                         SizedBox(
                             width: 209.h,
                             child: Text(
-                                "Are you looking for a new job or\nlooking for new employee",
-                                maxLines: 2,
+                                "Are you looking for a new job or looking for new employee",
+                                maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: CustomTextStyles.titleSmallBluegray400
@@ -67,7 +67,7 @@ class JobTypeScreen extends StatelessWidget {
             separatorBuilder: (context, index) {
               return SizedBox(width: 15.h);
             },
-            itemCount: 2,
+            itemCount: 1,
             itemBuilder: (context, index) {
               return JobtypeItemWidget();
             }));

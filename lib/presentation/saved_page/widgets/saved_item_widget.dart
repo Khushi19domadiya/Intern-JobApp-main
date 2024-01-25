@@ -48,6 +48,7 @@ class SavedItemWidget extends StatelessWidget {
                 left: 12.h,
                 top: 4.v,
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

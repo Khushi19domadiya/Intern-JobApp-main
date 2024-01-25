@@ -105,8 +105,7 @@ class _PostJobState extends State<PostJob> {
         children: [
           Text("Title", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
-          CustomTextFormField(
-            controller: titleController,
+          CustomTextFormField(            controller: titleController,
             hintText: "Enter Job Title",
           ),
         ],
@@ -125,7 +124,7 @@ class _PostJobState extends State<PostJob> {
           CustomTextFormField(
             controller: lsalaryController,
             hintText: "Enter your lowest salary",
-            textInputType: TextInputType.emailAddress,
+            textInputType: TextInputType.text,
           ),
         ],
       ),
@@ -143,7 +142,7 @@ class _PostJobState extends State<PostJob> {
           CustomTextFormField(
             controller: hsalaryController,
             hintText: "Enter your highest salary",
-            textInputType: TextInputType.emailAddress,
+            textInputType: TextInputType.text,
           ),
         ],
       ),
@@ -161,7 +160,7 @@ class _PostJobState extends State<PostJob> {
           CustomTextFormField(
             controller: addressController,
             hintText: "address",
-            textInputType: TextInputType.emailAddress,
+            textInputType: TextInputType.text,
             maxLines: 6,
           ),
         ],

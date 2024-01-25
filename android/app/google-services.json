@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "914831420083",
+    "firebase_url": "https://jobapp-55512-default-rtdb.firebaseio.com",
     "project_id": "jobapp-55512",
     "storage_bucket": "jobapp-55512.appspot.com"
   },
@@ -12,7 +13,36 @@
           "package_name": "com.saumilsapplication.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "914831420083-1e0omckcclbh87kaqkug03054p1qubfa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saumilsapplication.app",
+            "certificate_hash": "8a39dc094df818a21613a32f24d0643e8c80f166"
+          }
+        },
+        {
+          "client_id": "914831420083-aou2vlprqmgk5c4ucnr0q84vpjj0m8u2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saumilsapplication.app",
+            "certificate_hash": "3345998335ef9db411e69c7fbbed273fa7306a71"
+          }
+        },
+        {
+          "client_id": "914831420083-nc86331r24nm2hlrcunl1d9b1vl0mvam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saumilsapplication.app",
+            "certificate_hash": "c2097891928bdb928e693b65347b819048d78a30"
+          }
+        },
+        {
+          "client_id": "914831420083-qmtuvo6pfgrgurqd592rn8famfc7menq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBygt1sx38k24iAwN2hdv5sx5vkJqM5uv4"
@@ -20,7 +50,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914831420083-qmtuvo6pfgrgurqd592rn8famfc7menq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
