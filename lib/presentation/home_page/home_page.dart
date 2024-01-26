@@ -1,3 +1,10 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:saumil_s_application/presentation/post_job/post_job.dart';
+
+import '../../controller/jobController.dart';
+import '../../models/user_model.dart';
+import '../../widgets/custom_elevated_button.dart';
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +16,14 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart'
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
 
-// ignore_for_file: must_be_immutable
+import '../sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
+
 class HomePage extends StatelessWidget {
-  HomePage({Key? key})
-      : super(
-          key: key,
-        );
+  HomePage({Key? key}) : super(key: key);
 
   TextEditingController searchController = TextEditingController();
+
+  jobController controller = Get.put(jobController());
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,6 @@ class HomePage extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              // width: double.maxFinite,
               child: ListView(
                 children: [
                   Column(
@@ -45,6 +51,33 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(
+                          height: 15
+                              .v), // Add spacing between search box and button
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(horizontal: 24.h),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PostJob()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 25.h),
+                              onPrimary: Colors.white,
+                            ),
+                            child: Text(
+                              "Post Job",
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                          ),
+                        ),
+                      ),
                       SizedBox(height: 25.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -54,7 +87,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 17.v),
-                      _buildFrame(context),
+                      SingleChildScrollView(scrollDirection: Axis.horizontal,child: _buildFrame(context)),
                       SizedBox(height: 22.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -76,16 +109,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 74.h,
+      height: 85.h,
       leading: AppbarLeadingCircleimage(
         imagePath: ImageConstant.imgImage50x50,
         margin: EdgeInsets.only(left: 24.h),
       ),
       title: Padding(
-        padding: EdgeInsets.only(left: 10.h),
+        padding: EdgeInsets.only(left: 10.h,top: 10.h),
         child: Column(
           children: [
             AppbarSubtitle(
@@ -111,45 +144,70 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildFrame(BuildContext context) {
-    return Align(
-        alignment: Alignment.centerRight,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-                10,
-                (index) => Padding(
-                      padding: EdgeInsets.only(left: 16.h),
-                      child: FrameItemWidget(),
-                    )),
-          ),
-        )
-
-        // SizedBox(
-        //   height: 176.v,
-        //   child: ListView.separated(
-        //     padding: EdgeInsets.only(left: 24.h),
-        //     scrollDirection: Axis.horizontal,
-        //     separatorBuilder: (
-        //       context,
-        //       index,
-        //     ) {
-        //       return SizedBox(
-        //         width: 16.h,
-        //       );
-        //     },
-        //     itemCount: 2,
-        //     itemBuilder: (context, index) {
-        //       return FrameItemWidget();
-        //     },
-        //   ),
-        // ),
-        );
+  Widget _buildSaveChanges(BuildContext context) {
+    return CustomElevatedButton(
+      text: "Save Changes",
+      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 37.v),
+      onPressed: () {},
+    );
   }
 
-  /// Section Widget
+  Widget _buildFrame(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        children: [
+          FutureBuilder<List<postjobModel>>(
+            future: controller.fetchJobDataFromFirestore(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                print("-----------has data---------");
+                return
+Row(
+  children: [
+    ...List.generate(snapshot.data!.length, (index) =>  Padding(
+      padding: const EdgeInsets.only(left:20),
+      child: FrameItemWidget(
+        onTapBag: () {
+          onTapBag(context);
+        },
+        model: snapshot.data[index],
+      ),
+    ))
+  ],
+);
+
+
+                  ListView.separated(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 12.v);
+                    },
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      postjobModel model = snapshot.data[index];
+                      return FrameItemWidget(
+                        onTapBag: () {
+                          onTapBag(context);
+                        },
+                        model: model,
+                      );
+                    },
+                  );
+              } else {
+                print("--------- else  ---------");
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
   Widget _buildEightyEight(BuildContext context) {
     return Align(
       alignment: Alignment.center,
@@ -173,5 +231,8 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+  onTapBag(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
   }
 }

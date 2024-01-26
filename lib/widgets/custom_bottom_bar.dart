@@ -29,7 +29,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
     BottomMenuModel(
       icon: ImageConstant.imgNavSaved,
       activeIcon: ImageConstant.imgNavSaved,
-      title: "Saved",
+      title: "Jobs",
       type: BottomBarEnum.Saved,
     ),
     BottomMenuModel(

@@ -1,3 +1,8 @@
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:get/get.dart';
+
+import '../home_page/pdf_viewer_screen.dart';
+import '../job_details_page/job_details_page.dart';
 import '../job_details_tab_container_screen/widgets/framefive_item_widget.dart';
 import '../job_details_tab_container_screen/widgets/jobdetailstabcontainer_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +15,8 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 class JobDetailsTabContainerScreen extends StatefulWidget {
   const JobDetailsTabContainerScreen({Key? key})
       : super(
-          key: key,
-        );
+    key: key,
+  );
 
   @override
   JobDetailsTabContainerScreenState createState() =>
@@ -51,7 +56,7 @@ class JobDetailsTabContainerScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildCardanoOne(context),
-                        SizedBox(height: 24.v),
+                        SizedBox(height: 22.v),
                         _buildJobDetailsTabContainer(context),
                         SizedBox(height: 26.v),
                         _buildTabview(context),
@@ -74,7 +79,7 @@ class JobDetailsTabContainerScreenState
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgComponent1,
         margin: EdgeInsets.only(
-          left: 24.h,
+          left: 20.h,
           top: 13.v,
           bottom: 13.v,
         ),
@@ -110,10 +115,10 @@ class JobDetailsTabContainerScreenState
   /// Section Widget
   Widget _buildCardanoOne(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 24.h),
+      margin: EdgeInsets.only(left: 35.h),
       padding: EdgeInsets.symmetric(
-        horizontal: 71.h,
-        vertical: 23.v,
+        horizontal: 65.h,
+        vertical: 30.v,
       ),
       decoration: AppDecoration.outlineGray.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder16,
@@ -123,7 +128,7 @@ class JobDetailsTabContainerScreenState
         children: [
           Container(
             height: 79.adaptSize,
-            width: 79.adaptSize,
+            width: 85.adaptSize,
             padding: EdgeInsets.all(19.h),
             decoration: AppDecoration.fillGray.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder39,
@@ -131,11 +136,11 @@ class JobDetailsTabContainerScreenState
             child: CustomImageView(
               imagePath: ImageConstant.imgCardano1,
               height: 40.adaptSize,
-              width: 40.adaptSize,
+              width: 50.adaptSize,
               alignment: Alignment.center,
             ),
           ),
-          SizedBox(height: 16.v),
+          SizedBox(height: 20.v),
           Text(
             "Senior UI/UX Designer",
             style: CustomTextStyles.titleSmallBold,
@@ -148,9 +153,9 @@ class JobDetailsTabContainerScreenState
           SizedBox(height: 12.v),
           Wrap(
             runSpacing: 9.v,
-            spacing: 9.h,
+            spacing: 15.h,
             children:
-                List<Widget>.generate(2, (index) => FramefiveItemWidget()),
+            List<Widget>.generate(2, (index) => FramefiveItemWidget()),
           ),
         ],
       ),
@@ -168,9 +173,9 @@ class JobDetailsTabContainerScreenState
         ),
         scrollDirection: Axis.horizontal,
         separatorBuilder: (
-          context,
-          index,
-        ) {
+            context,
+            index,
+            ) {
           return SizedBox(
             width: 54.h,
           );
@@ -184,10 +189,11 @@ class JobDetailsTabContainerScreenState
   }
 
   /// Section Widget
+  /// Section Widget
   Widget _buildTabview(BuildContext context) {
     return Container(
       height: 44.v,
-      width: 351.h,
+      width: 340.h,
       child: TabBar(
         controller: tabviewController,
         isScrollable: true,
@@ -205,28 +211,34 @@ class JobDetailsTabContainerScreenState
         ),
         indicator: BoxDecoration(
           color: appTheme.gray100,
-          borderRadius: BorderRadius.circular(
-            22.h,
-          ),
+          borderRadius: BorderRadius.circular(22.h),
         ),
         tabs: [
           Tab(
-            child: Text(
-              "Description",
+            child: InkWell(
+              onTap: () {
+                // Navigate to the description page when the tab is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JobDetailsPage(), // Replace with your description page
+                  ),
+                );
+              },
+              child: Text("Description"),
             ),
           ),
           Tab(
-            child: Text(
-              "Requirement",
-            ),
+            child: GestureDetector(onTap: (){
+              Get.to(()=>PDFViewerScreen(path: 'https://firebasestorage.googleapis.com/v0/b/jobapp-55512.appspot.com/o/cv_files%2Fcv_unique_user_id.pdf?alt=media&token=be80f6c1-c19b-4e67-ae80-40b236935f7e',));
+            },child: Text("Requirement")),
           ),
           Tab(
-            child: Text(
-              "Responsibilities",
-            ),
+            child: Text("Responsibilities"),
           ),
         ],
       ),
     );
   }
+
 }

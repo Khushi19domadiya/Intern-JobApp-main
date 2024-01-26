@@ -23,9 +23,9 @@ class JobDetailsPageState extends State<JobDetailsPage>
   Widget _buildJobDescription(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(
-            padding: EdgeInsets.only(top: 419.v),
+            padding: EdgeInsets.only(top: 10.v),
             child: Column(children: [
-              SizedBox(height: 20.v),
+              SizedBox(height: 40.v),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Align(
                     alignment: Alignment.centerLeft,
@@ -33,7 +33,7 @@ class JobDetailsPageState extends State<JobDetailsPage>
                         padding: EdgeInsets.only(left: 24.h),
                         child: Text("Job Description",
                             style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 13.v),
+                SizedBox(height: 20.v),
                 Container(
                     width: 319.h,
                     margin: EdgeInsets.only(left: 31.h, right: 24.h),
@@ -46,11 +46,12 @@ class JobDetailsPageState extends State<JobDetailsPage>
                 SizedBox(height: 3.v),
                 Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 24.h, vertical: 28.v),
+                    EdgeInsets.symmetric(horizontal: 24.h, vertical: 28.v),
                     decoration: AppDecoration.linear,
                     child: Column(children: [
-                      SizedBox(height: 12.v),
+                      SizedBox(height: 350.v),
                       CustomElevatedButton(
+
                           text: "Apply Now",
                           onPressed: () {
                             onTapApplyNow(context);

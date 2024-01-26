@@ -39,6 +39,8 @@ import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/util/colors.dart';
 import 'package:saumil_s_application/util/common_methos.dart';
 
+import '../presentation/settings_screen/settings_screen.dart';
+
 final FirebaseStorage _storage = FirebaseStorage.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -83,6 +85,9 @@ class StoreData {
     UploadTask uploadTask = storageReference.putFile(imageFile);
 
     await uploadTask.whenComplete(() => print('Image uploaded successfully'));
+    await CommonMethod()
+            .getXSnackBar("Success", 'Profile Info Saved Successfully', success)
+            .whenComplete(() => Get.to(() => SettingsScreen()));
 
     String downloadUrl = await storageReference.getDownloadURL();
     return downloadUrl;

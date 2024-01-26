@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   final String id;
   final String email;
@@ -91,4 +93,62 @@ class educationModel{
       "Description" : description,
     };
   }
+}
+
+class postjobModel {
+  final String id;
+  final String title;
+  final String lowestsalary;
+  final String highestsalary;
+  final String address;
+  final String experience;
+  final String about;
+  final String deadline;
+  final String? jobType;
+  final String? gender;
+  final List<dynamic> selectedSkills;
+
+  postjobModel({
+    required this.id,
+    required this.title,
+    required this.lowestsalary,
+    required this.highestsalary,
+    required this.address,
+    required this.experience,
+    required this.about,
+    required this.deadline,
+    this.jobType,
+    this.gender,
+    required this.selectedSkills,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'lowestsalary': lowestsalary,
+      'highestsalary': highestsalary,
+      'address': address,
+      'experience': experience,
+      'about': about,
+      'deadline': deadline,
+      'jobType': jobType,
+      'gender': gender,
+      'selectedSkills': selectedSkills,
+    };
+  }
+  factory postjobModel.fromSnapshot(Map<String, dynamic> data) =>
+      postjobModel(
+        id: data["id"],
+        title: data["title"],
+        lowestsalary: data["lowestsalary"],
+        highestsalary: data["highestsalary"],
+        address: data["address"],
+        experience: data["experience"],
+        about: data["about"],
+        deadline: data["deadline"],
+        jobType: data["jobType"],
+        gender: data["gender"],
+        selectedSkills: data["selectedSkills"],
+    );
 }

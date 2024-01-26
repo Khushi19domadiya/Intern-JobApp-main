@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 
+import '../../../models/user_model.dart';
+
 // ignore: must_be_immutable
 class Fulltime7ItemWidget extends StatelessWidget {
-  const Fulltime7ItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+
+  Fulltime7ItemWidget({
+    Key? key,
+    required this.model,
+  }) : super(
+      key: key
+  );
+
+
+  postjobModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +26,7 @@ class Fulltime7ItemWidget extends StatelessWidget {
       showCheckmark: false,
       labelPadding: EdgeInsets.zero,
       label: Text(
-        "Fulltime",
+        "${model.jobType}",
         style: TextStyle(
           color: appTheme.blueGray400,
           fontSize: 12.fSize,

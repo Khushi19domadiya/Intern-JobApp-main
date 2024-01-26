@@ -283,7 +283,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         CustomTextFormField(
           controller: emailController,
           hintText: "xyz@gmail.com",
-          readOnly: true,
+          readOnly: false,
           textInputType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {

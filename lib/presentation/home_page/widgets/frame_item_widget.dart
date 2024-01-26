@@ -1,19 +1,26 @@
+import '../../../models/user_model.dart';
 import 'fulltime1_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
-// ignore: must_be_immutable
+
 class FrameItemWidget extends StatelessWidget {
-  const FrameItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+   FrameItemWidget({ Key? key,
+     this.onTapBag,
+     required this.model,
+   }) : super(
+       key: key
+   );
+
+   VoidCallback? onTapBag;
+
+   postjobModel model;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // width: 273.h,
+      width: 300.h,
       child: Align(
         alignment: Alignment.centerRight,
         child: Container(
@@ -27,15 +34,7 @@ class FrameItemWidget extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: 96.v),
-                child: CustomIconButton(
-                  height: 48.adaptSize,
-                  width: 48.adaptSize,
-                  padding: EdgeInsets.all(8.h),
-                  decoration: IconButtonStyleHelper.fillOnPrimaryContainer,
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgBag,
-                  ),
-                ),
+
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -46,37 +45,62 @@ class FrameItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Senior UI/UX Designer",
+                      model.title,
                       style: CustomTextStyles.titleSmallOnPrimaryContainerBold,
                     ),
                     SizedBox(height: 7.v),
                     Opacity(
-                      opacity: 0.8,
-                      child: Text(
-                        "Shopee",
+                        opacity: 0.8,
+                        child: Text(
+                        "Experience: ${model.experience} Year",
                         style: CustomTextStyles
-                            .labelLargeOnPrimaryContainerSemiBold,
+                            .labelLargeOnPrimaryContainer_3,
                       ),
                     ),
                     SizedBox(height: 11.v),
+                Opacity(
+                  opacity: 0.8,
+                  child:
+                       Text(
+                        "Salary: (${model.highestsalary} - ${model.lowestsalary})",
+                        style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                      ),
+                ),
+                    SizedBox(height: 9.v),
+                Opacity(
+                  opacity: 0.8,
+                  child:
+                    Text(
+                      "DeadLine: ${model.deadline} ",
+                      style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                    ),
+                ),
+                    SizedBox(height: 9.v),
+                Opacity(
+                  opacity: 0.8,
+                  child:
+                    Text(
+                      "JobType: ${model.jobType} ",
+                      style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                    ),
+                ),
+                    SizedBox(height: 9.v),
                     Opacity(
-                      opacity: 0.64,
-                      child: Text(
-                        "Jakarta, Indonesia (Remote)",
-                        style: CustomTextStyles.labelLargeOnPrimaryContainer_1,
+                      opacity: 0.8,
+                      child:
+                      Text(
+                        "Gender: ${model.gender} ",
+                        style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
                       ),
                     ),
                     SizedBox(height: 9.v),
-                    Text(
-                      "1100 - 12.000/Month",
-                      style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
-                    ),
-                    SizedBox(height: 17.v),
-                    Wrap(
-                      runSpacing: 7.v,
-                      spacing: 7.h,
-                      children: List<Widget>.generate(
-                          2, (index) => Fulltime1ItemWidget()),
+                    Opacity(
+                      opacity: 0.8,
+                      child:
+                      Text(
+                        "Skills: ${model.selectedSkills} ",
+                        style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                      ),
                     ),
                   ],
                 ),

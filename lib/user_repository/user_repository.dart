@@ -89,4 +89,44 @@ class UserRepository extends GetxController {
       },
     );
   }
+
+
+  postJob(postjobModel job) async {
+  log("----postJob----");
+  log("----postJob1111---- $job");
+  await _db.collection("job").add(job.toJson()).then(
+        (value) {
+      Get.snackbar(
+        "Success",
+        "Your Job has been Posted.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.1),
+        colorText: Colors.green,
+      );
+    },
+    onError: (error, stackTrace) {
+      Get.snackbar(
+        "Error",
+        "Something Went Wrong.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent.withOpacity(0.1),
+        colorText: Colors.red,
+      );
+      print(error.toString());
+    },
+  );
+ }
+
+  // Future<UserModel> getPostData(String email) async {
+  //   final snapshot = await _db.collection("Users").where("Email", isEqualTo: email).get();
+  //   final jobData = snapshot.docs.map((e) => UserModel.fromMap(e)).single;
+  //   return jobData;
+  // }
+
+  Future<List<postjobModel>> allPost() async {
+    final snapshot = await _db.collection("postJob").get();
+    final jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e.data())).toList();
+    return jobData;
+  }
+
 }
