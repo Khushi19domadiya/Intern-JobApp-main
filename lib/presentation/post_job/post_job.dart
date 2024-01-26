@@ -603,13 +603,13 @@ class _PostJobState extends State<PostJob> {
     required String experience,
     required String about,
     required String deadline,
-    required List<String> selectedSkills, // Add this parameter for selected skills
+    required List<String> selectedSkills,
   }) async {
     try {
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      // Reference to the "postJob" collection
+      CollectionReference jobCollection = FirebaseFirestore.instance.collection("postJob");
 
       postjobModel job = postjobModel(
-        id: userId,
         title: title,
         lowestsalary: lowestsalary,
         highestsalary: highestsalary,
@@ -619,14 +619,11 @@ class _PostJobState extends State<PostJob> {
         deadline: deadline,
         jobType: _selectedRadio,
         gender: _selectGender,
-        selectedSkills: selectedSkills, // Include the selected skills
+        selectedSkills: selectedSkills, id: '',
       );
 
-      // Save the profile information to Firestore
-      await FirebaseFirestore.instance
-          .collection("postJob")
-          .doc(userId)
-          .set(job.toJson());
+      // Use the add method to create a new document with an automatically generated ID
+      await jobCollection.add(job.toJson());
 
       await CommonMethod()
           .getXSnackBar("Success", 'Job posted successfully', success)

@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
 
 import '../../controller/jobController.dart';
@@ -18,12 +18,67 @@ import 'package:saumil_s_application/widgets/custom_search_view.dart';
 
 import '../sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
 
   jobController controller = Get.put(jobController());
+
+  List allResults = [];
+  List resultList = [];
+
+  void initState() {
+    getClientStream();
+    searchController.addListener(_onSearchChanged);
+    super.initState();
+  }
+
+  _onSearchChanged() {
+    print(searchController.text);
+    searchResultList();
+  }
+
+  searchResultList() {
+    var showResults = [];
+    if (searchController.text != "") {
+      for (var clientSnapShot in allResults) {
+        var title = clientSnapShot['title'].toString().toLowerCase();
+        if (title.contains(searchController.text.toLowerCase())) {
+          showResults.add(clientSnapShot);
+        }
+      }
+    } else {
+      showResults = List.from(allResults);
+    }
+    setState(() {
+      resultList = showResults;
+    });
+  }
+
+  getClientStream() async {
+    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
+    setState(() {
+      allResults = data.docs;
+    });
+  }
+
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    getClientStream();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +106,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(
-                          height: 15
-                              .v), // Add spacing between search box and button
+                      SizedBox(height: 15.v),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -63,8 +116,7 @@ class HomePage extends StatelessWidget {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => PostJob()),
+                                MaterialPageRoute(builder: (context) => PostJob()),
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -87,7 +139,10 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 17.v),
-                      SingleChildScrollView(scrollDirection: Axis.horizontal,child: _buildFrame(context)),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: _buildFrame(context),
+                      ),
                       SizedBox(height: 22.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -118,7 +173,7 @@ class HomePage extends StatelessWidget {
         margin: EdgeInsets.only(left: 24.h),
       ),
       title: Padding(
-        padding: EdgeInsets.only(left: 10.h,top: 10.h),
+        padding: EdgeInsets.only(left: 10.h, top: 10.h),
         child: Column(
           children: [
             AppbarSubtitle(
@@ -161,43 +216,24 @@ class HomePage extends StatelessWidget {
             future: controller.fetchJobDataFromFirestore(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                print("-----------has data---------");
-                return
-Row(
-  children: [
-    ...List.generate(snapshot.data!.length, (index) =>  Padding(
-      padding: const EdgeInsets.only(left:20),
-      child: FrameItemWidget(
-        onTapBag: () {
-          onTapBag(context);
-        },
-        model: snapshot.data[index],
-      ),
-    ))
-  ],
-);
-
-
-                  ListView.separated(
-                    physics: BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 12.v);
-                    },
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      postjobModel model = snapshot.data[index];
-                      return FrameItemWidget(
-                        onTapBag: () {
-                          onTapBag(context);
-                        },
-                        model: model,
-                      );
-                    },
-                  );
+                return Row(
+                  children: [
+                    ...List.generate(
+                      snapshot.data!.length,
+                          (index) => Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: FrameItemWidget(
+                          onTapBag: () {
+                            onTapBag(context);
+                          },
+                          model: snapshot.data[index],
+                          searchQuery: searchController.text,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
               } else {
-                print("--------- else  ---------");
                 return const Center(child: CircularProgressIndicator());
               }
             },
@@ -206,7 +242,6 @@ Row(
       ),
     );
   }
-
 
   Widget _buildEightyEight(BuildContext context) {
     return Align(
@@ -217,9 +252,9 @@ Row(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           separatorBuilder: (
-            context,
-            index,
-          ) {
+              context,
+              index,
+              ) {
             return SizedBox(
               height: 16.v,
             );
@@ -232,6 +267,7 @@ Row(
       ),
     );
   }
+
   onTapBag(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
   }

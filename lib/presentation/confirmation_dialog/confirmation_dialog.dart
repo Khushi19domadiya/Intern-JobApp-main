@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
@@ -50,7 +51,14 @@ class ConfirmationDialog extends StatelessWidget {
                     onTapAgreeAndContinue(context);
                   }),
               SizedBox(height: 24.v),
-              Text("Disgree", style: CustomTextStyles.titleSmallOnPrimary)
+              CustomElevatedButton(
+                  height: 54.v,
+                  width: 181.h,                text: "Disgree",
+                buttonTextStyle: CustomTextStyles.titleSmallOnPrimary,
+                  onPressed: () {
+                    onTapAgreeAndContinue(context);
+                    Navigator.pushNamed(context,AppRoutes.speciallizationScreen);
+                  }),
             ]));
   }
 
