@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 
-// ignore: must_be_immutable
-class FiftyfiveItemWidget extends StatelessWidget {
-  const FiftyfiveItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+class FiftyfiveItemWidget extends StatefulWidget {
+  const FiftyfiveItemWidget({Key? key}) : super(key: key);
+
+  @override
+  _FiftyfiveItemWidgetState createState() => _FiftyfiveItemWidgetState();
+}
+
+class _FiftyfiveItemWidgetState extends State<FiftyfiveItemWidget> {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
     return RawChip(
       padding: EdgeInsets.only(
         top: 14.v,
-        right: 16.h,
+        right: 10.h,
         bottom: 14.v,
       ),
       showCheckmark: false,
@@ -21,7 +24,7 @@ class FiftyfiveItemWidget extends StatelessWidget {
       label: Text(
         "Design & Creative",
         style: TextStyle(
-          color: theme.colorScheme.onPrimaryContainer.withOpacity(1),
+          color: isSelected ? Colors.white : Colors.black, // Change text color here
           fontSize: 12.fSize,
           fontFamily: 'Plus Jakarta Sans',
           fontWeight: FontWeight.w600,
@@ -33,8 +36,8 @@ class FiftyfiveItemWidget extends StatelessWidget {
         width: 18.adaptSize,
         margin: EdgeInsets.only(right: 5.h),
       ),
-      selected: false,
-      backgroundColor: theme.colorScheme.onPrimaryContainer.withOpacity(1),
+      selected: isSelected,
+      backgroundColor: isSelected ? appTheme.deepOrangeA200 : Colors.white,
       selectedColor: appTheme.deepOrangeA200,
       shape: RoundedRectangleBorder(
         side: BorderSide(
@@ -45,7 +48,11 @@ class FiftyfiveItemWidget extends StatelessWidget {
           22.h,
         ),
       ),
-      onSelected: (value) {},
+      onSelected: (value) {
+        setState(() {
+          isSelected = value;
+        });
+      },
     );
   }
 }

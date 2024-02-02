@@ -1,6 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
@@ -8,7 +5,9 @@ import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 import '../../../controller/authController.dart';
 
 class JobtypeItemWidget extends StatefulWidget {
-  const JobtypeItemWidget({Key? key}) : super(key: key);
+  final Function(String) onJobTypeSelected;
+
+  const JobtypeItemWidget({Key? key, required this.onJobTypeSelected}) : super(key: key);
 
   @override
   _JobtypeItemWidgetState createState() => _JobtypeItemWidgetState();
@@ -17,7 +16,6 @@ class JobtypeItemWidget extends StatefulWidget {
 class _JobtypeItemWidgetState extends State<JobtypeItemWidget> {
   String selectedJobType = '';
   AuthController authController = AuthController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +50,8 @@ class _JobtypeItemWidgetState extends State<JobtypeItemWidget> {
           selectedJobType = jobType;
         });
 
-        // Perform Firebase operation
-        await _storeSelectedJobTypeInFirebase(selectedJobType);
+        // Notify the parent about the selected job type
+        widget.onJobTypeSelected(selectedJobType);
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -106,31 +104,4 @@ class _JobtypeItemWidgetState extends State<JobtypeItemWidget> {
       ),
     );
   }
-
-  Future<void> _storeSelectedJobTypeInFirebase(String selectedJobType) async {
-    try {
-      await Firebase.initializeApp(); // Initialize Firebase if not initialized
-
-      // Fetch the email of the logged-in user
-      String? loggedInUserEmail = authController.getLoggedInUserEmail();
-
-      // Ensure the email is not null before proceeding
-      if (loggedInUserEmail != null) {
-        // Assuming you have a 'job_types' collection in Firestore
-        await FirebaseFirestore.instance.collection('job_types').add({
-          'selected_job_type': selectedJobType,
-          'timestamp': FieldValue.serverTimestamp(),
-          'Email': loggedInUserEmail,
-        });
-
-        print('Selected job type and user email stored in Firebase: $selectedJobType, $loggedInUserEmail');
-      } else {
-        print('Error: Logged-in user email is null.');
-      }
-    } catch (e) {
-      print('Error storing selected job type and user email: $e');
-    }
-
-  }
-
 }

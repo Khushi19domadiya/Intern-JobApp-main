@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 
-// ignore: must_be_immutable
-class JobsItemWidget extends StatelessWidget {
-  const JobsItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+class JobsItemWidget extends StatefulWidget {
+  final String jobCategory;
+
+  const JobsItemWidget({Key? key, required this.jobCategory}) : super(key: key);
+
+  @override
+  _JobsItemWidgetState createState() => _JobsItemWidgetState();
+}
+
+class _JobsItemWidgetState extends State<JobsItemWidget> {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +24,9 @@ class JobsItemWidget extends StatelessWidget {
       showCheckmark: false,
       labelPadding: EdgeInsets.zero,
       label: Text(
-        "Part Time",
+        widget.jobCategory,
         style: TextStyle(
-          color: theme.colorScheme.onPrimaryContainer.withOpacity(1),
+          color: isSelected ? Colors.white : Colors.black,
           fontSize: 12.fSize,
           fontFamily: 'Plus Jakarta Sans',
           fontWeight: FontWeight.w600,
@@ -33,16 +38,20 @@ class JobsItemWidget extends StatelessWidget {
         width: 18.adaptSize,
         margin: EdgeInsets.only(right: 4.h),
       ),
-      selected: false,
-      backgroundColor: appTheme.deepOrangeA200,
-      selectedColor: theme.colorScheme.onPrimaryContainer.withOpacity(1),
+      selected: isSelected,
+      backgroundColor: isSelected ? appTheme.deepOrangeA200 : Colors.white,
+      selectedColor: isSelected ? Colors.deepOrange : Colors.transparent,
       shape: RoundedRectangleBorder(
         side: BorderSide.none,
         borderRadius: BorderRadius.circular(
           22.h,
         ),
       ),
-      onSelected: (value) {},
+      onSelected: (value) {
+        setState(() {
+          isSelected = value;
+        });
+      },
     );
   }
 }

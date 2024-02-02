@@ -130,6 +130,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
+
+
                       SizedBox(height: 25.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -177,7 +179,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             AppbarSubtitle(
-              text: "Hi, Welcome Back! 👋",
+              text: "Welcome! 👋",
             ),
             SizedBox(height: 9.v),
             AppbarSubtitleOne(
