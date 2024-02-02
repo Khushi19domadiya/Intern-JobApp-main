@@ -4,11 +4,12 @@ class UserModel {
   final String id;
   final String email;
   final String? password;
-  final String? fname;
   final String? lname;
+  final String? fname;
   final String? phonenumber;
   final String? address;
   final String? profileUrl;
+  final String? role;
 
   const UserModel({
     required this.id,
@@ -19,6 +20,7 @@ class UserModel {
     this.phonenumber,
     this.address,
     this.profileUrl,
+    this.role,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data) {
@@ -31,6 +33,7 @@ class UserModel {
       phonenumber: data['phonenumber'],
       address: data['address'],
       profileUrl: data['profileUrl'],
+      role  : data['role'],
     );
   }
 
@@ -44,6 +47,7 @@ class UserModel {
       if (phonenumber != null) "phonenumber": phonenumber,
       if (address != null) "address": address,
       if (profileUrl != null) "profileUrl": profileUrl,
+      if (role != null) "role": role,
     };
   }
 

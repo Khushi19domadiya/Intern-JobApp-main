@@ -85,15 +85,14 @@ class StoreData {
     UploadTask uploadTask = storageReference.putFile(imageFile);
 
     await uploadTask.whenComplete(() => print('Image uploaded successfully'));
-    await CommonMethod()
-            .getXSnackBar("Success", 'Profile Info Saved Successfully', success)
-            .whenComplete(() => Get.to(() => SettingsScreen()));
+
 
     String downloadUrl = await storageReference.getDownloadURL();
     return downloadUrl;
   }
 
   Future<void> addOrUpdateUserData(UserModel userModel) async {
+    log('-----addOrUpdateUserData------');
     CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
     // Check if the user document already exists
@@ -113,52 +112,53 @@ class StoreData {
         .getXSnackBar("Success", "Profile upadate successfully", success);
   }
 
-  Future<String> saveDate({
-    // void int id,
-    required String userId,
-    required String fname,
-    required String lname,
-    required String email,
-    required String phonenumber,
-    required String address,
-    required File file,
-  }) async {
-    log("----saveProfileCalledInside-----");
-
-    CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
-
-    String resp = " Some Error Occurred";
-    // try{
-    if (fname.isNotEmpty ||
-        lname.isNotEmpty ||
-        email.isNotEmpty ||
-        phonenumber.isNotEmpty ||
-        address.isNotEmpty) {
-      log("----file-----${file.path}");
-      // String imageUrl = await uploadImageToStorage('profileImage', file);
-      // log("----imageUrl-----${imageUrl}");
-      String imageUrl = await uploadImage(File(file.path));
-      log("----imageUrl-----${imageUrl}");
-
-      await _firestore.collection('Users').add({
-        // 'id': id,
-        'fname': fname,
-        'lname': lname,
-        'email': email,
-        'phonenumber': phonenumber,
-        'address': address,
-        'imageLink': imageUrl,
-      });
-
-      CommonMethod()
-          .getXSnackBar("Success", "Profile upadate successfully", success);
-
-      resp = 'Success';
-      // }
-      // }
-      // catch(err){
-      //   resp = err.toString();
-    }
-    return resp;
-  }
+  // Future<String> saveDate({
+  //   // void int id,
+  //   required String userId,
+  //   required String fname,
+  //   required String lname,
+  //   required String email,
+  //   required String phonenumber,
+  //   required String address,
+  //   required File file,
+  // }) async {
+  //   log("----saveProfileCalledInside-----");
+  //
+  //   CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
+  //
+  //   String resp = " Some Error Occurred";
+  //   // try{
+  //   if (fname.isNotEmpty ||
+  //       lname.isNotEmpty ||
+  //       email.isNotEmpty ||
+  //       phonenumber.isNotEmpty ||
+  //       address.isNotEmpty) {
+  //     log("----file-----${file.path}");
+  //     // String imageUrl = await uploadImageToStorage('profileImage', file);
+  //     // log("----imageUrl-----${imageUrl}");
+  //     String imageUrl = await uploadImage(File(file.path));
+  //     log("----imageUrl-----${imageUrl}");
+  //
+  //     await _firestore.collection('Users').add({
+  //       // 'id': id,
+  //       'fname': fname,
+  //       'lname': lname,
+  //       'email': email,
+  //       'phonenumber': phonenumber,
+  //       'address': address,
+  //       'imageLink': imageUrl,
+  //     });
+  //
+  //     CommonMethod()
+  //         .getXSnackBar("Success", "Profile upadate successfully", success);
+  //
+  //     resp = 'Success';
+  //     // }
+  //     // }
+  //     // catch(err){
+  //     //   resp = err.toString();
+  //   }
+  //   return resp;
+  // }
 }
+

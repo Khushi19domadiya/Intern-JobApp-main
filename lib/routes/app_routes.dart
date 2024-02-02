@@ -108,7 +108,7 @@ class AppRoutes {
     signUpCreateAcountScreen: (context) => SignUpCreateAcountScreen(),
     signUpCompleteAccountScreen: (context) => SignUpCompleteAccountScreen(),
     jobTypeScreen: (context) => JobTypeScreen(),
-    speciallizationScreen: (context) => SpeciallizationScreen(),
+    // speciallizationScreen: (context) => SpeciallizationScreen(),
     selectACountryScreen: (context) => SelectACountryScreen(),
     loginScreen: (context) => LoginScreen(),
     enterOtpTabContainerScreen: (context) => EnterOtpTabContainerScreen(),

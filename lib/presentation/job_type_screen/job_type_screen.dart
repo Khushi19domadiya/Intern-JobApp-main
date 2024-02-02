@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/job_type_screen/widgets/jobtype_item_widget.dart';
@@ -8,16 +8,18 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart'
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
-import '../../controller/authController.dart';
 import '../confirmation_dialog/confirmation_dialog.dart';
 
-// Import JobtypeItemWidget here
+class JobTypeScreen extends StatefulWidget {
+  JobTypeScreen({Key? key}) : super(key: key);
 
-class JobTypeScreen extends StatelessWidget {
-   JobTypeScreen({Key? key}) : super(key: key);
+  @override
+  State<JobTypeScreen> createState() => _JobTypeScreenState();
+}
 
+class _JobTypeScreenState extends State<JobTypeScreen> {
   // Move the selectedJobType declaration here
-  String selectedJobType = '';
+  String selectedRole = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,36 +29,40 @@ class JobTypeScreen extends StatelessWidget {
         body: Container(
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 34.v),
-          child: Expanded(
-            child: ListView(
-              children: [
-                Column(
-                  children: [
-                    Text("Choose Job Type", style: theme.textTheme.headlineSmall),
-                    SizedBox(height: 7.v),
-                    SizedBox(
-                      width: 209.h,
-                      child: Text(
-                        "Are you looking for a new job or looking for a new employee",
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
-                      ),
-                    ),
-                    SizedBox(height: 37.v),
-                    _buildJobType(context),
-                  ],
+          child: Column(
+            children: [
+              Text("Choose Job Type", style: theme.textTheme.headlineSmall),
+              SizedBox(height: 7.v),
+              SizedBox(
+                width: 209.h,
+                child: Text(
+                  "Are you looking for a new job or looking for a new employee",
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 37.v),
+              SizedBox(
+                height: 234.v,
+                child: JobtypeItemWidget(
+                  onJobTypeSelected: (jobType) {
+                    log("-----jobType-----$jobType");
+                    // Update the selectedJobType variable
+                    selectedRole = jobType;
+                    setState(() {
+
+                    });
+                  },
+                ),
+              )            ],
           ),
         ),
-        bottomNavigationBar: _buildContinue(context),
+        bottomNavigationBar: _buildContinue(context,selectedRole),
       ),
     );
   }
-  
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
@@ -77,29 +83,16 @@ class JobTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildJobType(BuildContext context) {
-    return SizedBox(
-      height: 234.v,
-      child: JobtypeItemWidget(
-        onJobTypeSelected: (jobType) {
-          // Update the selectedJobType variable
-          selectedJobType = jobType;
-        },
-      ),
-    );
-  }
-
-  Widget _buildContinue(BuildContext context) {
+  Widget _buildContinue(BuildContext context,String selectedRole) {
     return CustomElevatedButton(
       text: "Continue",
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 55.v),
-      onPressed: () async {
-        // Check if a job type is selected before navigating
-        if (selectedJobType.isNotEmpty) {
-          // Store the selected job type along with the email in Firestore
-          await _storeSelectedJobTypeInFirebase(selectedJobType);
+      onPressed: () {
+        log("-----selectedRole-----$selectedRole");
+        // Check if a job type is selected before proceeding
+        if (selectedRole.isNotEmpty) {
           // Navigate to the next screen
-          onTapContinue(context);
+          onTapContinue(context,selectedRole);
         } else {
           // Show an error message or handle the case when no job type is selected
           print("Error: No job type selected");
@@ -112,39 +105,14 @@ class JobTypeScreen extends StatelessWidget {
     Navigator.pop(context);
   }
 
-  onTapContinue(BuildContext context) {
+  onTapContinue(BuildContext context,String selectedRole) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          content: ConfirmationDialog(),
+          content: ConfirmationDialog(selectedRole:selectedRole ,),
           backgroundColor: Colors.transparent,
           contentPadding: EdgeInsets.zero,
           insetPadding: const EdgeInsets.only(left: 0),
         ));
-  }  }
-
-  Future<void> _storeSelectedJobTypeInFirebase(String selectedJobType) async {
-    try {
-      await Firebase.initializeApp(); // Initialize Firebase if not initialized
-
-      // Fetch the email of the logged-in user using your authController
-      String? loggedInUserEmail = AuthController().getLoggedInUserEmail();
-
-      // Ensure the email is not null before proceeding
-      if (loggedInUserEmail != null) {
-        // Assuming you have a 'job_types' collection in Firestore
-        await FirebaseFirestore.instance.collection('job_types').add({
-          'selected_job_type': selectedJobType,
-          'timestamp': FieldValue.serverTimestamp(),
-          'Email': loggedInUserEmail,
-        });
-
-        print('Selected job type and user email stored in Firebase: $selectedJobType, $loggedInUserEmail');
-      } else {
-        print('Error: Logged-in user email is null.');
-      }
-    } catch (e) {
-      print('Error storing selected job type and user email: $e');
-    }
   }
-
+}

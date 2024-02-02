@@ -29,12 +29,6 @@ import '../../user_repository/user_repository.dart';
 import '../../util/colors.dart';
 import '../settings_screen/settings_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate();
-  runApp(PersonalInfoScreen());
-}
 
 class PersonalInfoScreen extends StatefulWidget {
   PersonalInfoScreen({Key? key}) : super(key: key);
@@ -58,6 +52,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   var authController = Get.put(AuthController());
+
   @override
   void initState() {
     refreshPage();
@@ -65,7 +60,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future refreshPage() async {
+    log('----refreshPage-----');
+
     currentUser = await authController.getCurrentUser();
+    log('----currentUser-----${currentUser.toString()}');
     if (currentUser != null) {
       UserModel? user = await authController.getUserById(currentUser!.uid);
       if (user != null) {
@@ -363,14 +361,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       imageUrl = await StoreData().uploadImage(_image!);
     }
 
-    // String resp = await StoreData().saveDate(
-    //     fname: fname,
-    //     lname: lname,
-    //     email: email,
-    //     phonenumber: phonenumber,
-    //     address: address,
-    //     file: _image!);
-    if (currentUser != null) {
+    // if (currentUser != null) {
       await StoreData().addOrUpdateUserData(UserModel(
           id: currentUser!.uid,
           email: email,
@@ -378,9 +369,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           lname: lname,
           phonenumber: phonenumber,
           address: address,
-          profileUrl: imageUrl!));
-    }
+          profileUrl: imageUrl.toString()));
+    // }
 
+    await CommonMethod()
+        .getXSnackBar("Success", 'Profile Info Saved Successfully', success)
+        .whenComplete(() => Get.to(() => SettingsScreen()));
     // Get.to(() => SettingsScreen());
   }
 
@@ -389,6 +383,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       text: "Save Changes",
       onPressed: () async {
         if (_formKey.currentState?.validate() ?? false) {
+          if(_image  != null){
+
+          }
+          // UserModel userModel =UserModel(id: currentUser!.uid, email: currentUser!.email!.trim(),fname: firstNameController.text,lname: lastNameController.text,phonenumber: phoneController.text,address: addressController.text);
+          // StoreData().addOrUpdateUserData(userModel);
           // All fields are valid, proceed with saving
           // saveProfileInfo(
           //   firstname: firstNameController.text,

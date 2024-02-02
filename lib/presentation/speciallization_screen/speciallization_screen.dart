@@ -8,7 +8,8 @@ import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/presentation/confirmation_dialog/confirmation_dialog.dart';
 
 class SpeciallizationScreen extends StatelessWidget {
-  const SpeciallizationScreen({Key? key}) : super(key: key);
+ final String selectedRole;
+  const SpeciallizationScreen({Key? key,required this.selectedRole}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class SpeciallizationScreen extends StatelessWidget {
                     ),
                   )
                 ])),
-            bottomNavigationBar: _buildContinue(context)));
+            bottomNavigationBar: _buildContinue(context,selectedRole)));
   }
 
   /// Section Widget
@@ -76,12 +77,12 @@ class SpeciallizationScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildContinue(BuildContext context) {
+  Widget _buildContinue(BuildContext context,String selectedRole) {
     return CustomElevatedButton(
         text: "Continue",
         margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 39.v),
         onPressed: () {
-          onTapContinue(context);
+          onTapContinue(context,selectedRole);
         });
   }
 
@@ -91,11 +92,11 @@ class SpeciallizationScreen extends StatelessWidget {
   }
 
   /// Displays a dialog with the [ConfirmationDialog] content.
-  onTapContinue(BuildContext context) {
+  onTapContinue(BuildContext context,String selectedRole) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              content: ConfirmationDialog(),
+              content: ConfirmationDialog(selectedRole:selectedRole ,),
               backgroundColor: Colors.transparent,
               contentPadding: EdgeInsets.zero,
               insetPadding: const EdgeInsets.only(left: 0),

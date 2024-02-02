@@ -1,10 +1,17 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
+import '../../models/personal_information.dart';
+
 class ConfirmationDialog extends StatelessWidget {
-  const ConfirmationDialog({Key? key}) : super(key: key);
+  final String selectedRole;
+  const ConfirmationDialog({Key? key,required this.selectedRole}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +63,15 @@ class ConfirmationDialog extends StatelessWidget {
             text: "Agree and continue",
             buttonTextStyle:
             CustomTextStyles.titleSmallOnPrimaryContainerSemiBold,
-            onPressed: () {
-              onTapAgreeAndContinue(context);
+            onPressed: () async {
+              User? currentUser = FirebaseAuth.instance.currentUser;
+              if(currentUser != null){
+                log("-----11----selectedRole----11---->>>>> ${selectedRole.toString()}");
+                await StoreData().addOrUpdateUserData(UserModel(id: currentUser.uid, email: currentUser.email.toString(),role: selectedRole));
+                Navigator.pushNamed(
+                    context, AppRoutes.homeContainerScreen);
+              }
+
             },
           ),
           SizedBox(height: 24.v),
@@ -78,37 +92,5 @@ class ConfirmationDialog extends StatelessWidget {
   }
 
   /// Check Firestore and redirect accordingly
-  void onTapAgreeAndContinue(BuildContext context) async {
-    try {
-      // Assuming 'job_types' is the collection name in Firestore
-      final snapshot =
-      await FirebaseFirestore.instance.collection('job_types').get();
-
-      // Check if there is any document in the collection
-      if (snapshot.docs.isNotEmpty) {
-        // Iterate through documents
-        for (final document in snapshot.docs) {
-          // Check if the stored job type is 'j'
-          if (document['selected_job_type'] == 'j') {
-            // Redirect to the profile page
-            Navigator.pushNamed(context, AppRoutes.savedPage);
-            return; // Stop iterating since we found a match
-          }
-          // Check if the stored job type is 'e'
-          else if (document['selected_job_type'] == 'e') {
-            // Redirect to the settings screen
-            Navigator.pushNamed(context, AppRoutes.homeContainerScreen);
-            return; // Stop iterating since we found a match
-          }
-          // Handle other cases if needed
-        }
-      }
-
-      // If no match is found, redirect to the 'speciallizationScreen'
-      Navigator.pushNamed(context, AppRoutes.speciallizationScreen);
-    } catch (e) {
-      print('Error checking Firestore: $e');
-    }
-  }
 
 }
