@@ -42,6 +42,7 @@ class _PostJobState extends State<PostJob> {
   List<String> _selectedItems = [];
 
   DateTime? selectedDate;
+  String? _selectedOption;
 
 
   final userRepo = Get.put(UserRepository());
@@ -77,6 +78,8 @@ class _PostJobState extends State<PostJob> {
                     _buildInputField5(context),
                     SizedBox(height: 20.v),
                     _buildInputField6(context),
+                    SizedBox(height: 20.v),
+                    _buildInputField(context),
                     SizedBox(height: 20.v),
                     _buildInputField7(context),
                     SizedBox(height: 20.v),
@@ -381,6 +384,39 @@ class _PostJobState extends State<PostJob> {
     return null;
   }
 
+  Widget _buildInputField(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text("Select a category", style: theme.textTheme.titleSmall),
+          SizedBox(height: 9.0),
+          Container(
+            width: double.infinity, // Set the width to fill the available space
+            child: DropdownButton<String>(
+              value: _selectedOption,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedOption = newValue;
+                });
+              },
+              items: <String>['Frontend', 'Backend', 'Database'] // Replace with your options
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
   Widget _buildInputField7(BuildContext context) {
     return Container(
       child: Column(
@@ -449,9 +485,9 @@ class _PostJobState extends State<PostJob> {
               }
               // Use a regular expression to validate the numeric format
               RegExp regex = RegExp(r'^\d[0,50](\.\d[0,11])?$');
-              if (!regex.hasMatch(value)) {
-                return 'Invalid experience format';
-              }
+              // if (!regex.hasMatch(value)) {
+              //   return 'Invalid experience format';
+              // }
               return null;
             },
           ),
@@ -586,7 +622,8 @@ class _PostJobState extends State<PostJob> {
             experience: experienceController.text,
             about: aboutController.text,
             deadline: datePickerController.text,
-            selectedSkills: _selectedItems, // Pass the selected skills
+            selectedSkills: _selectedItems,
+            selectedOption: _selectedOption,// Pass the selected skills
           );
           // Redirect to the settings page only if all fields are valid
           Get.to(() => HomeContainerScreen());
@@ -604,6 +641,7 @@ class _PostJobState extends State<PostJob> {
     required String about,
     required String deadline,
     required List<String> selectedSkills,
+    required String? selectedOption, // Add selected option parameter
   }) async {
     try {
       // Reference to the "postJob" collection
@@ -619,7 +657,9 @@ class _PostJobState extends State<PostJob> {
         deadline: deadline,
         jobType: _selectedRadio,
         gender: _selectGender,
-        selectedSkills: selectedSkills, id: '',
+        selectedSkills: selectedSkills,
+        selectedOption: selectedOption, // Assign the selected option to the model
+        id: '',
       );
 
       // Use the add method to create a new document with an automatically generated ID
@@ -636,6 +676,7 @@ class _PostJobState extends State<PostJob> {
       );
     }
   }
+
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(

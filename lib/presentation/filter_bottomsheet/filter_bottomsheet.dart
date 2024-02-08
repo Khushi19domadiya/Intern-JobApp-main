@@ -86,7 +86,7 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
           Wrap(
             runSpacing: 16.v,
             spacing: 16.h,
-            children: List<Widget>.generate(6, (index) => FiftyfiveItemWidget()),
+            children: List<Widget>.generate(1, (index) => FiftyfiveItemWidget()),
           ),
         ],
       ),

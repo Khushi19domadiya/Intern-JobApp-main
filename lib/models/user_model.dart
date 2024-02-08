@@ -111,6 +111,7 @@ class postjobModel {
   final String? jobType;
   final String? gender;
   final List<dynamic> selectedSkills;
+  final String? selectedOption;
 
   postjobModel({
     required this.id,
@@ -124,6 +125,8 @@ class postjobModel {
     this.jobType,
     this.gender,
     required this.selectedSkills,
+    required  this.selectedOption,
+
   });
 
   Map<String, dynamic> toJson() {
@@ -139,6 +142,7 @@ class postjobModel {
       'jobType': jobType,
       'gender': gender,
       'selectedSkills': selectedSkills,
+      'selectedOption': selectedOption,
     };
   }
   factory postjobModel.fromSnapshot(Map<String, dynamic> data) =>
@@ -154,5 +158,6 @@ class postjobModel {
         jobType: data["jobType"],
         gender: data["gender"],
         selectedSkills: data["selectedSkills"],
+        selectedOption: data["selectedOption"],
     );
 }
