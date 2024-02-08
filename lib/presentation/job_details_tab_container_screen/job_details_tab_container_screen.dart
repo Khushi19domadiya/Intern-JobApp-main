@@ -230,7 +230,10 @@ class JobDetailsTabContainerScreenState
           ),
           Tab(
             child: GestureDetector(onTap: (){
-              Get.to(()=>PDFViewerScreen(path: 'https://firebasestorage.googleapis.com/v0/b/jobapp-55512.appspot.com/o/cv_files%2Fcv_unique_user_id.pdf?alt=media&token=be80f6c1-c19b-4e67-ae80-40b236935f7e',));
+                  Get.to(() => PdfViewerPage(
+                        pdfUrl:
+                            'https://firebasestorage.googleapis.com/v0/b/jobapp-55512.appspot.com/o/cv_files%2Fcv_unique_user_id.pdf?alt=media&token=be80f6c1-c19b-4e67-ae80-40b236935f7e',
+                      ));
             },child: Text("Requirement")),
           ),
           Tab(

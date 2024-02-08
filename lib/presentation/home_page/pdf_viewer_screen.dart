@@ -1,111 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+class PdfViewerPage extends StatefulWidget {
+  final String pdfUrl;
 
-class PDFViewerScreen extends StatefulWidget {
-  final String path;
+  PdfViewerPage({required this.pdfUrl});
 
-  PDFViewerScreen({Key? key,required this.path}) : super(key: key);
-
-  _PDFViewerScreenState createState() => _PDFViewerScreenState();
+  @override
+  _PdfViewerPageState createState() => _PdfViewerPageState();
 }
 
-class _PDFViewerScreenState extends State<PDFViewerScreen> with WidgetsBindingObserver {
-  final Completer<PDFViewController> _controller =
-  Completer<PDFViewController>();
-  int? pages = 0;
-  int? currentPage = 0;
-  bool isReady = false;
-  String errorMessage = '';
+class _PdfViewerPageState extends State<PdfViewerPage> {
+  late String _localPath;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocalPath();
+  }
+
+  Future<void> _initLocalPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      _localPath = directory.path;
+    });
+  }
+
+  Future<void> _downloadPDF(String url, String fileName) async {
+    final response = await http.get(Uri.parse(url));
+    final File file = File('$_localPath/$fileName');
+    await file.writeAsBytes(response.bodyBytes);
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final fileName = widget.pdfUrl.split('/').last;
+    if (_localPath == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('PDF Viewer'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (!_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('PDF Viewer'),
+        ),
+        body: PDFView(
+          filePath: '$_localPath/$fileName',
+          enableSwipe: true,
+          swipeHorizontal: false,
+          autoSpacing: false,
+          pageFling: false,
+        ),
+      );
+    }
+
+    _downloadPDF(widget.pdfUrl, fileName);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Document"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {},
-          ),
-        ],
+        title: Text('PDF Viewer'),
       ),
-      body: Stack(
-        children: <Widget>[
-          PDFView(
-            filePath: widget.path,
-            enableSwipe: true,
-            swipeHorizontal: true,
-            autoSpacing: false,
-            pageFling: true,
-            pageSnap: true,
-            defaultPage: currentPage!,
-            fitPolicy: FitPolicy.BOTH,
-            preventLinkNavigation:
-            false, // if set to true the link is handled in flutter
-            onRender: (_pages) {
-              setState(() {
-                pages = _pages;
-                isReady = true;
-              });
-            },
-            onError: (error) {
-              setState(() {
-                errorMessage = error.toString();
-              });
-              print(error.toString());
-            },
-            onPageError: (page, error) {
-              setState(() {
-                errorMessage = '$page: ${error.toString()}';
-              });
-              print('$page: ${error.toString()}');
-            },
-            onViewCreated: (PDFViewController pdfViewController) {
-              _controller.complete(pdfViewController);
-            },
-            onLinkHandler: (String? uri) {
-              print('goto uri: $uri');
-            },
-            onPageChanged: (int? page, int? total) {
-              print('page change: $page/$total');
-              setState(() {
-                currentPage = page;
-              });
-            },
-          ),
-          errorMessage.isEmpty
-              ? !isReady
-              ? Center(
-            child: CircularProgressIndicator(),
-          )
-              : Container()
-              : Center(
-            child: Text(errorMessage),
-          )
-        ],
-      ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              label: Text("Go to ${pages! ~/ 2}"),
-              onPressed: () async {
-                await snapshot.data!.setPage(pages! ~/ 2);
-              },
-            );
-          }
-
-          return Container();
-        },
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
 }
+

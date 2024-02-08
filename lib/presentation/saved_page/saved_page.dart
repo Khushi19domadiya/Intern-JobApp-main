@@ -90,6 +90,7 @@ class SavedPage extends StatelessWidget {
 
   void onTapBag(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
+    
   }
 
   void onTapImage(BuildContext context) {
