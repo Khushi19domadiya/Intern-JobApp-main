@@ -12,7 +12,7 @@ class FrameItemWidget extends StatelessWidget {
   }) : super(key: key);
 
   VoidCallback? onTapBag;
-  final postjobModel model;
+  final PostJobModel model;
   final String searchQuery;
 
   @override

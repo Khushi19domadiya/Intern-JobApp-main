@@ -646,8 +646,11 @@ class _PostJobState extends State<PostJob> {
     try {
       // Reference to the "postJob" collection
       CollectionReference jobCollection = FirebaseFirestore.instance.collection("postJob");
+      DocumentReference newDocumentRef = jobCollection.doc(); // Generates a unique document ID
+      String newDocumentId = newDocumentRef.id;
+      User? currentUser = FirebaseAuth.instance.currentUser;
 
-      postjobModel job = postjobModel(
+      PostJobModel job = PostJobModel(
         title: title,
         lowestsalary: lowestsalary,
         highestsalary: highestsalary,
@@ -659,7 +662,7 @@ class _PostJobState extends State<PostJob> {
         gender: _selectGender,
         selectedSkills: selectedSkills,
         selectedOption: selectedOption, // Assign the selected option to the model
-        id: '',
+        id: newDocumentId, userId: currentUser!.uid,
       );
 
       // Use the add method to create a new document with an automatically generated ID

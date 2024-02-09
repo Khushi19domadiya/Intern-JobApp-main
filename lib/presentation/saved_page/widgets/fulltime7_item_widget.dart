@@ -14,7 +14,7 @@ class Fulltime7ItemWidget extends StatelessWidget {
   );
 
 
-  postjobModel model;
+  PostJobModel model;
 
   @override
   Widget build(BuildContext context) {

@@ -91,7 +91,7 @@ class UserRepository extends GetxController {
   }
 
 
-  postJob(postjobModel job) async {
+  postJob(PostJobModel job) async {
   log("----postJob----");
   log("----postJob1111---- $job");
   await _db.collection("job").add(job.toJson()).then(
@@ -123,9 +123,9 @@ class UserRepository extends GetxController {
   //   return jobData;
   // }
 
-  Future<List<postjobModel>> allPost() async {
+  Future<List<PostJobModel>> allPost() async {
     final snapshot = await _db.collection("postJob").get();
-    final jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e.data())).toList();
+    final jobData = snapshot.docs.map((e) => PostJobModel.fromSnapshot(e.data())).toList();
     return jobData;
   }
 

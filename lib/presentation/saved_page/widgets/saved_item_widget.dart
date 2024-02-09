@@ -18,7 +18,7 @@ class SavedItemWidget extends StatelessWidget {
 
   VoidCallback? onTapBag;
 
-  postjobModel model;
+  PostJobModel model;
 
   @override
   Widget build(BuildContext context) {

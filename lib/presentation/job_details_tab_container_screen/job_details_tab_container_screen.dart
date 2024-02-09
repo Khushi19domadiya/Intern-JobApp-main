@@ -1,6 +1,8 @@
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:get/get.dart';
 
+import '../../models/user_model.dart';
+import '../apply_job_screen/apply_job_screen.dart';
 import '../home_page/pdf_viewer_screen.dart';
 import '../job_details_page/job_details_page.dart';
 import '../job_details_tab_container_screen/widgets/framefive_item_widget.dart';
@@ -13,7 +15,11 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart'
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 
 class JobDetailsTabContainerScreen extends StatefulWidget {
-  const JobDetailsTabContainerScreen({Key? key})
+
+  final PostJobModel model;
+
+   JobDetailsTabContainerScreen({Key? key,    required this.model
+   })
       : super(
     key: key,
   );
@@ -221,7 +227,7 @@ class JobDetailsTabContainerScreenState
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => JobDetailsPage(), // Replace with your description page
+                    builder: (context) => ApplyJobScreen(jobId: widget.model.id,), // Replace with your description page
                   ),
                 );
               },

@@ -63,6 +63,6 @@ class JobDetailsPageState extends State<JobDetailsPage>
 
   /// Navigates to the applyJobScreen when the action is triggered.
   onTapApplyNow(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.applyJobScreen);
+    // Navigator.pushNamed(context, AppRoutes.applyJobScreen);
   }
 }

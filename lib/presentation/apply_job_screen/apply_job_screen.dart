@@ -17,6 +17,11 @@ import '../../util/common_methos.dart';
 import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
+
+  String jobId;
+  ApplyJobScreen({required this.jobId});
+
+
   @override
   _ApplyJobScreenState createState() => _ApplyJobScreenState();
 }
@@ -25,6 +30,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController frameOneController = TextEditingController();
+  User? user = FirebaseAuth.instance.currentUser;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -52,6 +58,8 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'website_portfolio': frameOneController.text,
           'cv_url': downloadURL,
           'timestamp': FieldValue.serverTimestamp(),
+          'userId':user!.uid,
+          'jobId':widget.jobId
         });
 
         print('Job application data stored successfully');
@@ -65,7 +73,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text('Apply Job'),
         ),

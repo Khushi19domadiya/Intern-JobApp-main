@@ -71,7 +71,7 @@ class SearchScreen extends StatelessWidget {
 
   /// Navigates to the jobDetailsTabContainerScreen when the action is triggered.
   onTapSettings(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
+    // Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
   }
 
   /// Navigates back to the previous screen.

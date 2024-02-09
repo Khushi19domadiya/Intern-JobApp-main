@@ -99,8 +99,9 @@ class educationModel{
   }
 }
 
-class postjobModel {
+class PostJobModel {
   final String id;
+  final String userId;
   final String title;
   final String lowestsalary;
   final String highestsalary;
@@ -113,8 +114,9 @@ class postjobModel {
   final List<dynamic> selectedSkills;
   final String? selectedOption;
 
-  postjobModel({
+  PostJobModel({
     required this.id,
+    required this.userId,
     required this.title,
     required this.lowestsalary,
     required this.highestsalary,
@@ -132,6 +134,7 @@ class postjobModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'userId': userId,
       'title': title,
       'lowestsalary': lowestsalary,
       'highestsalary': highestsalary,
@@ -145,9 +148,10 @@ class postjobModel {
       'selectedOption': selectedOption,
     };
   }
-  factory postjobModel.fromSnapshot(Map<String, dynamic> data) =>
-      postjobModel(
+  factory PostJobModel.fromSnapshot(Map<String, dynamic> data) =>
+      PostJobModel(
         id: data["id"],
+        userId: data["userId"],
         title: data["title"],
         lowestsalary: data["lowestsalary"],
         highestsalary: data["highestsalary"],

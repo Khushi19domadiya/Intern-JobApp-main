@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:saumil_s_application/models/user_model.dart';
@@ -8,14 +9,26 @@ import 'package:saumil_s_application/user_repository/user_repository.dart';
 class jobController extends GetxController{
 
   // RxList<postjobModel> jobDataList = <postjobModel>[].obs;
+  User? user = FirebaseAuth.instance.currentUser;
 
-  Future<List<postjobModel>> fetchJobDataFromFirestore() async {
+  Future<List<PostJobModel>> fetchJobDataFromFirestore(String role) async {
+
+
 
     final snapshot = await FirebaseFirestore.instance.collection('postJob').get();
     print("------------ ${snapshot.docs} ----------");
-    // List<postjobModel> jobdata = [];
+    List<PostJobModel>  jobData = snapshot.docs.map((e) => PostJobModel.fromSnapshot(e.data())).toList();
 
-    List<postjobModel>  jobData = snapshot.docs.map((e) => postjobModel.fromSnapshot(e.data())).toList();
+
+    if(role == 'e'){
+      List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
+      return myJobs;
+
+    }else{
+      return jobData;
+
+    }
+
 
     // print("done");
     // jobDataList.value = jobData;
@@ -24,6 +37,5 @@ class jobController extends GetxController{
     log("----fetchJobDataFromFirestore----");
     log("----jobData----" + jobData.length.toString());
 
-    return jobData;
   }
 }

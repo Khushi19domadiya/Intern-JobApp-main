@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +10,38 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import '../../models/user_model.dart';
+import '../apply_job_screen/apply_job_screen.dart';
 import '../filter_bottomsheet/filter_bottomsheet.dart';
+import '../job_details_page/applyer_list_screen.dart';
+import '../job_details_page/job_applyer_screen.dart';
 
-class SavedPage extends StatelessWidget {
+class SavedPage extends StatefulWidget {
   SavedPage({Key? key}) : super(key: key);
 
+  @override
+  State<SavedPage> createState() => _SavedPageState();
+}
+
+class _SavedPageState extends State<SavedPage> {
   jobController controller = Get.put(jobController());
+  String? userRole;
+  User? user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the current user's ID from Firebase Authentication
+
+    fetchUserRole();
+  }
+
+  void fetchUserRole() async {
+    var userDoc =
+    await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get();
+    setState(() {
+      userRole = userDoc['role'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +50,8 @@ class SavedPage extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: Padding(
           padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
-          child: FutureBuilder<List<postjobModel>>(
-            future: controller.fetchJobDataFromFirestore(),
+          child: FutureBuilder<List<PostJobModel>>(
+            future: controller.fetchJobDataFromFirestore(userRole.toString()),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 print("-----------has data---------");
@@ -35,10 +63,18 @@ class SavedPage extends StatelessWidget {
                   },
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    postjobModel model = snapshot.data[index];
+                    PostJobModel model = snapshot.data[index];
                     return SavedItemWidget(
                       onTapBag: () {
-                        onTapBag(context);
+                        // onTapBag(context);
+
+                        if(userRole == "e") {
+                          Get.to(() => ApplyerListScreen());
+                        }else{
+                          Get.to(() => ApplyJobScreen(jobId: model.id,));
+
+                        }
+
                       },
                       model: model,
                     );
@@ -88,10 +124,11 @@ class SavedPage extends StatelessWidget {
     );
   }
 
-  void onTapBag(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
-    
-  }
+  // void onTapBag(BuildContext context) {
+  //   // Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
+  //
+  //
+  // }
 
   void onTapImage(BuildContext context) {
     Navigator.pop(context);

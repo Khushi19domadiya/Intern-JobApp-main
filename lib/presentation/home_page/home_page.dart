@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
 
 import '../../controller/jobController.dart';
 import '../../models/user_model.dart';
 import '../../widgets/custom_elevated_button.dart';
+import '../apply_job_screen/apply_job_screen.dart';
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,16 +29,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
-
   jobController controller = Get.put(jobController());
+   String? userId;
+   String? userRole;
 
   List allResults = [];
   List resultList = [];
 
+  @override
   void initState() {
+    super.initState();
+    // Get the current user's ID from Firebase Authentication
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userId = user.uid;
+    }
     getClientStream();
     searchController.addListener(_onSearchChanged);
-    super.initState();
+    fetchUserRole();
+  }
+
+  void fetchUserRole() async {
+    var userDoc =
+    await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    setState(() {
+      userRole = userDoc['role'];
+    });
   }
 
   _onSearchChanged() {
@@ -62,22 +80,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
+    var data = await FirebaseFirestore.instance
+        .collection('postJob')
+        .orderBy('title')
+        .get();
     setState(() {
       allResults = data.docs;
     });
   }
 
+  @override
   void dispose() {
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    getClientStream();
-    super.didChangeDependencies();
   }
 
   @override
@@ -107,31 +123,32 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 15.v),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(horizontal: 24.h),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PostJob()),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 25.h),
-                              onPrimary: Colors.white,
-                            ),
-                            child: Text(
-                              "Post Job",
-                              style: TextStyle(fontSize: 15.0),
+                      if (userRole == 'e' || userRole == null)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(horizontal: 24.h),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PostJob(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 25.h),
+                                onPrimary: Colors.white,
+                              ),
+                              child: Text(
+                                "Post Job",
+                                style: TextStyle(fontSize: 15.0),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-
-
                       SizedBox(height: 25.v),
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
@@ -143,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 17.v),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: _buildFrame(context),
+                        child: _buildFrame(context, userId.toString()),
                       ),
                       SizedBox(height: 22.v),
                       Padding(
@@ -201,46 +218,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSaveChanges(BuildContext context) {
-    return CustomElevatedButton(
-      text: "Save Changes",
-      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 37.v),
-      onPressed: () {},
-    );
-  }
-
-  Widget _buildFrame(BuildContext context) {
+  Widget _buildFrame(BuildContext context, String userId) {
     return Align(
       alignment: Alignment.centerRight,
-      child: Row(
-        children: [
-          FutureBuilder<List<postjobModel>>(
-            future: controller.fetchJobDataFromFirestore(),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return Row(
-                  children: [
-                    ...List.generate(
-                      snapshot.data!.length,
-                          (index) => Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: FrameItemWidget(
-                          onTapBag: () {
-                            onTapBag(context);
-                          },
-                          model: snapshot.data[index],
-                          searchQuery: searchController.text,
-                        ),
-                      ),
+      child: FutureBuilder<List<PostJobModel>>(
+        future: controller.fetchJobDataFromFirestore(userRole ?? "j"),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Row(
+              children: [
+                ...List.generate(
+                  snapshot.data!.length,
+                      (index) => Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: FrameItemWidget(
+                      onTapBag: () {
+                        // onTapBag(context);
+                        PostJobModel model =  snapshot.data[index];
+                        Get.to(()=>ApplyJobScreen(jobId: model.id,));
+                      },
+                      model: snapshot.data[index],
+                      searchQuery: searchController.text,
                     ),
-                  ],
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        ],
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
@@ -270,7 +277,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  onTapBag(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
-  }
+  // onTapBag(BuildContext context) {
+  //   Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
+  // }
 }

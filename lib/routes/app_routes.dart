@@ -57,8 +57,8 @@ class AppRoutes {
 
   static const String jobDetailsPage = '/job_details_page';
 
-  static const String jobDetailsTabContainerScreen =
-      '/job_details_tab_container_screen';
+  // static const String jobDetailsTabContainerScreen =
+  //     '/job_details_tab_container_screen';
 
   static const String messagePage = '/message_page';
 
@@ -70,7 +70,6 @@ class AppRoutes {
 
   static const String savedDetailJobPage = '/saved_detail_job_page';
 
-  static const String applyJobScreen = '/apply_job_screen';
 
   static const String appliedJobPage = '/applied_job_page';
 
@@ -114,10 +113,9 @@ class AppRoutes {
     enterOtpTabContainerScreen: (context) => EnterOtpTabContainerScreen(),
     homeContainerScreen: (context) => HomeContainerScreen(),
     searchScreen: (context) => SearchScreen(),
-    jobDetailsTabContainerScreen: (context) => JobDetailsTabContainerScreen(),
+    // jobDetailsTabContainerScreen: (context) => JobDetailsTabContainerScreen(),
     messageActionScreen: (context) => MessageActionScreen(),
     chatScreen: (context) => ChatScreen(),
-    applyJobScreen: (context) => ApplyJobScreen(),
     notificationsMyProposalsTabContainerScreen: (context) =>
         NotificationsMyProposalsTabContainerScreen(),
     settingsScreen: (context) => SettingsScreen(),
