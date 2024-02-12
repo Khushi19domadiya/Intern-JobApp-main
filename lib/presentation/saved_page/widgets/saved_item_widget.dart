@@ -75,6 +75,10 @@ class SavedItemWidget extends StatelessWidget {
                     style: theme.textTheme.labelLarge,
                   ),
                   Text(
+                    "Category: ${model.selectedOption} ",
+                    style: theme.textTheme.labelLarge,
+                  ),
+                  Text(
                     "Skills: ${model.selectedSkills} ",
                     style: theme.textTheme.labelLarge,
                   ),

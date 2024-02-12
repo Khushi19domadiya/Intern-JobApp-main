@@ -4,16 +4,22 @@ import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/fif
 import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/jobs_item_widget.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
+
 class FilterBottomsheet extends StatefulWidget {
-  const FilterBottomsheet({Key? key}) : super(key: key);
+  final Function(String?) onJobCategorySelected;
+  final Function(String?) onCategories;
+
+  const FilterBottomsheet({Key? key, required this.onJobCategorySelected, required this.onCategories}) : super(key: key);
 
   @override
   _FilterBottomsheetState createState() => _FilterBottomsheetState();
 }
 
 class _FilterBottomsheetState extends State<FilterBottomsheet> {
-  double minSalary = 5000;
-  double maxSalary = 100000;
+  double minSalary = 5000; // Placeholder value
+  double maxSalary = 100000; // Placeholder value
+  String? selectedJobCategory;
+  String? selectedCategories;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +27,7 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
       child: Container(
         width: double.maxFinite,
         padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 25.v),
-        decoration: AppDecoration.background
-            .copyWith(borderRadius: BorderRadiusStyle.customBorderTL24),
+        decoration: AppDecoration.background.copyWith(borderRadius: BorderRadiusStyle.customBorderTL24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -37,7 +42,9 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             CustomElevatedButton(
               text: "Apply Filter",
               onPressed: () {
-                onTapApplyFilter(context);
+                widget.onJobCategorySelected(selectedJobCategory);
+                widget.onCategories(selectedCategories);
+                Navigator.pop(context);
               },
             ),
             SizedBox(height: 15.v),
@@ -78,15 +85,25 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: 1.h),
-            child: Text("Categories", style: CustomTextStyles.titleMediumBold_1),
-          ),
-          SizedBox(height: 14.v),
+          Text("Categories", style: CustomTextStyles.titleMediumBold_1),
+          SizedBox(height: 16.v),
           Wrap(
             runSpacing: 16.v,
             spacing: 16.h,
-            children: List<Widget>.generate(1, (index) => FiftyfiveItemWidget()),
+            children: [
+              FiftyfiveItemWidget(
+                categories: "Backend",
+                onCategories: _handleCategorySelected,
+              ),
+              FiftyfiveItemWidget(
+                categories: "Frontend",
+                onCategories: _handleCategorySelected,
+              ),
+              FiftyfiveItemWidget(
+                categories: "Database",
+                onCategories: _handleCategorySelected,
+              ),
+            ],
           ),
         ],
       ),
@@ -105,7 +122,7 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             trackShape: RoundedRectSliderTrackShape(),
             activeTrackColor: appTheme.deepOrangeA200,
             inactiveTrackColor: appTheme.gray100,
-            thumbColor: appTheme.deepOrangeA200, // Set to orange color
+            thumbColor: appTheme.deepOrangeA200,
             thumbShape: RoundSliderThumbShape(),
           ),
           child: RangeSlider(
@@ -114,13 +131,8 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             max: 100000.0,
             onChanged: (values) {
               setState(() {
-                minSalary = values.start;
-                // Round the value to the nearest thousand
-                minSalary = (minSalary / 1000).round() * 1000;
-
-                maxSalary = values.end;
-                // Round the value to the nearest thousand
-                maxSalary = (maxSalary / 1000).round() * 1000;
+                minSalary = (values.start / 1000).round() * 1000;
+                maxSalary = (values.end / 1000).round() * 1000;
               });
             },
           ),
@@ -143,16 +155,20 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             runSpacing: 16.v,
             spacing: 16.h,
             children: [
-              JobsItemWidget(jobCategory: "Part Time"),
-              JobsItemWidget(jobCategory: "Full Time"),
-              // Add more instances of JobsItemWidget as needed
+              JobsItemWidget(
+                jobCategory: "Part Time",
+                onJobCategorySelected: _handleJobCategorySelected,
+              ),
+              JobsItemWidget(
+                jobCategory: "Full Time",
+                onJobCategorySelected: _handleJobCategorySelected,
+              ),
             ],
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildPrice(BuildContext context, {
     required String priceText1,
@@ -173,11 +189,19 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
     );
   }
 
-  onTapImgClose(BuildContext context) {
+  void onTapImgClose(BuildContext context) {
     Navigator.pop(context);
   }
 
-  onTapApplyFilter(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.homeContainerScreen);
+  void _handleJobCategorySelected(String? category) {
+    setState(() {
+      selectedJobCategory = category;
+    });
+  }
+
+  void _handleCategorySelected(String? categories) {
+    setState(() {
+      selectedCategories = categories;
+    });
   }
 }

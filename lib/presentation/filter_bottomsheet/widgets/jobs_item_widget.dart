@@ -3,8 +3,9 @@ import 'package:saumil_s_application/core/app_export.dart';
 
 class JobsItemWidget extends StatefulWidget {
   final String jobCategory;
+  final Function(String) onJobCategorySelected; // Add callback function
 
-  const JobsItemWidget({Key? key, required this.jobCategory}) : super(key: key);
+  const JobsItemWidget({Key? key, required this.jobCategory, required this.onJobCategorySelected}) : super(key: key);
 
   @override
   _JobsItemWidgetState createState() => _JobsItemWidgetState();
@@ -50,6 +51,10 @@ class _JobsItemWidgetState extends State<JobsItemWidget> {
       onSelected: (value) {
         setState(() {
           isSelected = value;
+          if (value) {
+            // Notify the parent widget when job category is selected
+            widget.onJobCategorySelected(widget.jobCategory);
+          }
         });
       },
     );

@@ -1,43 +1,43 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/presentation/filter_bottomsheet/filter_bottomsheet.dart';
 import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import '../../controller/jobController.dart';
 import '../../models/user_model.dart';
 import '../apply_job_screen/apply_job_screen.dart';
-import '../filter_bottomsheet/filter_bottomsheet.dart';
 import '../job_details_page/applyer_list_screen.dart';
-import '../job_details_page/job_applyer_screen.dart';
+import '../filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
 
 class SavedPage extends StatefulWidget {
-  SavedPage({Key? key}) : super(key: key);
+  String? selectedJobCategory;
+  String? selectedCategories;
+
+  SavedPage({Key? key, this.selectedJobCategory, this.selectedCategories}) : super(key: key);
 
   @override
   State<SavedPage> createState() => _SavedPageState();
 }
 
 class _SavedPageState extends State<SavedPage> {
-  jobController controller = Get.put(jobController());
+  final jobController controller = Get.put(jobController());
   String? userRole;
-  User? user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    // Get the current user's ID from Firebase Authentication
-
     fetchUserRole();
   }
 
   void fetchUserRole() async {
-    var userDoc =
-    await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get();
     setState(() {
       userRole = userDoc['role'];
     });
@@ -54,34 +54,44 @@ class _SavedPageState extends State<SavedPage> {
             future: controller.fetchJobDataFromFirestore(userRole.toString()),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                print("-----------has data---------");
+                List<PostJobModel> filteredJobs = [];
+                if (widget.selectedJobCategory != null) {
+                  // Filter jobs based on the selected job category
+                  filteredJobs = snapshot.data.where((job) => job.jobType == widget.selectedJobCategory).toList();
+                } else {
+                  // If no job category is selected, show all jobs
+                  filteredJobs = snapshot.data;
+                }
+
+                // Apply additional filtering based on selected option
+                if (widget.selectedCategories != null) {
+                  filteredJobs = filteredJobs.where((job) => job.selectedOption == widget.selectedCategories).toList();
+                }
+
+                // Apply filter based on salary condition
+
                 return ListView.separated(
                   physics: BouncingScrollPhysics(),
                   shrinkWrap: true,
                   separatorBuilder: (context, index) {
                     return SizedBox(height: 12.v);
                   },
-                  itemCount: snapshot.data!.length,
+                  itemCount: filteredJobs.length,
                   itemBuilder: (context, index) {
-                    PostJobModel model = snapshot.data[index];
+                    PostJobModel model = filteredJobs[index];
                     return SavedItemWidget(
                       onTapBag: () {
-                        // onTapBag(context);
-
-                        if(userRole == "e") {
+                        if (userRole == "e") {
                           Get.to(() => ApplyerListScreen());
-                        }else{
+                        } else {
                           Get.to(() => ApplyJobScreen(jobId: model.id,));
-
                         }
-
                       },
                       model: model,
                     );
                   },
                 );
               } else {
-                print("--------- else  ---------");
                 return const Center(child: CircularProgressIndicator());
               }
             },
@@ -108,7 +118,7 @@ class _SavedPageState extends State<SavedPage> {
           imagePath: ImageConstant.imgFilter,
           margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v),
           onTap: () {
-            showFilterBottomSheet(context); // Call the filter bottom sheet
+            showFilterBottomSheet(context);
           },
         ),
       ],
@@ -119,16 +129,21 @@ class _SavedPageState extends State<SavedPage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return FilterBottomsheet();
+        return FilterBottomsheet(
+          onJobCategorySelected: (category) {
+            setState(() {
+              widget.selectedJobCategory = category;
+            });
+          },
+          onCategories: (categories) {
+            setState(() {
+              widget.selectedCategories = categories;
+            });
+          },
+        );
       },
     );
   }
-
-  // void onTapBag(BuildContext context) {
-  //   // Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
-  //
-  //
-  // }
 
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
