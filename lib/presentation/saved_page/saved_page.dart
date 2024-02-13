@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
-import 'package:saumil_s_application/presentation/filter_bottomsheet/filter_bottomsheet.dart';
 import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
-import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
-import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../../controller/jobController.dart';
 import '../../models/user_model.dart';
+import '../../widgets/app_bar/appbar_leading_image.dart';
+import '../../widgets/app_bar/appbar_title.dart';
+import '../../widgets/app_bar/appbar_trailing_image.dart';
+import '../../widgets/app_bar/custom_app_bar.dart';
 import '../apply_job_screen/apply_job_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
 import '../filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
+import '../filter_bottomsheet/filter_bottomsheet.dart';
 
 class SavedPage extends StatefulWidget {
   String? selectedJobCategory;
   String? selectedCategories;
+  double? minSalary;
+  double? maxSalary;
 
-  SavedPage({Key? key, this.selectedJobCategory, this.selectedCategories}) : super(key: key);
+  SavedPage({
+    Key? key,
+    this.selectedJobCategory,
+    this.selectedCategories,
+    this.minSalary,
+    this.maxSalary,
+  }) : super(key: key);
 
   @override
   State<SavedPage> createState() => _SavedPageState();
@@ -54,21 +62,23 @@ class _SavedPageState extends State<SavedPage> {
             future: controller.fetchJobDataFromFirestore(userRole.toString()),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                List<PostJobModel> filteredJobs = [];
-                if (widget.selectedJobCategory != null) {
-                  // Filter jobs based on the selected job category
-                  filteredJobs = snapshot.data.where((job) => job.jobType == widget.selectedJobCategory).toList();
-                } else {
-                  // If no job category is selected, show all jobs
-                  filteredJobs = snapshot.data;
+                List<PostJobModel> filteredJobs = snapshot.data;
+
+                // Filter jobs based on selected price range
+                if (widget.minSalary != null && widget.maxSalary != null) {
+                  filteredJobs = filteredJobs.where((job) =>
+                  double.parse(job.lowestsalary) >= widget.minSalary! && double.parse(job.highestsalary) <= widget.maxSalary!
+                  ).toList();
                 }
 
-                // Apply additional filtering based on selected option
+                // Apply other filters
+                if (widget.selectedJobCategory != null) {
+                  filteredJobs = filteredJobs.where((job) => job.jobType == widget.selectedJobCategory).toList();
+                }
+
                 if (widget.selectedCategories != null) {
                   filteredJobs = filteredJobs.where((job) => job.selectedOption == widget.selectedCategories).toList();
                 }
-
-                // Apply filter based on salary condition
 
                 return ListView.separated(
                   physics: BouncingScrollPhysics(),
@@ -140,9 +150,18 @@ class _SavedPageState extends State<SavedPage> {
               widget.selectedCategories = categories;
             });
           },
+          minSalary: widget.minSalary ?? 5000,
+          maxSalary: widget.maxSalary ?? 100000,
         );
       },
-    );
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          widget.minSalary = value['minSalary'];
+          widget.maxSalary = value['maxSalary'];
+        });
+      }
+    });
   }
 
   void onTapImage(BuildContext context) {

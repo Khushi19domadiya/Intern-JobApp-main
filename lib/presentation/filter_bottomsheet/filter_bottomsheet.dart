@@ -6,18 +6,24 @@ import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
 
 class FilterBottomsheet extends StatefulWidget {
-  final Function(String?) onJobCategorySelected;
-  final Function(String?) onCategories;
+   Function(String?) onJobCategorySelected;
+   Function(String?) onCategories;
+   double minSalary;
+   double maxSalary;
 
-  const FilterBottomsheet({Key? key, required this.onJobCategorySelected, required this.onCategories}) : super(key: key);
+   FilterBottomsheet({
+    Key? key,
+    required this.onJobCategorySelected,
+    required this.onCategories,
+    required this.minSalary,
+    required this.maxSalary,
+  }) : super(key: key);
 
   @override
   _FilterBottomsheetState createState() => _FilterBottomsheetState();
 }
 
 class _FilterBottomsheetState extends State<FilterBottomsheet> {
-  double minSalary = 5000; // Placeholder value
-  double maxSalary = 100000; // Placeholder value
   String? selectedJobCategory;
   String? selectedCategories;
 
@@ -44,7 +50,7 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
               onPressed: () {
                 widget.onJobCategorySelected(selectedJobCategory);
                 widget.onCategories(selectedCategories);
-                Navigator.pop(context);
+                Navigator.pop(context, {'minSalary': widget.minSalary, 'maxSalary': widget.maxSalary});
               },
             ),
             SizedBox(height: 15.v),
@@ -113,9 +119,9 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   Widget _buildSalariesColumn(BuildContext context) {
     return Column(
       children: [
-        _buildPrice(context, priceText1: "Min Salary", priceText2: "${minSalary.toInt()}.000/Month"),
+        _buildPrice(context, priceText1: "Min Salary", priceText2: "${widget.minSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
-        _buildPrice(context, priceText1: "Max Salary", priceText2: "${maxSalary.toInt()}.000/Month"),
+        _buildPrice(context, priceText1: "Max Salary", priceText2: "${widget.maxSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
         SliderTheme(
           data: SliderThemeData(
@@ -126,19 +132,19 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             thumbShape: RoundSliderThumbShape(),
           ),
           child: RangeSlider(
-            values: RangeValues(minSalary, maxSalary),
+            values: RangeValues(widget.minSalary, widget.maxSalary),
             min: 5000.0,
             max: 100000.0,
             onChanged: (values) {
               setState(() {
-                minSalary = (values.start / 1000).round() * 1000;
-                maxSalary = (values.end / 1000).round() * 1000;
+                widget.minSalary = (values.start / 1000).round() * 1000;
+                widget.maxSalary = (values.end / 1000).round() * 1000;
               });
             },
           ),
         ),
         SizedBox(height: 2.v),
-        _buildPrice(context, priceText1: "${minSalary.toInt()}", priceText2: "${maxSalary.toInt()}.000"),
+        _buildPrice(context, priceText1: "${widget.minSalary.toInt()}", priceText2: "${widget.maxSalary.toInt()}.000"),
       ],
     );
   }

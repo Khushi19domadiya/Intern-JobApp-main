@@ -1,15 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
-
-import '../../controller/jobController.dart';
-import '../../models/user_model.dart';
-import '../../widgets/custom_elevated_button.dart';
-import '../apply_job_screen/apply_job_screen.dart';
-import '../home_page/widgets/eightyeight_item_widget.dart';
-import '../home_page/widgets/frame_item_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:saumil_s_application/controller/jobController.dart';
+import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
+import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
+import 'package:saumil_s_application/presentation/home_page/widgets/eightyeight_item_widget.dart';
+import 'package:saumil_s_application/presentation/home_page/widgets/frame_item_widget.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_circleimage.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_subtitle.dart';
@@ -17,8 +16,7 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_subtitle_one.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
-
-import '../sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
+import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -30,8 +28,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
   jobController controller = Get.put(jobController());
-   String? userId;
-   String? userRole;
+  String? userId;
+  String? userRole;
 
   List allResults = [];
   List resultList = [];
@@ -50,8 +48,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void fetchUserRole() async {
-    var userDoc =
-    await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
     setState(() {
       userRole = userDoc['role'];
     });
@@ -80,10 +77,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance
-        .collection('postJob')
-        .orderBy('title')
-        .get();
+    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
     setState(() {
       allResults = data.docs;
     });
@@ -187,24 +181,102 @@ class _HomePageState extends State<HomePage> {
     return CustomAppBar(
       leadingWidth: 74.h,
       height: 85.h,
-      leading: AppbarLeadingCircleimage(
-        imagePath: ImageConstant.imgImage50x50,
-        margin: EdgeInsets.only(left: 24.h),
+      leading: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('Users').doc(userId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: AppbarLeadingCircleimage(
+                imagePath: ImageConstant.imgImage50x50, // Placeholder image
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: AppbarLeadingCircleimage(
+                imagePath: ImageConstant.imgImage50x50, // Placeholder image
+              ),
+            );
+          }
+          if (snapshot.hasData) {
+            var userImage = snapshot.data!['profileUrl'] ?? ImageConstant.imgImage50x50; // User image or default image
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: CircleAvatar(
+                radius: 20.h, // Adjust the size as needed
+                backgroundImage: NetworkImage(userImage),
+              ),
+            );
+          }
+          return Padding(
+            padding: EdgeInsets.only(left: 24.h),
+            child: AppbarLeadingCircleimage(
+              imagePath: ImageConstant.imgImage50x50, // Placeholder image
+            ),
+          );
+        },
       ),
-      title: Padding(
-        padding: EdgeInsets.only(left: 10.h, top: 10.h),
-        child: Column(
-          children: [
-            AppbarSubtitle(
-              text: "Welcome! 👋",
-            ),
-            SizedBox(height: 9.v),
-            AppbarSubtitleOne(
-              text: "Find your dream job",
-              margin: EdgeInsets.only(right: 33.h),
-            ),
-          ],
-        ),
+      title: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('Users').doc(userId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          if (snapshot.hasError) {
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          if (snapshot.hasData) {
+            var userName = snapshot.data!['fname'] ?? "User"; // User name or default name
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome, $userName! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          return Column(
+            children: [
+              AppbarSubtitle(
+                text: "Welcome! 👋",
+              ),
+              SizedBox(height: 9.v),
+              AppbarSubtitleOne(
+                text: "Find your dream job",
+                margin: EdgeInsets.only(right: 33.h),
+              ),
+            ],
+          );
+        },
       ),
       actions: [
         AppbarTrailingImage(
@@ -233,9 +305,8 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(left: 20),
                     child: FrameItemWidget(
                       onTapBag: () {
-                        // onTapBag(context);
-                        PostJobModel model =  snapshot.data[index];
-                        Get.to(()=>ApplyJobScreen(jobId: model.id,));
+                        PostJobModel model = snapshot.data[index];
+                        Get.to(() => ApplyJobScreen(jobId: model.id));
                       },
                       model: snapshot.data[index],
                       searchQuery: searchController.text,
@@ -260,13 +331,8 @@ class _HomePageState extends State<HomePage> {
         child: ListView.separated(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          separatorBuilder: (
-              context,
-              index,
-              ) {
-            return SizedBox(
-              height: 16.v,
-            );
+          separatorBuilder: (context, index) {
+            return SizedBox(height: 16.v);
           },
           itemCount: 12,
           itemBuilder: (context, index) {
@@ -276,8 +342,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  // onTapBag(BuildContext context) {
-  //   Navigator.pushNamed(context, AppRoutes.jobDetailsTabContainerScreen);
-  // }
 }
