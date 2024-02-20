@@ -77,7 +77,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
+    var currentTime = Timestamp.now();
+    var data = await FirebaseFirestore.instance
+        .collection('postJob')
+        .where('deadline', isGreaterThan: currentTime)
+        .orderBy('title')
+        .get();
     setState(() {
       allResults = data.docs;
     });
