@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 
-// ignore: must_be_immutable
 class FortysevenItemWidget extends StatelessWidget {
   const FortysevenItemWidget({Key? key})
       : super(

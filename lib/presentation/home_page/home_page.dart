@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:saumil_s_application/presentation/notifications_general_page/notifications_general_page.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
 import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:saumil_s_application/models/user_model.dart';
@@ -17,6 +18,9 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart'
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
 import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
+import 'package:saumil_s_application/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
+
+import '../job_details_page/applyer_list_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -77,7 +81,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
+    var currentTime = Timestamp.now();
+    var data = await FirebaseFirestore.instance
+        .collection('postJob')
+        .where('deadline', isGreaterThan: currentTime)
+        .orderBy('title')
+        .get();
     setState(() {
       allResults = data.docs;
     });
@@ -160,12 +169,12 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: EdgeInsets.only(left: 24.h),
                         child: Text(
-                          "Recent Jobs",
+                          "Most Trending Jobs",
                           style: theme.textTheme.titleMedium,
                         ),
                       ),
                       SizedBox(height: 15.v),
-                      _buildEightyEight(context),
+                      _buildTrendingJobs(),
                     ],
                   ),
                 ],
@@ -173,7 +182,31 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+
+          floatingActionButton: GestureDetector(
+          onTap: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => NotificationsGeneralPage(),
+    ),
+    );
+    },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black87,
+        ),
+        child: Icon(
+          Icons.notifications,
+          color: Colors.white, // Change color to black or any other dark color
+          size: 30,
+        ),
       ),
+    ),
+    ),
     );
   }
 
@@ -278,15 +311,8 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      actions: [
-        AppbarTrailingImage(
-          imagePath: ImageConstant.imgNotification,
-          margin: EdgeInsets.symmetric(
-            horizontal: 24.h,
-            vertical: 13.v,
-          ),
-        ),
-      ],
+
+
     );
   }
 
@@ -303,13 +329,19 @@ class _HomePageState extends State<HomePage> {
                   snapshot.data!.length,
                       (index) => Padding(
                     padding: const EdgeInsets.only(left: 20),
-                    child: FrameItemWidget(
-                      onTapBag: () {
+                    child: GestureDetector(
+                      onTap: () {
                         PostJobModel model = snapshot.data[index];
-                        Get.to(() => ApplyJobScreen(jobId: model.id));
+                        if (userRole == "e") {
+                          Get.to(() => ApplyerListScreen());
+                        } else {
+                          Get.to(() => ApplyJobScreen(jobId: model.id,));
+                        }
                       },
-                      model: snapshot.data[index],
-                      searchQuery: searchController.text,
+                      child: FrameItemWidget(
+                        model: snapshot.data[index],
+                        searchQuery: searchController.text,
+                      ),
                     ),
                   ),
                 ),
@@ -323,23 +355,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildEightyEight(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.h),
-        child: ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (context, index) {
-            return SizedBox(height: 16.v);
-          },
-          itemCount: 12,
-          itemBuilder: (context, index) {
-            return EightyeightItemWidget();
-          },
-        ),
-      ),
+  Widget _buildTrendingJobs() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('trendingJobs').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.data!.docs.isEmpty) {
+          return Center(child: Text('No trending jobs available'));
+        }
+
+        return Column(
+          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            return EightyeightItemWidget(jobData: data);
+          }).toList(),
+        );
+      },
     );
   }
 }

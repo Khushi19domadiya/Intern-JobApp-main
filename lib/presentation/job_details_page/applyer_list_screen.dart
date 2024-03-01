@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 
 import 'job_applyer_screen.dart';
 
+// ApplyerListScreen
+
 class ApplyerListScreen extends StatefulWidget {
   Key? key;
   ApplyerListScreen({this.key});
@@ -14,64 +16,50 @@ class ApplyerListScreen extends StatefulWidget {
 }
 
 class _ApplyerListScreenState extends State<ApplyerListScreen> {
-  List data= [];
+  List<Map<String, dynamic>> data = [];
+
   @override
   void initState() {
     super.initState();
-    // Get the current user's ID from Firebase Authentication
-    User? user = FirebaseAuth.instance.currentUser;
     fetchDocumentList();
   }
 
-  Future<List<Map<String, dynamic>>> fetchDocumentList() async {
-    CollectionReference jobCollection = FirebaseFirestore.instance.collection("job_applications");
-
+  Future<void> fetchDocumentList() async {
     try {
-      QuerySnapshot querySnapshot = await jobCollection.get();
-
-      List<DocumentSnapshot> documents = querySnapshot.docs;
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("job_applications")
+          .get();
 
       List<Map<String, dynamic>> documentList = [];
 
-      // Now you can iterate over the documents list to access each document
-      for (DocumentSnapshot document in documents) {
-        // Access document data using document.data()
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        // Access document ID using document.id
+      for (DocumentSnapshot document in querySnapshot.docs) {
+        Map<String, dynamic> data =
+        document.data() as Map<String, dynamic>;
         String documentId = document.id;
-        // Add document data along with ID to the list
         documentList.add({...data, 'id': documentId});
       }
-      print("v fetching documents: $documentList");
-      data = documentList;
-      setState(() {
 
+      setState(() {
+        data = documentList;
       });
-      return documentList;
     } catch (e) {
-      // Handle errors here
       print("Error fetching documents: $e");
-      return []; // Return an empty list in case of an error
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Appler'),
-
+      appBar: AppBar(
+        title: Text('Applicants'),
       ),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          // Build each list item based on index
           return ListTile(
             title: Text(data[index]['full_name']),
             onTap: () {
-              Get.to(() => JobApplyerScreen(jobId: data[index]['jobId'],));
-
-              // Handle item tap if needed
-              // print('Tapped on ${dataList[index]}');
+              Get.to(JobApplyerScreen(jobId: data[index]['id']));
             },
           );
         },

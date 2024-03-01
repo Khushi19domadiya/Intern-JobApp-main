@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
@@ -17,10 +16,9 @@ import '../../util/common_methos.dart';
 import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
+  final String jobId;
 
-  String jobId;
   ApplyJobScreen({required this.jobId});
-
 
   @override
   _ApplyJobScreenState createState() => _ApplyJobScreenState();
@@ -39,32 +37,56 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   Future<void> _uploadCV() async {
     if (cvFile != null) {
       try {
-        String userId = 'unique_user_id'; // Replace with your user ID or fetch dynamically
+        String userId = user?.uid ?? 'unique_user_id';
         String cvFileName = 'cv_$userId.pdf';
 
-        // Upload CV to Firebase Cloud Storage
-        Reference storageReference =
-        FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
+        Reference storageReference = FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
         UploadTask uploadTask = storageReference.putFile(cvFile!);
         await uploadTask.whenComplete(() => print('CV Uploaded'));
 
-        // Get the download URL of the uploaded CV
         String downloadURL = await storageReference.getDownloadURL();
 
-        // Store user data including CV download URL in Firestore
-        await FirebaseFirestore.instance.collection('job_applications').add({
+        // Get a reference to the 'job_applications' collection
+        CollectionReference jobApplications = FirebaseFirestore.instance.collection('job_applications');
+
+        // Add a new document to the 'job_applications' collection
+        DocumentReference docRef = await jobApplications.add({
           'full_name': fullNameController.text,
           'email': emailController.text,
           'website_portfolio': frameOneController.text,
           'cv_url': downloadURL,
           'timestamp': FieldValue.serverTimestamp(),
-          'userId':user!.uid,
-          'jobId':widget.jobId
+          'userId': user?.uid,
         });
 
+        // Get the document ID assigned by Firestore and use it as the job ID
+        String jobId = docRef.id;
+
+        // Now update the document with the job ID
+        await docRef.update({'jobId': jobId});
+
         print('Job application data stored successfully');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Application submitted successfully!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeContainerScreen()),
+        );
       } catch (error) {
         print('Error uploading CV or storing data: $error');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error submitting application. Please try again later.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     }
   }
@@ -73,7 +95,6 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text('Apply Job'),
         ),
@@ -90,11 +111,10 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
                   SizedBox(height: 18.0),
                   _buildPersonalInfoWebsite(context),
                   SizedBox(height: 18.0),
-                  _buildCvFields(),
+                  _buildCvFields(context),
                   SizedBox(height: 16.0),
                   SizedBox(height: 270.0),
                   _buildContinueButton(),
-                  // Adjusted spacing
                 ],
               ),
             ),
@@ -170,56 +190,75 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
     );
   }
 
-  Widget _buildCvFields() {
+  Widget _buildCvFields(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Upload CV', style: theme.textTheme.titleSmall), // Adjusted label
-        SizedBox(height: 7.0),
-        ElevatedButton(
-          onPressed: () async {
-            FilePickerResult? result;
-            try {
-              result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf'],
-              );
-            } on Exception catch (e) {
-              // Handle exception, if any
-              print('File picker error: $e');
-            }
-            if (result != null) {
-              //setState(() {
-              cvFile = File(result!.files.single.path!);
-            }
-            else if(cvFile != null)
-            {
-              Text(
-                'Please select a CV file',
-                style: TextStyle(color: Colors.red),
-              );
-            }
-          },
-          child: Text('Select CV'),
+        Text("Upload CV", style: theme.textTheme.titleSmall),
+        SizedBox(height: 7.v),
+        DottedBorder(
+          color: appTheme.gray300,
+          padding: EdgeInsets.only(left: 1.h, top: 1.v, right: 1.h, bottom: 1.v),
+          strokeWidth: 1.h,
+          radius: Radius.circular(24),
+          dashPattern: [6, 6],
+          child: GestureDetector(
+            onTap: () async {
+              FilePickerResult? result;
+              try {
+                result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['pdf'],
+                );
+              } on Exception catch (e) {
+                print('File picker error: $e');
+              }
+              if (result != null && result.files.isNotEmpty) {
+                setState(() {
+                  cvFile = File(result?.files.first.path ?? '');
+                });
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 124.h, vertical: 39.v),
+              decoration: AppDecoration.outlineGray300.copyWith(
+                borderRadius: BorderRadiusStyle.roundedBorder24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomImageView(
+                    imagePath: ImageConstant.imgCloudUpload1,
+                    height: 40.adaptSize,
+                    width: 40.adaptSize,
+                  ),
+                  SizedBox(height: 8.v),
+                  Text(
+                    "Upload File",
+                    style: CustomTextStyles.titleSmallSemiBold,
+                  ),
+                  if (cvFile != null)
+                    Text(
+                      'Selected CV: ${cvFile!.path}',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                ],
+              ),
+            ),
+          ),
         ),
-        // if (cvFile != null)
-        //   Text('Selected CV: ${cvFile!.path}'),
       ],
     );
   }
-
 
   Widget _buildContinueButton() {
     return CustomElevatedButton(
       text: 'Continue',
       onPressed: () async {
         if (_formKey.currentState?.validate() ?? false) {
-          // Validate successful, perform the CV upload and data storage
           await _uploadCV();
         }
       },
     );
   }
-
-
 }

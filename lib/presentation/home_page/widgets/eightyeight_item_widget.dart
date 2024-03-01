@@ -5,10 +5,9 @@ import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class EightyeightItemWidget extends StatelessWidget {
-  const EightyeightItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+  final Map<String, dynamic> jobData; // Add this variable to hold job data
+  const EightyeightItemWidget({Key? key, required this.jobData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +52,12 @@ class EightyeightItemWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Digital Marketing",
+                                jobData['title'], // Use job title from jobData
                                 style: CustomTextStyles.titleMediumBold_1,
                               ),
                               SizedBox(height: 5.v),
                               Text(
-                                "Motorola",
+                                jobData['company'], // Use company name from jobData
                                 style: CustomTextStyles.labelLargeGray500,
                               ),
                             ],
@@ -74,7 +73,7 @@ class EightyeightItemWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 12.v),
                     Text(
-                      "560 - 12.000/Month",
+                      jobData['salary'], // Use salary from jobData
                       style: theme.textTheme.labelLarge,
                     ),
                     SizedBox(height: 13.v),
