@@ -169,4 +169,8 @@ class _SavedPageState extends State<SavedPage> {
       return _controller.fetchJobDataFromFirestore(userRole!);
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2ab727349c9d1061f40b03ce2a3534336efe7eda
