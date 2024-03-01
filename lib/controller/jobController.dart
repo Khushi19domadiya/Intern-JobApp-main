@@ -38,4 +38,19 @@ class jobController extends GetxController{
     log("----jobData----" + jobData.length.toString());
 
   }
+
+  Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+    try {
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('postJob')
+          .where('userId', isEqualTo: userId)
+          .get();
+      return querySnapshot.docs
+          .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching user posted jobs: $e');
+      return [];
+    }
+  }
 }

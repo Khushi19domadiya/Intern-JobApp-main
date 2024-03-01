@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 17.v),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: _buildFrame(context, userId.toString()),
+                        child: _buildFrame(context),
                       ),
                       SizedBox(height: 22.v),
                       Padding(
@@ -183,30 +183,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
 
-          floatingActionButton: GestureDetector(
+        floatingActionButton: GestureDetector(
           onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => NotificationsGeneralPage(),
-    ),
-    );
-    },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.black87,
-        ),
-        child: Icon(
-          Icons.notifications,
-          color: Colors.white, // Change color to black or any other dark color
-          size: 30,
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NotificationsGeneralPage(),
+              ),
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black87,
+            ),
+            child: Icon(
+              Icons.notifications,
+              color: Colors.white, // Change color to black or any other dark color
+              size: 30,
+            ),
+          ),
         ),
       ),
-    ),
-    ),
     );
   }
 
@@ -311,49 +311,92 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-
-
     );
   }
 
-  Widget _buildFrame(BuildContext context, String userId) {
+
+  // Widget _buildFrame(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: FutureBuilder<List<PostJobModel>>(
+  //       future: controller.fetchUserPostedJobs(userId), // Pass userId to fetch only user's posted jobs
+  //       builder: (context, AsyncSnapshot snapshot) {
+  //         if (snapshot.hasData) {
+  //           return Row(
+  //             children: [
+  //               ...List.generate(
+  //                 snapshot.data!.length,
+  //                     (index) => Padding(
+  //                   padding: const EdgeInsets.only(left: 20),
+  //                   child: GestureDetector(
+  //                     onTap: () {
+  //                       PostJobModel model = snapshot.data[index];
+  //                       if (userRole == "e") {
+  //                         Get.to(() => ApplyerListScreen());
+  //                       } else {
+  //                         Get.to(() => ApplyJobScreen(jobId: model.id,));
+  //                       }
+  //                     },
+  //                     child: FrameItemWidget(
+  //                       model: snapshot.data[index],
+  //                       searchQuery: searchController.text,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           );
+  //         } else {
+  //           return const Center(child: CircularProgressIndicator());
+  //         }
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFrame(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
       child: FutureBuilder<List<PostJobModel>>(
-        future: controller.fetchJobDataFromFirestore(userRole ?? "j"),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
+        future: userRole == 'j' ? controller.fetchJobDataFromFirestore(userRole!) : controller.fetchUserPostedJobs(userId),
+        builder: (context, AsyncSnapshot<List<PostJobModel>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final List<PostJobModel>? jobData = snapshot.data;
+
+            if (jobData == null || jobData.isEmpty) {
+              return const Center(child: Text("No jobs available."));
+            }
+
             return Row(
-              children: [
-                ...List.generate(
-                  snapshot.data!.length,
-                      (index) => Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: GestureDetector(
-                      onTap: () {
-                        PostJobModel model = snapshot.data[index];
-                        if (userRole == "e") {
-                          Get.to(() => ApplyerListScreen());
-                        } else {
-                          Get.to(() => ApplyJobScreen(jobId: model.id,));
-                        }
-                      },
-                      child: FrameItemWidget(
-                        model: snapshot.data[index],
-                        searchQuery: searchController.text,
-                      ),
+              children: jobData.map((model) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (userRole == "e") {
+                        Get.to(() => ApplyerListScreen());
+                      } else {
+                        Get.to(() => ApplyJobScreen(jobId: model.id));
+                      }
+                    },
+                    child: FrameItemWidget(
+                      model: model,
+                      searchQuery: searchController.text,
                     ),
                   ),
-                ),
-              ],
+                );
+              }).toList(),
             );
-          } else {
-            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
     );
   }
+
 
   Widget _buildTrendingJobs() {
     return StreamBuilder<QuerySnapshot>(

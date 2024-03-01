@@ -10,7 +10,6 @@ class UserModel {
   final String? address;
   final String? profileUrl;
   final String? role;
-  final String? skills;
 
   const UserModel({
     required this.id,
@@ -22,7 +21,6 @@ class UserModel {
     this.address,
     this.profileUrl,
     this.role,
-    this.skills,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data) {
@@ -36,7 +34,6 @@ class UserModel {
       address: data['address'],
       profileUrl: data['profileUrl'],
       role  : data['role'],
-      skills: data['skills'],
     );
   }
 
@@ -51,7 +48,6 @@ class UserModel {
       if (address != null) "address": address,
       if (profileUrl != null) "profileUrl": profileUrl,
       if (role != null) "role": role,
-      if(skills != null) "skill" : skills,
     };
   }
 

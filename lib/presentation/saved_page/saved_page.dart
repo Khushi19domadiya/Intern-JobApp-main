@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:saumil_s_application/core/app_export.dart';
-import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
+import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
-import '../../controller/jobController.dart';
-import '../../models/user_model.dart';
-import '../../widgets/app_bar/appbar_leading_image.dart';
+import 'package:saumil_s_application/core/utils/image_constant.dart';
+import 'package:saumil_s_application/core/utils/size_utils.dart';
+import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
+import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
+import 'package:saumil_s_application/presentation/job_details_page/applyer_list_screen.dart';
+import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
+import 'package:saumil_s_application/presentation/filter_bottomsheet/filter_bottomsheet.dart';
+import 'package:saumil_s_application/controller/jobController.dart';
+import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
+import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
+import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
+
 import '../../widgets/app_bar/appbar_title.dart';
-import '../../widgets/app_bar/appbar_trailing_image.dart';
-import '../../widgets/app_bar/custom_app_bar.dart';
-import '../apply_job_screen/apply_job_screen.dart';
-import '../job_details_page/applyer_list_screen.dart';
-import '../filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
-import '../filter_bottomsheet/filter_bottomsheet.dart';
 
 class SavedPage extends StatefulWidget {
   String? selectedJobCategory;
@@ -34,9 +36,9 @@ class SavedPage extends StatefulWidget {
 }
 
 class _SavedPageState extends State<SavedPage> {
-  final jobController controller = Get.put(jobController());
+  final jobController _controller = Get.put(jobController());
   String? userRole;
-  final User? user = FirebaseAuth.instance.currentUser;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -45,7 +47,7 @@ class _SavedPageState extends State<SavedPage> {
   }
 
   void fetchUserRole() async {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(_user!.uid).get();
     setState(() {
       userRole = userDoc['role'];
     });
@@ -59,41 +61,17 @@ class _SavedPageState extends State<SavedPage> {
         body: Padding(
           padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
           child: FutureBuilder<List<PostJobModel>>(
-            future: controller.fetchJobDataFromFirestore(userRole.toString()),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                List<PostJobModel> filteredJobs = snapshot.data;
+            future: _getJobsFuture(), // Future based on user role
+            builder: (context, AsyncSnapshot<List<PostJobModel>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                final List<PostJobModel>? jobs = snapshot.data;
 
-                // Filter jobs based on selected price range
-                if (widget.minSalary != null && widget.maxSalary != null) {
-                  filteredJobs = filteredJobs.where((job) =>
-                  double.parse(job.lowestsalary) >= widget.minSalary! &&
-                      double.parse(job.highestsalary) <= widget.maxSalary!
-                  ).toList();
-                }
-
-                // Apply other filters
-                if (widget.selectedJobCategory != null) {
-                  filteredJobs = filteredJobs.where((job) => job.jobType == widget.selectedJobCategory).toList();
-                }
-
-                if (widget.selectedCategories != null) {
-                  filteredJobs = filteredJobs.where((job) => job.selectedOption == widget.selectedCategories).toList();
-                }
-
-                // Filter out jobs with expired deadlines
-                filteredJobs = filteredJobs.where((job) {
-                  // Parse deadline date string to DateTime object
-                  DateTime deadline = DateTime.parse(job.deadline);
-                  // Check if the deadline has already passed
-                  return deadline.isAfter(DateTime.now());
-                }).toList();
-
-                if (filteredJobs.isEmpty) {
-                  // Display a message or widget indicating that no jobs are available
-                  return Center(
-                    child: Text("No jobs available."),
-                  );
+                if (jobs == null || jobs.isEmpty) {
+                  return Center(child: Text("No jobs available."));
                 }
 
                 return ListView.separated(
@@ -102,23 +80,21 @@ class _SavedPageState extends State<SavedPage> {
                   separatorBuilder: (context, index) {
                     return SizedBox(height: 12.v);
                   },
-                  itemCount: filteredJobs.length,
+                  itemCount: jobs.length,
                   itemBuilder: (context, index) {
-                    PostJobModel model = filteredJobs[index];
+                    PostJobModel model = jobs[index];
                     return SavedItemWidget(
                       onTapBag: () {
                         if (userRole == "e") {
                           Get.to(() => ApplyerListScreen());
                         } else {
-                          Get.to(() => ApplyJobScreen(jobId: model.id,));
+                          Get.to(() => ApplyJobScreen(jobId: model.id));
                         }
                       },
                       model: model,
                     );
                   },
                 );
-              } else {
-                return const Center(child: CircularProgressIndicator());
               }
             },
           ),
@@ -182,5 +158,15 @@ class _SavedPageState extends State<SavedPage> {
 
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  Future<List<PostJobModel>> _getJobsFuture() async {
+    if (userRole == 'e') {
+      // Fetch only current user's posted jobs
+      return _controller.fetchUserPostedJobs(_user!.uid);
+    } else {
+      // Fetch all jobs
+      return _controller.fetchJobDataFromFirestore(userRole!);
+    }
   }
 }
