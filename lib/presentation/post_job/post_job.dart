@@ -585,14 +585,7 @@ class _PostJobState extends State<PostJob> {
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildContinueButton(BuildContext context) {
-
-
-
-=======
   Widget _buildContinueButton(BuildContext context, String newDocumentId) {
->>>>>>> 2ab727349c9d1061f40b03ce2a3534336efe7eda
     return CustomElevatedButton(
       text: "POST",
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),

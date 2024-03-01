@@ -86,7 +86,7 @@ class _SavedPageState extends State<SavedPage> {
                     return SavedItemWidget(
                       onTapBag: () {
                         if (userRole == "e") {
-                          Get.to(() => ApplyerListScreen());
+                          Get.to(() => ApplyerListScreen(jobId: model.id,));
                         } else {
                           Get.to(() => ApplyJobScreen(jobId: model.id));
                         }
@@ -169,8 +169,4 @@ class _SavedPageState extends State<SavedPage> {
       return _controller.fetchJobDataFromFirestore(userRole!);
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2ab727349c9d1061f40b03ce2a3534336efe7eda

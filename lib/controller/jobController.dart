@@ -22,7 +22,7 @@ class jobController extends GetxController{
   Future<List<PostJobModel>> fetchJobDataFromFirestore(String role) async {
 
 
-
+log('----fetchJobDataFromFirestore----');
     final snapshot = await FirebaseFirestore.instance.collection('postJob').get();
     print("------------ ${snapshot.docs} ----------");
     List<PostJobModel>  jobData = snapshot.docs.map((e) => PostJobModel.fromSnapshot(e.data())).toList();

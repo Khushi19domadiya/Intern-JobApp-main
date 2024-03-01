@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +10,8 @@ import 'job_applyer_screen.dart';
 // ApplyerListScreen
 
 class ApplyerListScreen extends StatefulWidget {
-  Key? key;
-  ApplyerListScreen({this.key});
+  String? jobId;
+  ApplyerListScreen({required this.jobId});
 
   @override
   State<ApplyerListScreen> createState() => _ApplyerListScreenState();
@@ -36,7 +38,10 @@ class _ApplyerListScreenState extends State<ApplyerListScreen> {
         Map<String, dynamic> data =
         document.data() as Map<String, dynamic>;
         String documentId = document.id;
-        documentList.add({...data, 'id': documentId});
+
+
+        if(data['jobId']== widget.jobId){
+        documentList.add({...data, 'id': documentId});}
       }
 
       setState(() {

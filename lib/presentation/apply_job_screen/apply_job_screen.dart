@@ -57,13 +57,35 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'cv_url': downloadURL,
           'timestamp': FieldValue.serverTimestamp(),
           'userId': user?.uid,
+          'jobId':widget.jobId
         });
 
-        // Get the document ID assigned by Firestore and use it as the job ID
-        String jobId = docRef.id;
+
+        var docApplyCount = FirebaseFirestore.instance.collection('postJob').doc(widget.jobId);
+
+        FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentSnapshot snapshot = await transaction.get(docApplyCount);
+
+          // if (!snapshot.exists) {
+          //   throw Exception("Document does not exist!"); // Handle case where document does not exist
+          // }
+
+          if (snapshot.data() is Map<String, dynamic> && (snapshot.data() as Map<String, dynamic>).containsKey('applyCount')) {
+            var applyCount = snapshot.get('applyCount') ?? 0; // Get current apply count or default to 0
+            applyCount++; // Increment apply count
+
+            transaction.update(docApplyCount, {'applyCount': applyCount}); // Update document with new apply count
+          } else {
+
+            transaction.update(docApplyCount, {'applyCount': 1}); //
+          }
+
+        });
+
+
 
         // Now update the document with the job ID
-        await docRef.update({'jobId': jobId});
+        await docRef.update({'id': docRef.id});
 
         print('Job application data stored successfully');
 

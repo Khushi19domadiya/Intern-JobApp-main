@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:saumil_s_application/util/colors.dart';
 import 'dart:io';
+
+import 'pdf_downloader_screen.dart';
 
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
@@ -46,6 +50,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text('PDF Viewer'),
+
         ),
         body: Center(
           child: CircularProgressIndicator(),
@@ -57,7 +62,12 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text('PDF Viewer'),
+          actions: [IconButton(onPressed: (){
+
+            Get.to(()=>PdfDownloader(pdfUrl: widget.pdfUrl,));
+          }, icon: Icon(Icons.download,color: primaryBlack,))],
         ),
+
         body: PDFView(
           filePath: '$_localPath/$fileName',
           enableSwipe: true,

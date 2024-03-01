@@ -101,7 +101,7 @@ class educationModel{
 
 class PostJobModel {
   final String id;
-  final String userId;
+  final String? userId;
   final String title;
   final String lowestsalary;
   final String highestsalary;

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -153,11 +155,16 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       SizedBox(height: 25.v),
-                      Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text(
-                          "Recommendation",
-                          style: CustomTextStyles.titleMedium18,
+                      GestureDetector(
+                        onTap: (){
+                          controller.fetchJobDataFromFirestore(userRole!);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 24.h),
+                          child: Text(
+                            "Recommendation",
+                            style: CustomTextStyles.titleMedium18,
+                          ),
                         ),
                       ),
                       SizedBox(height: 17.v),
@@ -234,7 +241,22 @@ class _HomePageState extends State<HomePage> {
             );
           }
           if (snapshot.hasData) {
-            var userImage = snapshot.data!['profileUrl'] ?? ImageConstant.imgImage50x50; // User image or default image
+            var userImage ='https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // User image or default image
+
+            if (snapshot.data!.exists) {
+
+              var data = snapshot.data!.data() as Map<String, dynamic>?;
+              if (data != null && data.containsKey('profileUrl')) {
+                userImage = data['profileUrl'];
+                // Use fname here
+              } else {
+                // Handle case where 'fname' field does not exist
+              }
+            } else {
+              // Handle case where document does not exist
+            }
+
+            // var userImage = snapshot.data!['profileUrl'] ?? ImageConstant.imgImage50x50; // User image or default image
             return Padding(
               padding: EdgeInsets.only(left: 24.h),
               child: CircleAvatar(
@@ -283,7 +305,24 @@ class _HomePageState extends State<HomePage> {
             );
           }
           if (snapshot.hasData) {
-            var userName = snapshot.data!['fname'] ?? "User"; // User name or default name
+            String userName = ''; // User name or default name
+
+            if (snapshot.data!.exists) {
+
+              var data = snapshot.data!.data() as Map<String, dynamic>?;
+              if (data != null && data.containsKey('fname')) {
+                var fname = data['fname'];
+                userName = fname;
+                // Use fname here
+              } else {
+                // Handle case where 'fname' field does not exist
+              }
+            } else {
+              // Handle case where document does not exist
+            }
+
+
+            // String userName = snapshot.data!['fname'] ?? "User"; // User name or default name
             return Column(
               children: [
                 AppbarSubtitle(
@@ -378,7 +417,9 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     onTap: () {
                       if (userRole == "e") {
-                        Get.to(() => ApplyerListScreen());
+
+
+                        Get.to(() => ApplyerListScreen(jobId: model.id));
                       } else {
                         Get.to(() => ApplyJobScreen(jobId: model.id));
                       }
