@@ -7,14 +7,14 @@ import 'job_applyer_screen.dart';
 
 class ApplyerListScreen extends StatefulWidget {
   Key? key;
-   ApplyerListScreen({this.key});
+  ApplyerListScreen({this.key});
 
   @override
   State<ApplyerListScreen> createState() => _ApplyerListScreenState();
 }
 
 class _ApplyerListScreenState extends State<ApplyerListScreen> {
-List data= [];
+  List data= [];
   @override
   void initState() {
     super.initState();

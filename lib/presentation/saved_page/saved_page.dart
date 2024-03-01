@@ -67,7 +67,8 @@ class _SavedPageState extends State<SavedPage> {
                 // Filter jobs based on selected price range
                 if (widget.minSalary != null && widget.maxSalary != null) {
                   filteredJobs = filteredJobs.where((job) =>
-                  double.parse(job.lowestsalary) >= widget.minSalary! && double.parse(job.highestsalary) <= widget.maxSalary!
+                  double.parse(job.lowestsalary) >= widget.minSalary! &&
+                      double.parse(job.highestsalary) <= widget.maxSalary!
                   ).toList();
                 }
 
@@ -78,6 +79,21 @@ class _SavedPageState extends State<SavedPage> {
 
                 if (widget.selectedCategories != null) {
                   filteredJobs = filteredJobs.where((job) => job.selectedOption == widget.selectedCategories).toList();
+                }
+
+                // Filter out jobs with expired deadlines
+                filteredJobs = filteredJobs.where((job) {
+                  // Parse deadline date string to DateTime object
+                  DateTime deadline = DateTime.parse(job.deadline);
+                  // Check if the deadline has already passed
+                  return deadline.isAfter(DateTime.now());
+                }).toList();
+
+                if (filteredJobs.isEmpty) {
+                  // Display a message or widget indicating that no jobs are available
+                  return Center(
+                    child: Text("No jobs available."),
+                  );
                 }
 
                 return ListView.separated(
