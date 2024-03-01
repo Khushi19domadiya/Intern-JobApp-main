@@ -5,19 +5,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saumil_s_application/core/utils/image_constant.dart';
 import 'package:saumil_s_application/core/utils/size_utils.dart';
 import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
-import '../../controller/jobController.dart';
-// import '../../models/post_job_model.dart';
-import '../../models/user_model.dart';
-import '../../widgets/app_bar/appbar_leading_image.dart';
-import '../../widgets/app_bar/appbar_title.dart';
-import '../../widgets/app_bar/appbar_trailing_image.dart';
-import '../../widgets/app_bar/custom_app_bar.dart';
-import '../apply_job_screen/apply_job_screen.dart';
-import '../job_details_page/applyer_list_screen.dart';
-import '../filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
-import '../filter_bottomsheet/filter_bottomsheet.dart';
-import '../../controller/jobController.dart';
+import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
+import 'package:saumil_s_application/presentation/job_details_page/applyer_list_screen.dart';
+import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
+import 'package:saumil_s_application/presentation/filter_bottomsheet/filter_bottomsheet.dart';
+import 'package:saumil_s_application/controller/jobController.dart';
+import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
+import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
+import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 
+import '../../widgets/app_bar/appbar_title.dart';
 
 class SavedPage extends StatefulWidget {
   String? selectedJobCategory;
@@ -63,49 +61,17 @@ class _SavedPageState extends State<SavedPage> {
         body: Padding(
           padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
           child: FutureBuilder<List<PostJobModel>>(
-            future: _controller.fetchUserPostedJobs(_user!.uid), // Fetch only user's posted jobs
+            future: _getJobsFuture(), // Future based on user role
             builder: (context, AsyncSnapshot<List<PostJobModel>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                final List<PostJobModel>? userPostedJobs = snapshot.data;
+                final List<PostJobModel>? jobs = snapshot.data;
 
-                if (userPostedJobs == null || userPostedJobs.isEmpty) {
-                  // Display a message or widget indicating that no jobs are available
+                if (jobs == null || jobs.isEmpty) {
                   return Center(child: Text("No jobs available."));
-                }
-
-                // Apply filters
-                List<PostJobModel> filteredJobs = userPostedJobs;
-
-                if (widget.minSalary != null && widget.maxSalary != null) {
-                  filteredJobs = filteredJobs.where((job) =>
-                  double.parse(job.lowestsalary) >= widget.minSalary! &&
-                      double.parse(job.highestsalary) <= widget.maxSalary!
-                  ).toList();
-                }
-
-                if (widget.selectedJobCategory != null) {
-                  filteredJobs = filteredJobs.where((job) => job.jobType == widget.selectedJobCategory).toList();
-                }
-
-                if (widget.selectedCategories != null) {
-                  filteredJobs = filteredJobs.where((job) => job.selectedOption == widget.selectedCategories).toList();
-                }
-
-                // Filter out jobs with expired deadlines
-                filteredJobs = filteredJobs.where((job) {
-                  // Parse deadline date string to DateTime object
-                  DateTime deadline = DateTime.parse(job.deadline);
-                  // Check if the deadline has already passed
-                  return deadline.isAfter(DateTime.now());
-                }).toList();
-
-                if (filteredJobs.isEmpty) {
-                  // Display a message or widget indicating that no jobs are available
-                  return Center(child: Text("No jobs available after applying filters."));
                 }
 
                 return ListView.separated(
@@ -114,9 +80,9 @@ class _SavedPageState extends State<SavedPage> {
                   separatorBuilder: (context, index) {
                     return SizedBox(height: 12.v);
                   },
-                  itemCount: filteredJobs.length,
+                  itemCount: jobs.length,
                   itemBuilder: (context, index) {
-                    PostJobModel model = filteredJobs[index];
+                    PostJobModel model = jobs[index];
                     return SavedItemWidget(
                       onTapBag: () {
                         if (userRole == "e") {
@@ -192,5 +158,15 @@ class _SavedPageState extends State<SavedPage> {
 
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  Future<List<PostJobModel>> _getJobsFuture() async {
+    if (userRole == 'e') {
+      // Fetch only current user's posted jobs
+      return _controller.fetchUserPostedJobs(_user!.uid);
+    } else {
+      // Fetch all jobs
+      return _controller.fetchJobDataFromFirestore(userRole!);
+    }
   }
 }
