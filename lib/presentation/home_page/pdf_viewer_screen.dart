@@ -63,7 +63,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
         appBar: AppBar(
           title: Text('PDF Viewer'),
           actions: [IconButton(onPressed: (){
-
             Get.to(()=>PdfDownloader(pdfUrl: widget.pdfUrl,));
           }, icon: Icon(Icons.download,color: primaryBlack,))],
         ),

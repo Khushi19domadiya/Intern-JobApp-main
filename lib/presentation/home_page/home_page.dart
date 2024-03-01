@@ -82,17 +82,37 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
   getClientStream() async {
     var currentTime = Timestamp.now();
     var data = await FirebaseFirestore.instance
         .collection('postJob')
-        .where('deadline', isGreaterThan: currentTime)
         .orderBy('title')
         .get();
+
+    // Filter out records with a deadline that has already passed or equals the current date
+    var validData = data.docs.where((doc) {
+      var deadline = doc['deadline'] as Timestamp;
+      return deadline.toDate().isAfter(DateTime.now());
+    }).toList();
+
     setState(() {
-      allResults = data.docs;
+      allResults = validData;
     });
   }
+
+
+  // getClientStream() async {
+  //   var currentTime = Timestamp.now();
+  //   var data = await FirebaseFirestore.instance
+  //       .collection('postJob')
+  //       .where('deadline', isGreaterThan: currentTime) // Only fetch recommendations with a deadline after the current date
+  //       .orderBy('title')
+  //       .get();
+  //   setState(() {
+  //     allResults = data.docs;
+  //   });
+  // }
 
   @override
   void dispose() {
