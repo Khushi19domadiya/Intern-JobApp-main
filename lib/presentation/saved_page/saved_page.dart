@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:saumil_s_application/core/app_export.dart';
-import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
+import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
+import 'package:saumil_s_application/core/utils/image_constant.dart';
+import 'package:saumil_s_application/core/utils/size_utils.dart';
+import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
 import '../../controller/jobController.dart';
+// import '../../models/post_job_model.dart';
 import '../../models/user_model.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
@@ -14,6 +16,8 @@ import '../apply_job_screen/apply_job_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
 import '../filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
 import '../filter_bottomsheet/filter_bottomsheet.dart';
+import '../../controller/jobController.dart';
+
 
 class SavedPage extends StatefulWidget {
   String? selectedJobCategory;
@@ -34,9 +38,9 @@ class SavedPage extends StatefulWidget {
 }
 
 class _SavedPageState extends State<SavedPage> {
-  final jobController controller = Get.put(jobController());
+  final jobController _controller = Get.put(jobController());
   String? userRole;
-  final User? user = FirebaseAuth.instance.currentUser;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -45,7 +49,7 @@ class _SavedPageState extends State<SavedPage> {
   }
 
   void fetchUserRole() async {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(_user!.uid).get();
     setState(() {
       userRole = userDoc['role'];
     });
@@ -59,12 +63,23 @@ class _SavedPageState extends State<SavedPage> {
         body: Padding(
           padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
           child: FutureBuilder<List<PostJobModel>>(
-            future: controller.fetchJobDataFromFirestore(userRole.toString()),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                List<PostJobModel> filteredJobs = snapshot.data;
+            future: _controller.fetchUserPostedJobs(_user!.uid), // Fetch only user's posted jobs
+            builder: (context, AsyncSnapshot<List<PostJobModel>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                final List<PostJobModel>? userPostedJobs = snapshot.data;
 
-                // Filter jobs based on selected price range
+                if (userPostedJobs == null || userPostedJobs.isEmpty) {
+                  // Display a message or widget indicating that no jobs are available
+                  return Center(child: Text("No jobs available."));
+                }
+
+                // Apply filters
+                List<PostJobModel> filteredJobs = userPostedJobs;
+
                 if (widget.minSalary != null && widget.maxSalary != null) {
                   filteredJobs = filteredJobs.where((job) =>
                   double.parse(job.lowestsalary) >= widget.minSalary! &&
@@ -72,7 +87,6 @@ class _SavedPageState extends State<SavedPage> {
                   ).toList();
                 }
 
-                // Apply other filters
                 if (widget.selectedJobCategory != null) {
                   filteredJobs = filteredJobs.where((job) => job.jobType == widget.selectedJobCategory).toList();
                 }
@@ -91,9 +105,7 @@ class _SavedPageState extends State<SavedPage> {
 
                 if (filteredJobs.isEmpty) {
                   // Display a message or widget indicating that no jobs are available
-                  return Center(
-                    child: Text("No jobs available."),
-                  );
+                  return Center(child: Text("No jobs available after applying filters."));
                 }
 
                 return ListView.separated(
@@ -110,15 +122,13 @@ class _SavedPageState extends State<SavedPage> {
                         if (userRole == "e") {
                           Get.to(() => ApplyerListScreen());
                         } else {
-                          Get.to(() => ApplyJobScreen(jobId: model.id,));
+                          Get.to(() => ApplyJobScreen(jobId: model.id));
                         }
                       },
                       model: model,
                     );
                   },
                 );
-              } else {
-                return const Center(child: CircularProgressIndicator());
               }
             },
           ),

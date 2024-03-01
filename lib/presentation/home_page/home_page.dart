@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 17.v),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: _buildFrame(context, userId.toString()),
+                        child: _buildFrame(context),
                       ),
                       SizedBox(height: 22.v),
                       Padding(
@@ -183,30 +183,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
 
-          floatingActionButton: GestureDetector(
+        floatingActionButton: GestureDetector(
           onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => NotificationsGeneralPage(),
-    ),
-    );
-    },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.black87,
-        ),
-        child: Icon(
-          Icons.notifications,
-          color: Colors.white, // Change color to black or any other dark color
-          size: 30,
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NotificationsGeneralPage(),
+              ),
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black87,
+            ),
+            child: Icon(
+              Icons.notifications,
+              color: Colors.white, // Change color to black or any other dark color
+              size: 30,
+            ),
+          ),
         ),
       ),
-    ),
-    ),
     );
   }
 
@@ -311,16 +311,15 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-
-
     );
   }
 
-  Widget _buildFrame(BuildContext context, String userId) {
+
+  Widget _buildFrame(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
       child: FutureBuilder<List<PostJobModel>>(
-        future: controller.fetchJobDataFromFirestore(userRole ?? "j"),
+        future: controller.fetchUserPostedJobs(userId), // Pass userId to fetch only user's posted jobs
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return Row(

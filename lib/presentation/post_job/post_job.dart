@@ -34,41 +34,38 @@ class _PostJobState extends State<PostJob> {
   TextEditingController addressController = TextEditingController();
   TextEditingController experienceController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
-  TextEditingController datePickerController= TextEditingController();
+  TextEditingController datePickerController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _selectedRadio;
   String? _selectGender;
-
   List<String> _selectedItems = [];
-
   DateTime? selectedDate;
   String? _selectedOption;
 
-
   final userRepo = Get.put(UserRepository());
-
-  var collection = FirebaseFirestore.instance.collection("personalinfo");
-  User? userId = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    // Generate the document ID here
+    String newDocumentId = FirebaseFirestore.instance.collection("postJob").doc().id;
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
         body: SizedBox(
-          width: SizeUtils.width,
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Form(
               key: _formKey,
               child: Container(
                 width: double.maxFinite,
-                padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 31.v),
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 31.0),
                 child: Column(
                   children: [
                     _buildInputField1(context),
-                    SizedBox(height: 20.v),
+                    SizedBox(height: 20.0),
                     _buildInputField2(context),
                     SizedBox(height: 20.v),
                     _buildInputField3(context),
@@ -95,7 +92,7 @@ class _PostJobState extends State<PostJob> {
             ),
           ),
         ),
-        bottomNavigationBar: _buildContinueButton(context),
+        bottomNavigationBar: _buildContinueButton(context, newDocumentId),
       ),
     );
   }
@@ -588,7 +585,7 @@ class _PostJobState extends State<PostJob> {
     );
   }
 
-  Widget _buildContinueButton(BuildContext context) {
+  Widget _buildContinueButton(BuildContext context, String newDocumentId) {
     return CustomElevatedButton(
       text: "POST",
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),
@@ -597,24 +594,25 @@ class _PostJobState extends State<PostJob> {
         if (_validateRadio() != null) {
           // If validation fails, show an error message
           CommonMethod().getXSnackBar("Error", _validateRadio() ?? "", red);
-        }
-        else if (_validateGender() != null) {
+        } else if (_validateGender() != null) {
           // If validation fails, show an error message
           CommonMethod().getXSnackBar("Error", _validateGender() ?? "", red);
         }
         // Validate the select skills field
         else if (_selectedItems.isEmpty) {
           // If no skills are selected, show an error message
-          CommonMethod().getXSnackBar("Error", "Please select at least one skill", red);
-        }
-        else if (datePickerController.text.isEmpty) {
+          CommonMethod().getXSnackBar(
+              "Error", "Please select at least one skill", red);
+        } else if (datePickerController.text.isEmpty) {
           // Show an error message if the deadline is empty
-          CommonMethod().getXSnackBar("Error", "Please select a deadline", red);
+          CommonMethod().getXSnackBar(
+              "Error", "Please select a deadline", red);
         }
         // Proceed with form validation if all previous validations pass
         else if (_formKey.currentState?.validate() ?? false) {
           // All fields are valid
           saveJobPost(
+            id: newDocumentId, // Pass the document ID
             title: titleController.text,
             lowestsalary: lsalaryController.text,
             highestsalary: hsalaryController.text,
@@ -623,8 +621,9 @@ class _PostJobState extends State<PostJob> {
             about: aboutController.text,
             deadline: datePickerController.text,
             selectedSkills: _selectedItems,
-            selectedOption: _selectedOption,// Pass the selected skills
+            selectedOption: _selectedOption, // Pass the selected skills
           );
+
           // Redirect to the settings page only if all fields are valid
           Get.to(() => HomeContainerScreen());
         }
@@ -633,6 +632,7 @@ class _PostJobState extends State<PostJob> {
   }
 
   Future<void> saveJobPost({
+    required String id, // Accept document ID as a parameter
     required String title,
     required String lowestsalary,
     required String highestsalary,
@@ -646,11 +646,11 @@ class _PostJobState extends State<PostJob> {
     try {
       // Reference to the "postJob" collection
       CollectionReference jobCollection = FirebaseFirestore.instance.collection("postJob");
-      DocumentReference newDocumentRef = jobCollection.doc(); // Generates a unique document ID
-      String newDocumentId = newDocumentRef.id;
+
       User? currentUser = FirebaseAuth.instance.currentUser;
 
       PostJobModel job = PostJobModel(
+        id: id, // Assign the document ID to the model
         title: title,
         lowestsalary: lowestsalary,
         highestsalary: highestsalary,
@@ -662,11 +662,11 @@ class _PostJobState extends State<PostJob> {
         gender: _selectGender,
         selectedSkills: selectedSkills,
         selectedOption: selectedOption, // Assign the selected option to the model
-        id: newDocumentId, userId: currentUser!.uid,
+        userId: currentUser!.uid,
       );
 
-      // Use the add method to create a new document with an automatically generated ID
-      await jobCollection.add(job.toJson());
+      // Use the document ID as the ID for the document
+      await jobCollection.doc(id).set(job.toJson());
 
       await CommonMethod()
           .getXSnackBar("Success", 'Job posted successfully', success)
@@ -679,6 +679,7 @@ class _PostJobState extends State<PostJob> {
       );
     }
   }
+
 
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
