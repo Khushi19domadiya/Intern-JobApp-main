@@ -1,20 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String id;
-  final String email;
-  final String? password;
-  final String? lname;
-  final String? fname;
-  final String? phonenumber;
-  final String? address;
-  final String? profileUrl;
-  final String? role;
+   String? id;
+   String? email;
+   String? password;
+   String? lname;
+   String? fname;
+   String? phonenumber;
+   String? address;
+   String? profileUrl;
+   String? role;
+   String? token;
 
-  const UserModel({
+   UserModel({
     required this.id,
     required this.email,
     this.password,
+    this.token,
     this.fname,
     this.lname,
     this.phonenumber,
@@ -23,18 +25,29 @@ class UserModel {
     this.role,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> data) {
-    return UserModel(
-      id: data['id'],
-      email: data['email'],
-      password: data['password'],
-      fname: data['fname'],
-      lname: data['lname'],
-      phonenumber: data['phonenumber'],
-      address: data['address'],
-      profileUrl: data['profileUrl'],
-      role  : data['role'],
-    );
+   UserModel.fromMap(data) {
+    id= data['id'];
+    email= data['email'];
+    password=  data['password'];
+    token= data['token'];
+    fname= data['fname'];
+    lname= data['lname'];
+    phonenumber= data['phonenumber'];
+    address= data['address'];
+    profileUrl= data['profileUrl'];
+    role  = data['role'];
+    // return UserModel(
+    //   id: data['id'],
+    //   email: data['email'],
+    //   password: data['password'] == null ? "" : data['password'],
+    //   token: data['token'],
+    //   fname: data['fname'],
+    //   lname: data['lname'],
+    //   phonenumber: data['phonenumber'],
+    //   address: data['address'],
+    //   profileUrl: data['profileUrl'],
+    //   role  : data['role'],
+    // );
   }
 
   Map<String, dynamic> toMap() {
@@ -43,6 +56,7 @@ class UserModel {
       if (email != null) "email": email,
       if (password != null) "password": password,
       if (fname != null) "fname": fname,
+      if (token != null) "token": token,
       if (lname != null) "lname": lname,
       if (phonenumber != null) "phonenumber": phonenumber,
       if (address != null) "address": address,

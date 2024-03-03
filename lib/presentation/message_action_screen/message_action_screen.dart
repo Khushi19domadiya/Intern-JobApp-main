@@ -57,7 +57,7 @@ class MessageActionScreen extends StatelessWidget {
                           CustomTextStyles.titleSmallOnPrimaryContainerSemiBold,
                       alignment: Alignment.centerRight)
                 ])),
-            bottomNavigationBar: _buildBottomBar(context)));
+            ));
   }
 
   /// Section Widget
@@ -102,11 +102,11 @@ class MessageActionScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildBottomBar(BuildContext context) {
-    return CustomBottomBar(onChanged: (BottomBarEnum type) {
-      Navigator.pushNamed(navigatorKey.currentContext!, getCurrentRoute(type));
-    });
-  }
+  // Widget _buildBottomBar(BuildContext context) {
+  //   return CustomBottomBar(onChanged: (BottomBarEnum type) {
+  //     Navigator.pushNamed(navigatorKey.currentContext!, getCurrentRoute(type));
+  //   });
+  // }
 
   ///Handling route based on bottom click actions
   String getCurrentRoute(BottomBarEnum type) {

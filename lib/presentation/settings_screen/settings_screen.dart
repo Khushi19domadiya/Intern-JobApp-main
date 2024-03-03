@@ -85,7 +85,7 @@ class SettingsScreen extends StatelessWidget {
                                             .titleMediumOnPrimary))
                               ]))))
                 ])),
-            bottomNavigationBar: _buildBottomBar(context)));
+));
   }
 
   /// Section Widget
@@ -206,12 +206,13 @@ class SettingsScreen extends StatelessWidget {
     ]);
   }
 
-  /// Section Widget
-  Widget _buildBottomBar(BuildContext context) {
-    return CustomBottomBar(onChanged: (BottomBarEnum type) {
-      Navigator.pushNamed(navigatorKey.currentContext!, getCurrentRoute(type));
-    });
-  }
+  // /// Section Widget
+  // Widget _buildBottomBar(BuildContext context) {
+  //   return CustomBottomBar(
+  //       onChanged: (BottomBarEnum type) {
+  //     Navigator.pushNamed(navigatorKey.currentContext!, getCurrentRoute(type));
+  //   });
+  // }
 
   /// Common widget
   Widget _buildPrivacy(

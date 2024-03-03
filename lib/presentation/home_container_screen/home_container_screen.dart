@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/home_page/home_page.dart';
 import 'package:saumil_s_application/presentation/message_page/message_page.dart';
@@ -11,16 +12,26 @@ class HomeContainerScreen extends StatefulWidget {
   @override
   _HomeContainerScreenState createState() => _HomeContainerScreenState();
 }
-
+RxInt currentIndex = 0.obs;
 class _HomeContainerScreenState extends State<HomeContainerScreen> {
-  int _currentIndex = 0;
+
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: _getCurrentPage(_currentIndex),
-        bottomNavigationBar: _buildBottomBar(context),
+        body: StreamBuilder(
+          stream: currentIndex.stream,
+          builder: (context, snapshot) {
+            return _getCurrentPage(currentIndex.value);
+          }
+        ),
+        bottomNavigationBar: StreamBuilder(
+          stream: currentIndex.stream,
+          builder: (context, snapshot) {
+            return _buildBottomBar(context);
+          }
+        ),
       ),
     );
   }
@@ -28,6 +39,7 @@ class _HomeContainerScreenState extends State<HomeContainerScreen> {
   /// Section Widget
   Widget _buildBottomBar(BuildContext context) {
     return CustomBottomBar(
+      selectIndex: currentIndex.value,
       onChanged: (BottomBarEnum type) {
         _updateCurrentPage(type);
       },
@@ -52,23 +64,22 @@ class _HomeContainerScreenState extends State<HomeContainerScreen> {
 
   /// Handling page index based on bottom bar click actions
   void _updateCurrentPage(BottomBarEnum type) {
-    setState(() {
+
       switch (type) {
         case BottomBarEnum.Home:
-          _currentIndex = 0;
+          currentIndex.value = 0;
           break;
         case BottomBarEnum.Message:
-          _currentIndex = 1;
+          currentIndex.value = 1;
           break;
         case BottomBarEnum.Saved:
-          _currentIndex = 2;
+          currentIndex.value = 2;
           break;
         case BottomBarEnum.Profile:
-          _currentIndex = 3;
+          currentIndex.value = 3;
           break;
         default:
-          _currentIndex = 0;
+          currentIndex.value = 0;
       }
-    });
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,6 +23,7 @@ import 'package:saumil_s_application/widgets/custom_search_view.dart';
 import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
 import 'package:saumil_s_application/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
 
+import '../home_container_screen/home_container_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,12 +54,14 @@ class _HomePageState extends State<HomePage> {
     searchController.addListener(_onSearchChanged);
     fetchUserRole();
   }
-
-  void fetchUserRole() async {
+RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
+   fetchUserRole() async {
     var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    setState(() {
+    setState(()  {
       userRole = userDoc['role'];
     });
+    pOPJobs.value =    await controller.fetchUserPostedJobs(userId);
+     // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
   }
 
   _onSearchChanged() {
@@ -121,6 +125,8 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -141,7 +147,15 @@ class _HomePageState extends State<HomePage> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24.h),
                           child: CustomSearchView(
-                            controller: searchController,
+                            // controller: searchController,
+                            onTap: (){
+                              setState(() {
+                                currentIndex.value = 2;
+                              });
+
+                            },
+                            isRead : true,
+                            autofocus: false,
                             hintText: "Search...",
                             alignment: Alignment.center,
                           ),
@@ -236,6 +250,34 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  Widget _buildEightyEight(BuildContext context) {
+    return Align(
+        alignment: Alignment.center,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.h),
+            child: ListView.separated(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              separatorBuilder: (
+                  context,
+                  index,
+                  ) {
+                return SizedBox(
+                  height: 16.v,
+                );
+              },
+              itemCount: 12,
+              itemBuilder: (context, index) {
+                return SizedBox();
+                // return EightyeightItemWidget();
+              },
+            ),
+     ),
+    );
+
+  }
+
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(

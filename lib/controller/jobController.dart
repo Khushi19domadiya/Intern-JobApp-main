@@ -19,7 +19,7 @@ class jobController extends GetxController{
   // RxList<postjobModel> jobDataList = <postjobModel>[].obs;
   User? user = FirebaseAuth.instance.currentUser;
 
-  Future<List<PostJobModel>> fetchJobDataFromFirestore(String role) async {
+  Future<List<PostJobModel>>  fetchJobDataFromFirestore(String role) async {
 
 
 log('----fetchJobDataFromFirestore----');

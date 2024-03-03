@@ -13,6 +13,7 @@ class CustomSearchView extends StatelessWidget {
     this.textStyle,
     this.textInputType = TextInputType.text,
     this.maxLines,
+    this.onTap,
     this.hintText,
     this.hintStyle,
     this.prefix,
@@ -21,6 +22,7 @@ class CustomSearchView extends StatelessWidget {
     this.suffixConstraints,
     this.contentPadding,
     this.borderDecoration,
+    this.isRead,
     this.fillColor,
     this.filled = true,
     this.validator,
@@ -52,6 +54,7 @@ class CustomSearchView extends StatelessWidget {
   final TextStyle? hintStyle;
 
   final Widget? prefix;
+  final bool? isRead;
 
   final BoxConstraints? prefixConstraints;
 
@@ -69,7 +72,8 @@ class CustomSearchView extends StatelessWidget {
 
   final FormFieldValidator<String>? validator;
 
-  final Function(String)? onChanged;
+  final Function(String?)? onChanged;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +93,8 @@ class CustomSearchView extends StatelessWidget {
           controller: controller,
           focusNode: focusNode ?? FocusNode(),
           autofocus: autofocus!,
+          onTap : onTap,
+          readOnly: isRead ?? false,
           style: textStyle ?? CustomTextStyles.titleMediumBluegray400,
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,

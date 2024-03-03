@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/servies/firebase_messing.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
 import '../../models/personal_information.dart';
@@ -67,7 +68,7 @@ class ConfirmationDialog extends StatelessWidget {
               User? currentUser = FirebaseAuth.instance.currentUser;
               if(currentUser != null){
                 log("-----11----selectedRole----11---->>>>> ${selectedRole.toString()}");
-                await StoreData().addOrUpdateUserData(UserModel(id: currentUser.uid, email: currentUser.email.toString(),role: selectedRole));
+                await StoreData().addOrUpdateUserData(UserModel(id: currentUser.uid, email: currentUser.email.toString(),role: selectedRole,token: storage.read("fcmToken")));
                 Navigator.pushNamed(
                     context, AppRoutes.homeContainerScreen);
               }

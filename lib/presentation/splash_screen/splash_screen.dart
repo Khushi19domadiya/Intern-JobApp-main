@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/controller/authController.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/servies/firebase_messing.dart';
 
 import '../home_container_screen/home_container_screen.dart';
 import '../onboarding_three_screen/onboarding_three_screen.dart';
@@ -24,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     init();
     super.initState();
+    FirebaseNotificationService.getNotification();
   }
 
   Future init() async {

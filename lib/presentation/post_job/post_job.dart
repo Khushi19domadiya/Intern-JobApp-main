@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
+import 'package:saumil_s_application/servies/firebase_messing.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
@@ -664,9 +666,39 @@ class _PostJobState extends State<PostJob> {
         selectedOption: selectedOption, // Assign the selected option to the model
         userId: currentUser!.uid,
       );
-
-      // Use the document ID as the ID for the document
       await jobCollection.doc(id).set(job.toJson());
+      allUserList.clear();
+      await fetchAllUsers();
+
+      allUserList.forEach((element) async {
+        if(element.role == "j"){
+          Dio dio = Dio();
+          var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+          var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
+          var responce = await dio.post(url,
+            data:  {
+              "notification": {
+                "title": title,
+                "body": "In Job App their is one job was posted recently  it is ${title}, For better experience click this notification",
+                "sound": "default"
+              },
+              "priority": "High",
+              "to": element.token,
+
+            },
+            options: Options(
+                headers: headers
+            ),);
+          if(responce.statusCode == 200){
+            print("-----${responce.data.toString}");
+          }
+        }
+
+      });
+      // Use the document ID as the ID for the document
+
 
       await CommonMethod()
           .getXSnackBar("Success", 'Job posted successfully', success)
@@ -679,7 +711,18 @@ class _PostJobState extends State<PostJob> {
       );
     }
   }
-
+  List<UserModel> allUserList = [];
+   fetchAllUsers() async {
+    QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
+    List<UserModel> users = [];
+    userDocs.docs.forEach((doc) {
+      users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
+    });
+    setState(() {
+      allUserList = users;
+    });
+    // Proceed with the rest of your logic here
+  }
 
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {

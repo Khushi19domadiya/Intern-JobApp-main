@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/presentation/profile_page/widgets/fortyseven_item_widget.dart';
 import 'package:saumil_s_application/presentation/profile_page/widgets/profile_item_widget.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
@@ -95,13 +96,14 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        String firstName = snapshot.data?['fname'] ?? 'Anonymous';
-        String lastName = snapshot.data?['lname'] ?? '';
+        UserModel  userData = UserModel.fromMap(snapshot.data?.data() ?? {});
+        String firstName = userData.fname ?? 'Anonymous';
+        String lastName =  userData.lname ?? '';
         String displayName = '$firstName $lastName';
 
         // Check if 'photoUrl' is not null
-        if (snapshot.data?['profileUrl'] != null) {
-          String photoUrl = snapshot.data?['profileUrl'];
+        if (userData.profileUrl != null) {
+          String photoUrl = userData.profileUrl ?? "";
           return SizedBox(
             height: 225.v,
             width: 327.h,

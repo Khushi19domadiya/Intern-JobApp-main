@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 
 class CustomBottomBar extends StatefulWidget {
-  CustomBottomBar({this.onChanged});
-
   Function(BottomBarEnum)? onChanged;
+  int selectIndex;
+  CustomBottomBar({this.onChanged,required this.selectIndex});
+
 
   @override
   CustomBottomBarState createState() => CustomBottomBarState();
@@ -64,7 +65,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
         showUnselectedLabels: false,
         selectedFontSize: 0,
         elevation: 0,
-        currentIndex: selectedIndex,
+        currentIndex: widget.selectIndex,
         type: BottomNavigationBarType.fixed,
         items: List.generate(bottomMenuList.length, (index) {
           return BottomNavigationBarItem(
@@ -114,7 +115,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
           );
         }),
         onTap: (index) {
-          selectedIndex = index;
+          widget.selectIndex = index;
           widget.onChanged?.call(bottomMenuList[index].type);
           setState(() {});
         },

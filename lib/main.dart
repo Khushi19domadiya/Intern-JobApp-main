@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'core/app_export.dart';
 import 'package:get/get.dart';
 
+import 'servies/firebase_messing.dart';
+
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 void main()async {
@@ -27,6 +29,9 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           theme: theme,
           title: 'saumil_s_application',
+          onInit: (){
+            FirebaseNotificationService.initializeService();
+          },
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splashScreen,
           routes: AppRoutes.routes,
