@@ -54,14 +54,14 @@ class _HomePageState extends State<HomePage> {
     searchController.addListener(_onSearchChanged);
     fetchUserRole();
   }
-RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
-   fetchUserRole() async {
+  RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
+  fetchUserRole() async {
     var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
     setState(()  {
       userRole = userDoc['role'];
     });
     pOPJobs.value =    await controller.fetchUserPostedJobs(userId);
-     // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
+    // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
   }
 
   _onSearchChanged() {
@@ -215,7 +215,7 @@ RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
                         ),
                       ),
                       SizedBox(height: 15.v),
-                      _buildTrendingJobs(),
+                      _buildEightyEight(context),
                     ],
                   ),
                 ],
@@ -253,30 +253,44 @@ RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
 
   Widget _buildEightyEight(BuildContext context) {
     return Align(
-        alignment: Alignment.center,
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.h),
-            child: ListView.separated(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.h),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Something went wrong');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.data!.docs.isEmpty) {
+              return Center(child: Text('No jobs available'));
+            }
+
+            return ListView.separated(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              separatorBuilder: (
-                  context,
-                  index,
-                  ) {
-                return SizedBox(
-                  height: 16.v,
-                );
+              separatorBuilder: (context, index) {
+                return SizedBox(height: 16.v);
               },
-              itemCount: 12,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                return SizedBox();
-                // return EightyeightItemWidget();
+                final DocumentSnapshot document = snapshot.data!.docs[index];
+                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                return EightyeightItemWidget(jobData: data);
               },
-            ),
-     ),
+            );
+          },
+        ),
+      ),
     );
-
   }
+
+
 
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -483,7 +497,7 @@ RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
 
                         Get.to(() => ApplyerListScreen(jobId: model.id));
                       } else {
-                        Get.to(() => ApplyJobScreen(jobId: model.id));
+                        Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId,));
                       }
                     },
                     child: FrameItemWidget(
@@ -500,30 +514,56 @@ RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
     );
   }
 
+// Widget _buildTrendingJobs() {
+//   return StreamBuilder<QuerySnapshot>(
+//     stream: FirebaseFirestore.instance.collection('postJob').snapshots(),
+//     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//       if (snapshot.hasError) {
+//         return Text('Something went wrong');
+//       }
+//
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return Center(child: CircularProgressIndicator());
+//       }
+//
+//       if (snapshot.data!.docs.isEmpty) {
+//         return Center(child: Text('No jobs available'));
+//       }
+//
+//       return Column(
+//         children: snapshot.data!.docs.map((DocumentSnapshot document) {
+//           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+//           return EightyeightItemWidget(jobData: data);
+//         }).toList(),
+//       );
+//     },
+//   );
+// }
 
-  Widget _buildTrendingJobs() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('trendingJobs').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No trending jobs available'));
-        }
-
-        return Column(
-          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-            return EightyeightItemWidget(jobData: data);
-          }).toList(),
-        );
-      },
-    );
-  }
+// Widget _buildTrendingJobs() {
+//   return StreamBuilder<QuerySnapshot>(
+//     stream: FirebaseFirestore.instance.collection('trendingJobs').snapshots(),
+//     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//       if (snapshot.hasError) {
+//         return Text('Something went wrong');
+//       }
+//
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return Center(child: CircularProgressIndicator());
+//       }
+//
+//       if (snapshot.data!.docs.isEmpty) {
+//         return Center(child: Text('No trending jobs available'));
+//       }
+//
+//       return Column(
+//         children: snapshot.data!.docs.map((DocumentSnapshot document) {
+//           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+//           return EightyeightItemWidget(jobData: data);
+//         }).toList(),
+//       );
+//     },
+//   );
+// }
 }

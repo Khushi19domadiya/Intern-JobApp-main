@@ -54,8 +54,7 @@ class _SavedPageState extends State<SavedPage> {
   }
 
   void fetchUserRole() async {
-    final userDoc =
-    await FirebaseFirestore.instance.collection('Users').doc(_user!.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(_user!.uid).get();
     setState(() {
       userRole = userDoc['role'];
     });
@@ -74,8 +73,7 @@ class _SavedPageState extends State<SavedPage> {
             stream: isLoading.stream,
             builder: (context, snapshot) {
               return Padding(
-                padding: EdgeInsets.only(
-                    left: 24.h, top: 30.v, right: 24.h),
+                padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -87,12 +85,7 @@ class _SavedPageState extends State<SavedPage> {
                           // isRead : true,
                           onChanged: (String? text) {
                             if (text?.isNotEmpty ?? false) {
-                              jobList = tempSearchJob
-                                  .where((element) =>
-                              (element.title
-                                  .toLowerCase()
-                                  .contains(text ?? "")))
-                                  .toList();
+                              jobList = tempSearchJob.where((element) => (element.selectedSkills.toString().toLowerCase().contains(text ?? ""))).toList();
                             } else {
                               jobList = tempSearchJob;
                             }
@@ -104,32 +97,33 @@ class _SavedPageState extends State<SavedPage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                  if(jobList.isNotEmpty)    ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) {
-                          return SizedBox(height: 12.v);
-                        },
-                        itemCount: jobList.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) {
-                          PostJobModel model = jobList[index];
-                          return SavedItemWidget(
-                            onTapBag: () {
-                              if (userRole == "e") {
-                                Get.to(() => ApplyerListScreen(
-                                  jobId: model.id,
-                                ));
-                              } else {
-                                Get.to(() => ApplyJobScreen(
-                                  jobId: model.id,
-                                ));
-                              }
-                            },
-                            model: model,
-                          );
-                        },
-                      ),
+                      if (jobList.isNotEmpty)
+                        ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) {
+                            return SizedBox(height: 12.v);
+                          },
+                          itemCount: jobList.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            PostJobModel model = jobList[index];
+                            return SavedItemWidget(
+                              onTapBag: () {
+                                if (userRole == "e") {
+                                  Get.to(() => ApplyerListScreen(
+                                        jobId: model.id,
+                                      ));
+                                } else {
+                                  Get.to(() => ApplyJobScreen(
+                                        jobId: model.id,
+                                      ));
+                                }
+                              },
+                              model: model,
+                            );
+                          },
+                        ),
                     ],
                   ),
                 ),
@@ -187,10 +181,70 @@ class _SavedPageState extends State<SavedPage> {
         setState(() {
           widget.minSalary = value['minSalary'];
           widget.maxSalary = value['maxSalary'];
+          // Filter the job list based on the selected criteria
+          jobList = _getFilteredJobs();
         });
       }
     });
   }
+
+  List<PostJobModel> _getFilteredJobs() {
+    List<PostJobModel> filteredJobs = [];
+
+    // Filter job list based on selected criteria
+    filteredJobs = tempSearchJob.where((job) {
+      bool matchesJobCategory = true;
+      bool matchesSelectedCategories = true;
+
+      // Filter by job category
+      if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
+        matchesJobCategory = (job.selectedOption == widget.selectedJobCategory);
+      }
+
+      // Filter by selected categories
+      if (widget.selectedCategories != null && widget.selectedCategories != '') {
+        // Split selected categories into a list
+        List<String> selectedCategoriesList = widget.selectedCategories!.split(',');
+
+        // Check if any of the selected categories match job's selectedOption
+        matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
+      }
+
+      // Include job if it matches job category and selected categories
+      return matchesJobCategory && matchesSelectedCategories;
+    }).toList();
+
+    return filteredJobs;
+  }
+
+  // void showFilterBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return FilterBottomsheet(
+  //         onJobCategorySelected: (category) {
+  //           setState(() {
+  //             widget.selectedJobCategory = category;
+  //           });
+  //         },
+  //         onCategories: (categories) {
+  //           setState(() {
+  //             widget.selectedCategories = categories;
+  //           });
+  //         },
+  //         minSalary: widget.minSalary ?? 5000,
+  //         maxSalary: widget.maxSalary ?? 100000,
+  //       );
+  //     },
+  //   ).then((value) {
+  //     if (value != null) {
+  //       setState(() {
+  //         widget.minSalary = value['minSalary'];
+  //         widget.maxSalary = value['maxSalary'];
+  //       });
+  //     }
+  //   });
+  // }
 
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
@@ -206,4 +260,3 @@ class _SavedPageState extends State<SavedPage> {
     }
   }
 }
-

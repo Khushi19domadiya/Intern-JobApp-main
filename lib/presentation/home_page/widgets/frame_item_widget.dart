@@ -38,67 +38,71 @@ class FrameItemWidget extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(bottom: 96.v),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 12.h,
-                    top: 4.v,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        model.title,
-                        style: CustomTextStyles.titleSmallOnPrimaryContainerBold,
-                      ),
-                      SizedBox(height: 7.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "Experience: ${model.experience} Year",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 12.h,
+                      top: 4.v,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          model.title,
+                          style: CustomTextStyles.titleSmallOnPrimaryContainerBold,
                         ),
-                      ),
-                      SizedBox(height: 11.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "Salary: (${model.highestsalary} - ${model.lowestsalary})",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                        SizedBox(height: 7.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Text(
+                            "Experience: ${model.experience} Year",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 9.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "DeadLine: ${model.deadline} ",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                        SizedBox(height: 11.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Text(
+                            "Salary: (${model.highestsalary} - ${model.lowestsalary})",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 9.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "JobType: ${model.jobType} ",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                        SizedBox(height: 9.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Text(
+                            "DeadLine: ${model.deadline} ",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 9.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "Gender: ${model.gender} ",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                        SizedBox(height: 9.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Text(
+                            "JobType: ${model.jobType} ",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 9.v),
-                      Opacity(
-                        opacity: 0.8,
-                        child: Text(
-                          "Skills: ${model.selectedSkills} ",
-                          style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                        SizedBox(height: 9.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Text(
+                            "Gender: ${model.gender} ",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 9.v),
+                        Opacity(
+                          opacity: 0.8,
+                          child: Expanded(
+                            child: Text(
+                              "Skills: ${model.selectedSkills} ",
+                              style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -46,43 +46,49 @@ class EightyeightItemWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 4.v),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                jobData['title'], // Use job title from jobData
-                                style: CustomTextStyles.titleMediumBold_1,
-                              ),
-                              SizedBox(height: 5.v),
-                              Text(
-                                jobData['company'], // Use company name from jobData
-                                style: CustomTextStyles.labelLargeGray500,
-                              ),
-                            ],
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 4.v),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  jobData['title'], // Use job title from jobData
+                                  style: CustomTextStyles.titleMediumBold_1,
+                                ),
+                                SizedBox(height: 5.v),
+                                Text(
+                                  "Applied Count : ${jobData['applyCount'].toString()}", // Use company name from jobData
+                                  style: CustomTextStyles.labelLargeGray500,
+                                ),
+                                Text(
+                                  "${jobData['about'].toString()}", // Use company name from jobData
+                                  style: CustomTextStyles.labelLargeGray500,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgComponent3,
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
-                          margin: EdgeInsets.only(bottom: 22.v),
-                        ),
+                        // CustomImageView(
+                        //   imagePath: ImageConstant.imgComponent3,
+                        //   height: 24.adaptSize,
+                        //   width: 24.adaptSize,
+                        //   margin: EdgeInsets.only(bottom: 22.v),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 12.v),
-                    Text(
-                      jobData['salary'], // Use salary from jobData
-                      style: theme.textTheme.labelLarge,
-                    ),
+                    // Text(
+                    //   jobData['salary'], // Use salary from jobData
+                    //   style: theme.textTheme.labelLarge,
+                    // ),
                     SizedBox(height: 13.v),
-                    Wrap(
-                      runSpacing: 8.v,
-                      spacing: 8.h,
-                      children: List<Widget>.generate(
-                          2, (index) => Fulltime3ItemWidget()),
-                    ),
+                    // Wrap(
+                    //   runSpacing: 8.v,
+                    //   spacing: 8.h,
+                    //   children: List<Widget>.generate(
+                    //       2, (index) => Fulltime3ItemWidget()),
+                    // ),
                   ],
                 ),
               ),

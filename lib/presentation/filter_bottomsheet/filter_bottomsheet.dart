@@ -6,12 +6,12 @@ import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
 
 class FilterBottomsheet extends StatefulWidget {
-   Function(String?) onJobCategorySelected;
-   Function(String?) onCategories;
-   double minSalary;
-   double maxSalary;
+  Function(String?) onJobCategorySelected;
+  Function(String?) onCategories;
+  double minSalary;
+  double maxSalary;
 
-   FilterBottomsheet({
+  FilterBottomsheet({
     Key? key,
     required this.onJobCategorySelected,
     required this.onCategories,

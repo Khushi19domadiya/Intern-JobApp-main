@@ -20,32 +20,45 @@ class jobController extends GetxController{
   User? user = FirebaseAuth.instance.currentUser;
 
   Future<List<PostJobModel>>  fetchJobDataFromFirestore(String role) async {
+    try {
+      log('----fetchJobDataFromFirestore----');
+      final snapshot = await FirebaseFirestore.instance.collection('postJob')
+          .get();
+      print("------------ ${snapshot.docs} ----------");
+      List<PostJobModel> jobData = snapshot.docs.map((e) =>
+          PostJobModel.fromSnapshot(e.data())).toList();
 
 
-log('----fetchJobDataFromFirestore----');
-    final snapshot = await FirebaseFirestore.instance.collection('postJob').get();
-    print("------------ ${snapshot.docs} ----------");
-    List<PostJobModel>  jobData = snapshot.docs.map((e) => PostJobModel.fromSnapshot(e.data())).toList();
+      jobData = jobData.where((job) {
+        var deadlineDateTime = DateTime.parse(job.deadline);
+        return deadlineDateTime.isAfter(DateTime.now());
+      }).toList();
 
-
-    if(role == 'e'){
-      List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
-      return myJobs;
-
-    }else{
       return jobData;
-
+    } catch (e) {
+      print('Error fetching job data: $e');
+      return [];
     }
-
-
-    // print("done");
-    // jobDataList.value = jobData;
-    // print("done ....");
-    // update();
-    log("----fetchJobDataFromFirestore----");
-    log("----jobData----" + jobData.length.toString());
-
   }
+  // if(role == 'e'){
+  //   List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
+  //   return myJobs;
+  //
+  // }else{
+  //   return jobData;
+  //
+  // }
+
+
+
+  // print("done");
+  // jobDataList.value = jobData;
+  // print("done ....");
+  // update();
+  // log("----fetchJobDataFromFirestore----");
+  // log("----jobData----" + jobData.length.toString());
+
+
 
 
   // getClientStream() async {
@@ -179,17 +192,17 @@ log('----fetchJobDataFromFirestore----');
 
 
 // Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
-  //   try {
-  //     var querySnapshot = await FirebaseFirestore.instance
-  //         .collection('postJob')
-  //         .where('userId', isEqualTo: userId)
-  //         .get();
-  //     return querySnapshot.docs
-  //         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-  //         .toList();
-  //   } catch (e) {
-  //     print('Error fetching user posted jobs: $e');
-  //     return [];
-  //   }
-  // }
+//   try {
+//     var querySnapshot = await FirebaseFirestore.instance
+//         .collection('postJob')
+//         .where('userId', isEqualTo: userId)
+//         .get();
+//     return querySnapshot.docs
+//         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+//         .toList();
+//   } catch (e) {
+//     print('Error fetching user posted jobs: $e');
+//     return [];
+//   }
+// }
 }

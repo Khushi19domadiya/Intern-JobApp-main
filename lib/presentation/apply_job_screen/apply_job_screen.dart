@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,8 +18,9 @@ import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
   final String jobId;
+  final String? postUserId;
 
-  ApplyJobScreen({required this.jobId});
+  ApplyJobScreen({required this.jobId, this.postUserId});
 
   @override
   _ApplyJobScreenState createState() => _ApplyJobScreenState();
@@ -82,8 +84,30 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
 
         });
 
+var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
+print("============{{}}}}${userData.data()!["token"]}}");
+        Dio dio = Dio();
+        var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+        var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
+        var responce = await dio.post(url,
+          data:  {
+            "notification": {
+              "title": "title",
+              "body": "In Job App their is one job was posted recently  it is , For better experience click this notification",
+              "sound": "default"
+            },
+            "priority": "High",
+            "to": "${userData.data()!["token"]}",
 
-
+          },
+          options: Options(
+              headers: headers
+          ),);
+        if(responce.statusCode == 200){
+          print("-dfdf----${responce.data.toString}");
+        }
         // Now update the document with the job ID
         await docRef.update({'id': docRef.id});
 

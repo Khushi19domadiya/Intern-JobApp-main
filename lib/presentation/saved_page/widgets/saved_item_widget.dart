@@ -42,54 +42,57 @@ class SavedItemWidget extends StatelessWidget {
               ),
 
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                // left: 0.h,
-                top: 4.v,
-              ),
+            Expanded(
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    model.title,
-                    style: CustomTextStyles.titleMediumBold_1,
-                  ),
-                  SizedBox(height: 5.v),
-                  Text(
-                    "Experience: ${model.experience} Year",
-                    style: CustomTextStyles.labelLargeGray500,
-                  ),
-                  // SizedBox(height: 12.v),
-                  Text(
-                    "Salary: (${model.highestsalary} - ${model.lowestsalary})",
-                    style: theme.textTheme.labelLarge,
-                  ),
-                  // SizedBox(height: 12.v),
-                  Text(
-                    "Gender: ${model.gender} ",
-                    style: theme.textTheme.labelLarge,
-                  ),
-                  Text(
-                    "DeadLine: ${model.deadline} ",
-                    style: theme.textTheme.labelLarge,
-                  ),
-                  Text(
-                    "Category: ${model.selectedOption} ",
-                    style: theme.textTheme.labelLarge,
-                  ),
-                  Text(
-                    "Skills: ${model.selectedSkills} ",
-                    style: theme.textTheme.labelLarge,
-                  ),
-                  SizedBox(height: 5.v),
-                  Wrap(
-                    runSpacing: 8.v,
-                    spacing: 8.h,
-                    children: List<Widget>.generate(
-                        1, (index) => Fulltime7ItemWidget(model: model,)),
-                  ),
-                ],
+              child: Padding(
+                padding: EdgeInsets.only(
+                  // left: 0.h,
+                  top: 4.v,
+                ),
+
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      model.title,
+                      style: CustomTextStyles.titleMediumBold_1,
+                    ),
+                    SizedBox(height: 5.v),
+                    Text(
+                      "Experience: ${model.experience} Year",
+                      style: CustomTextStyles.labelLargeGray500,
+                    ),
+                    // SizedBox(height: 12.v),
+                    Text(
+                      "Salary: (${model.highestsalary} - ${model.lowestsalary})",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    // SizedBox(height: 12.v),
+                    Text(
+                      "Gender: ${model.gender} ",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    Text(
+                      "DeadLine: ${model.deadline} ",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    Text(
+                      "Category: ${model.selectedOption} ",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    Text(
+                      "Skills: ${model.selectedSkills}",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    SizedBox(height: 5.v),
+                    Wrap(
+                      runSpacing: 8.v,
+                      spacing: 8.h,
+                      children: List<Widget>.generate(
+                          1, (index) => Fulltime7ItemWidget(model: model,)),
+                    ),
+                  ],
+                ),
               ),
             ),
 
