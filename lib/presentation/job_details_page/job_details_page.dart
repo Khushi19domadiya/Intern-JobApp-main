@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
+
+import '../apply_job_screen/apply_job_screen.dart';
+import '../apply_job_screen/apply_job_screen.dart';
+import '../apply_job_screen/apply_job_screen.dart';
 
 class JobDetailsPage extends StatefulWidget {
   const JobDetailsPage({Key? key}) : super(key: key);
@@ -63,6 +68,6 @@ class JobDetailsPageState extends State<JobDetailsPage>
 
   /// Navigates to the applyJobScreen when the action is triggered.
   onTapApplyNow(BuildContext context) {
-    // Navigator.pushNamed(context, AppRoutes.applyJobScreen);
+    // Navigator.pushNamed(context, AppRoutes.ApplyJobScreen);
   }
 }
