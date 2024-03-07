@@ -16,6 +16,7 @@ import 'package:saumil_s_application/presentation/logout_popup_dialog/logout_pop
 import '../logout_popup_dialog/logout_popup_dialog.dart';
 import '../logout_popup_dialog/logout_popup_dialog.dart';
 import '../logout_popup_dialog/logout_popup_dialog.dart';
+import 'forgotPassword.dart';
 
 // ignore_for_file: must_be_immutable
 class SettingsScreen extends StatelessWidget {
@@ -171,6 +172,14 @@ class SettingsScreen extends StatelessWidget {
         onTapPrivacy(context);
       }),
       SizedBox(height: 14.v),
+      Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
+      SizedBox(height: 14.v),
+      _buildPrivacy(context,
+          thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
+          experienceText: "Forgot Passoword", onTapPrivacy: () {
+            onTapPassword(context);
+          }),
+      SizedBox(height: 14.v),
       Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h))
     ]);
   }
@@ -321,4 +330,12 @@ class SettingsScreen extends StatelessWidget {
               insetPadding: const EdgeInsets.only(left: 0),
             ));
   }
+
+  void onTapPassword(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+    );
+  }
+
 }

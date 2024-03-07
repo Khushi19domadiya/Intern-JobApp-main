@@ -666,22 +666,39 @@ class _PostJobState extends State<PostJob> {
         selectedOption: selectedOption, // Assign the selected option to the model
         userId: currentUser!.uid,
       );
-
-      // Update the postjobcount of the current user
-      await FirebaseFirestore.instance.collection('Users').doc(currentUser.uid).update({
-        'postjobcount': FieldValue.increment(1),
-      });
-
-      // Add the job to the "postJob" collection
       await jobCollection.doc(id).set(job.toJson());
       allUserList.clear();
       await fetchAllUsers();
 
       allUserList.forEach((element) async {
         if(element.role == "j"){
-          // Your FCM notification logic here
+          Dio dio = Dio();
+          var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+          var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
+          var responce = await dio.post(url,
+            data:  {
+              "notification": {
+                "title": title,
+                "body": "In Job App their is one job was posted recently  it is ${title}, For better experience click this notification",
+                "sound": "default"
+              },
+              "priority": "High",
+              "to": element.token,
+
+            },
+            options: Options(
+                headers: headers
+            ),);
+          if(responce.statusCode == 200){
+            print("-----${responce.data.toString}");
+          }
         }
+
       });
+      // Use the document ID as the ID for the document
+
 
       await CommonMethod()
           .getXSnackBar("Success", 'Job posted successfully', success)
@@ -694,10 +711,8 @@ class _PostJobState extends State<PostJob> {
       );
     }
   }
-
-
   List<UserModel> allUserList = [];
-   fetchAllUsers() async {
+  fetchAllUsers() async {
     QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
