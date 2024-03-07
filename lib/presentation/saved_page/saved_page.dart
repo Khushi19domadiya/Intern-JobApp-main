@@ -15,7 +15,6 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
-
 import '../../widgets/app_bar/appbar_title.dart';
 
 class SavedPage extends StatefulWidget {
@@ -81,16 +80,22 @@ class _SavedPageState extends State<SavedPage> {
                         alignment: Alignment.center,
                         child: CustomSearchView(
                           // controller: searchController,
-
                           // isRead : true,
                           onChanged: (String? text) {
                             if (text?.isNotEmpty ?? false) {
-                              jobList = tempSearchJob.where((element) => (element.selectedSkills.toString().toLowerCase().contains(text ?? ""))).toList();
+                              if (userRole == 'j') {
+                                // If user role is 'j' (job seeker), search by job title
+                                jobList = tempSearchJob.where((element) => element.title.toLowerCase().contains(text ?? "")).toList();
+                              } else if (userRole == 'e') {
+                                // If user role is 'e' (employer), search by selected skills
+                                jobList = tempSearchJob.where((element) => element.selectedSkills.toString().toLowerCase().contains(text ?? "")).toList();
+                              }
                             } else {
                               jobList = tempSearchJob;
                             }
                             isLoading.refresh();
                           },
+
                           // autofocus: false,
                           hintText: "Search...",
                           alignment: Alignment.center,
@@ -211,11 +216,14 @@ class _SavedPageState extends State<SavedPage> {
       }
 
       // Include job if it matches job category and selected categories
-      return matchesJobCategory && matchesSelectedCategories;
+      // Also, include if the job category is "Part Time" or "Full Time"
+      return (matchesJobCategory || job.selectedOption == widget.selectedJobCategory) && matchesSelectedCategories;
     }).toList();
 
     return filteredJobs;
   }
+
+
 
   // void showFilterBottomSheet(BuildContext context) {
   //   showModalBottomSheet(
