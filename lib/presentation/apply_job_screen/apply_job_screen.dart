@@ -84,8 +84,8 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
 
         });
 
-var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
-print("============{{}}}}${userData.data()!["token"]}}");
+        var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
+        print("============{{}}}}${userData.data()!["token"]}}");
         Dio dio = Dio();
         var url = 'https://fcm.googleapis.com/fcm/send';
 //queryParameters will the parameter required by your API.
@@ -95,7 +95,7 @@ print("============{{}}}}${userData.data()!["token"]}}");
           data:  {
             "notification": {
               "title": "title",
-              "body": "In Job App their is one job was posted recently  it is , For better experience click this notification",
+              "body": "One user was recently applied in your posted job the job name is -- and user name is --",
               "sound": "default"
             },
             "priority": "High",

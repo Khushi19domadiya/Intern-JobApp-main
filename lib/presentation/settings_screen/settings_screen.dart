@@ -176,7 +176,7 @@ class SettingsScreen extends StatelessWidget {
       SizedBox(height: 14.v),
       _buildPrivacy(context,
           thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
-          experienceText: "Forgot Passoword", onTapPrivacy: () {
+          experienceText: "Change Passoword", onTapPrivacy: () {
             onTapPassword(context);
           }),
       SizedBox(height: 14.v),
