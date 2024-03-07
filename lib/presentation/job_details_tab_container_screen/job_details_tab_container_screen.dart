@@ -14,7 +14,7 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_title.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 
-class JobDetailsTabContainerScreen extends StatefulWidget {
+  class JobDetailsTabContainerScreen extends StatefulWidget {
 
   final PostJobModel model;
 
@@ -224,10 +224,16 @@ class JobDetailsTabContainerScreenState
             child: InkWell(
               onTap: () {
                 // Navigate to the description page when the tab is tapped
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => ApplyJobScreen(jobId: widget.model.id, jobTitle: widget.model.title,), // Replace with your description page
+                //   ),
+                // );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ApplyJobScreen(jobId: widget.model.id,), // Replace with your description page
+                    builder: (context) => JobDetailsPage(postJobModel: widget.model), // Replace with your description page
                   ),
                 );
               },

@@ -17,6 +17,7 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
 
 import '../../widgets/app_bar/appbar_title.dart';
+import '../job_details_page/job_details_page.dart';
 
 class SavedPage extends StatefulWidget {
   String? selectedJobCategory;
@@ -144,8 +145,11 @@ class _SavedPageState extends State<SavedPage> {
                                   jobId: model.id,
                                 ));
                               } else {
-                                Get.to(() => ApplyJobScreen(
-                                  jobId: model.id,
+                                // Get.to(() => ApplyJobScreen(
+                                //   jobId: model.id, jobTitle:model.title,
+                                // ));
+                                Get.to(() => JobDetailsPage(
+                                  postJobModel: model,
                                 ));
                               }
                             },

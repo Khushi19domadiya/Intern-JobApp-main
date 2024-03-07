@@ -33,7 +33,7 @@ class _PdfDownloaderState extends State<PdfDownloader> {
         Directory(downloadPath).createSync(recursive: true);
 
         // Write response body to file
-        File pdfFile = File('$downloadPath/Resume.pdf');
+        File pdfFile = File('$downloadPath/${DateTime.now().microsecondsSinceEpoch}.pdf');
         await pdfFile.writeAsBytes(response.bodyBytes);
 
         setState(() {

@@ -25,6 +25,7 @@ import 'package:saumil_s_application/presentation/notifications_my_proposals_tab
 
 import '../home_container_screen/home_container_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
+import '../job_details_page/job_details_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -497,7 +498,8 @@ class _HomePageState extends State<HomePage> {
 
                         Get.to(() => ApplyerListScreen(jobId: model.id));
                       } else {
-                        Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId,));
+                        // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
+                        Get.to(() => JobDetailsPage(postJobModel: model,));
                       }
                     },
                     child: FrameItemWidget(

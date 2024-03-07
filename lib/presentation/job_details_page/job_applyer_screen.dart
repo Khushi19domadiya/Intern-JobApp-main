@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/presentation/home_page/pdf_viewer_screen.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
+
 class JobApplyerScreen extends StatefulWidget {
   final String jobId;
 
@@ -17,6 +20,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController frameOneController = TextEditingController();
+  String userId = "";
 
   Map<String, dynamic>? jobData;
 
@@ -24,20 +28,19 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
   void initState() {
     super.initState();
     fetchDocumentList();
+    fetchAllUsers();
   }
 
   Future<void> fetchDocumentList() async {
     try {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection("job_applications")
-          .doc(widget.jobId)
-          .get();
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection("job_applications").doc(widget.jobId).get();
 
       if (documentSnapshot.exists) {
         jobData = documentSnapshot.data() as Map<String, dynamic>;
         fullNameController.text = jobData!['full_name'];
         emailController.text = jobData!['email'];
         frameOneController.text = jobData!['website_portfolio'];
+        userId = jobData?["userId"];
         setState(() {});
       } else {
         print('Document does not exist');
@@ -69,6 +72,72 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                 SizedBox(height: 18.0),
                 _buildCvFields(),
                 SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
+                        text: 'Approve',
+                        // child: Text('Approve'),
+                        onPressed: () async {
+                          String token = "";
+                          allUserList.forEach((element) {
+                            if (element.id == userId) {
+                              token = (element.token ?? "");
+                            }
+                          });
+
+                          // Add your approve logic here
+                          Dio dio = Dio();
+                          var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+                          var headers = {
+                            'Content-type': 'application/json; charset=utf-8',
+                            "Authorization":
+                                "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
+                          };
+                          var responce = await dio.post(
+                            url,
+                            data: {
+                              "notification": {
+                                "title": "Job App",
+                                "body": "You are approve for next process",
+                                "sound": "default"
+                              },
+                              "priority": "High",
+                              "to": token,
+                            },
+                            options: Options(headers: headers),
+                          );
+                          if (responce.statusCode == 200) {
+                            print("-dfdf----${responce.data.toString}");
+                            Get.back();
+                          }
+                        },
+                        height: 46,
+                      ),
+                    ),
+                    SizedBox(width: 16), // Add some spacing between the buttons
+                    Expanded(
+                      child: CustomElevatedButton(
+                        height: 46,
+                        buttonStyle: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              return Colors.red;
+                            },
+                          ),
+                        ),
+                        text: 'Reject',
+                        // child: Text('Reject'),
+                        onPressed: () {
+                          // Add your reject logic here
+                        },
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -137,4 +206,16 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     );
   }
 
+  List<UserModel> allUserList = [];
+  fetchAllUsers() async {
+    QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
+    List<UserModel> users = [];
+    userDocs.docs.forEach((doc) {
+      users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
+    });
+    setState(() {
+      allUserList = users;
+    });
+    // Proceed with the rest of your logic here
+  }
 }

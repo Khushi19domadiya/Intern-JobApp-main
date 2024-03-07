@@ -18,9 +18,10 @@ import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
   final String jobId;
+  final String jobTitle;
   final String? postUserId;
 
-  ApplyJobScreen({required this.jobId, this.postUserId});
+  ApplyJobScreen({required this.jobId, this.postUserId, required this.jobTitle});
 
   @override
   _ApplyJobScreenState createState() => _ApplyJobScreenState();
@@ -33,11 +34,12 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   User? user = FirebaseAuth.instance.currentUser;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+RxBool isLoading = false.obs;
   File? cvFile;
 
   Future<void> _uploadCV() async {
     if (cvFile != null) {
+      isLoading.value = true;
       try {
         String userId = user?.uid ?? 'unique_user_id';
         String cvFileName = 'cv_$userId.pdf';
@@ -94,8 +96,8 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         var responce = await dio.post(url,
           data:  {
             "notification": {
-              "title": "title",
-              "body": "One user was recently applied in your posted job the job name is -- and user name is --",
+              "title": "Job App",
+              "body": "${fullNameController.text} was recently applied in ${widget.jobTitle} job",
               "sound": "default"
             },
             "priority": "High",
@@ -119,14 +121,14 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
             duration: Duration(seconds: 2),
           ),
         );
-
+        isLoading.value = false;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeContainerScreen()),
         );
       } catch (error) {
         print('Error uploading CV or storing data: $error');
-
+        isLoading.value = false;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error submitting application. Please try again later.'),
@@ -144,27 +146,42 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         appBar: AppBar(
           title: Text('Apply Job'),
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildPersonalInfoFullName(context),
-                  SizedBox(height: 18.0),
-                  _buildPersonalInfoEmail(context),
-                  SizedBox(height: 18.0),
-                  _buildPersonalInfoWebsite(context),
-                  SizedBox(height: 18.0),
-                  _buildCvFields(context),
-                  SizedBox(height: 16.0),
-                  SizedBox(height: 270.0),
-                  _buildContinueButton(),
-                ],
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      _buildPersonalInfoFullName(context),
+                      SizedBox(height: 18.0),
+                      _buildPersonalInfoEmail(context),
+                      SizedBox(height: 18.0),
+                      _buildPersonalInfoWebsite(context),
+                      SizedBox(height: 18.0),
+                      _buildCvFields(context),
+                      SizedBox(height: 16.0),
+                      SizedBox(height: 270.0),
+                      _buildContinueButton(),
+                    ],
+                  ),
+                ),
               ),
             ),
+          StreamBuilder(
+            stream: isLoading.stream,
+            builder: (context, snapshot) {
+              return isLoading.value ?   Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black.withOpacity(.3),
+                  child: Center(child: CircularProgressIndicator()),
+                ) : SizedBox();
+            }
           ),
+          ],
         ),
       ),
     );
