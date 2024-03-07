@@ -405,7 +405,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         }
       },
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 44.v),
-      buttonStyle: CustomButtonStyles.fillGrayTL24,
+      buttonStyle: CustomButtonStyles.fillPrimaryTL20,
       buttonTextStyle: CustomTextStyles.titleMediumGray50001,
     );
   }

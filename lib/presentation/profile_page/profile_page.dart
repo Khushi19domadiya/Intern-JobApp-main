@@ -65,13 +65,13 @@ class ProfilePage extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 48.h,
-      leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgComponent1,
-        margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
-        onTap: () {
-          onTapImage(context);
-        },
-      ),
+      // leading: AppbarLeadingImage(
+      //   imagePath: ImageConstant.imgComponent1,
+      //   margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
+      //   onTap: () {
+      //     onTapImage(context);
+      //   },
+      // ),
       centerTitle: true,
       title: AppbarTitle(text: "Profile"),
       actions: [

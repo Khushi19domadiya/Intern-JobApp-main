@@ -241,18 +241,19 @@ class SignUpCreateAcountScreen extends StatelessWidget {
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
-        leadingWidth: 48.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgComponent1,
-            margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
-            onTap: () {
-              onTapImage(context);
-            }),
-        actions: [
-          AppbarTrailingImage(
-              imagePath: ImageConstant.imgComponent3,
-              margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v))
-        ]);
+        // leadingWidth: 48.h,
+        // leading: AppbarLeadingImage(
+        //     imagePath: ImageConstant.imgComponent1,
+        //     margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
+        //     onTap: () {
+        //       onTapImage(context);
+        //     }),
+        // actions: [
+        //   AppbarTrailingImage(
+        //       // imagePath: ImageConstant.imgComponent3,
+        //       margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v))
+        // ]
+    );
   }
 
   /// Section Widget
@@ -303,10 +304,10 @@ class SignUpCreateAcountScreen extends StatelessWidget {
         ]));
   }
 
-  /// Navigates back to the previous screen.
-  onTapImage(BuildContext context) {
-    Navigator.pop(context);
-  }
+  // /// Navigates back to the previous screen.
+  // onTapImage(BuildContext context) {
+  //   Navigator.pop(context);
+  // }
 
   /// Navigates to the signUpCompleteAccountScreen when the action is triggered.
   onTapContinueWithEmail(BuildContext context) {

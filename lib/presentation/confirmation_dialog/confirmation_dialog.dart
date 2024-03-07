@@ -84,7 +84,7 @@ class ConfirmationDialog extends StatelessWidget {
             onPressed: () {
               // Updated logic: Redirect to the 'specializationScreen' when the user disagrees
               Navigator.pushNamed(
-                  context, AppRoutes.speciallizationScreen);
+                  context, AppRoutes.jobTypeScreen);
             },
           ),
         ],

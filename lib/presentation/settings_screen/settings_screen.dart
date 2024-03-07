@@ -282,7 +282,7 @@ class SettingsScreen extends StatelessWidget {
 
   /// Navigates back to the previous screen.
   onTapImage(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context, AppRoutes.profilePage);
   }
 
   /// Navigates to the personalInfoScreen when the action is triggered.

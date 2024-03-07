@@ -79,19 +79,20 @@ class MessagePage extends StatelessWidget {
     return CustomAppBar(
         height: 51.v,
         leadingWidth: 48.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgComponent1,
-            margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 14.v),
-            onTap: () {
-              onTapImage(context);
-            }),
+        // leading: AppbarLeadingImage(
+        //     imagePath: ImageConstant.imgComponent1,
+        //     margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 14.v),
+        //     onTap: () {
+        //       onTapImage(context);
+        //     }),
         centerTitle: true,
         title: AppbarTitle(text: "Message"),
-        actions: [
-          AppbarTrailingImage(
-              imagePath: ImageConstant.imgComponent3,
-              margin: EdgeInsets.fromLTRB(16.h, 13.v, 16.h, 14.v))
-        ]);
+        // actions: [
+        //   AppbarTrailingImage(
+        //       imagePath: ImageConstant.imgComponent3,
+        //       margin: EdgeInsets.fromLTRB(16.h, 13.v, 16.h, 14.v))
+        // ]
+    );
   }
 
   /// Section Widget

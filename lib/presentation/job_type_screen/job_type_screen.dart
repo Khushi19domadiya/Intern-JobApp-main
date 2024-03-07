@@ -74,12 +74,12 @@ class _JobTypeScreenState extends State<JobTypeScreen> {
           onTapImage(context);
         },
       ),
-      actions: [
-        AppbarTrailingImage(
-          imagePath: ImageConstant.imgComponent3,
-          margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v),
-        ),
-      ],
+      // actions: [
+      //   AppbarTrailingImage(
+      //     imagePath: ImageConstant.imgComponent3,
+      //     margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v),
+      //   ),
+      // ],
     );
   }
 

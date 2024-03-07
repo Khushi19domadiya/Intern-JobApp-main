@@ -121,6 +121,7 @@ class AppRoutes {
     settingsScreen: (context) => SettingsScreen(),
     personalInfoScreen: (context) => PersonalInfoScreen(),
     experienceSettingScreen: (context) => ExperienceSettingScreen(),
+
     newPositionScreen: (context) => NewPositionScreen(),
     addNewEducationScreen: (context) => AddNewEducationScreen(),
     privacyScreen: (context) => PrivacyScreen(),
