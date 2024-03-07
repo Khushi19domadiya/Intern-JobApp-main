@@ -15,6 +15,7 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
+
 import '../../widgets/app_bar/appbar_title.dart';
 
 class SavedPage extends StatefulWidget {
@@ -36,6 +37,7 @@ class SavedPage extends StatefulWidget {
 }
 
 class _SavedPageState extends State<SavedPage> {
+  final TextEditingController _searchController = TextEditingController();
   final jobController _controller = Get.put(jobController());
   List<PostJobModel> jobList = <PostJobModel>[];
   RxBool isLoading = false.obs;
@@ -69,71 +71,94 @@ class _SavedPageState extends State<SavedPage> {
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: StreamBuilder(
-            stream: isLoading.stream,
-            builder: (context, snapshot) {
-              return Padding(
-                padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: CustomSearchView(
-                          // controller: searchController,
-                          // isRead : true,
-                          onChanged: (String? text) {
-                            if (text?.isNotEmpty ?? false) {
-                              if (userRole == 'j') {
-                                // If user role is 'j' (job seeker), search by job title
-                                jobList = tempSearchJob.where((element) => element.title.toLowerCase().contains(text ?? "")).toList();
-                              } else if (userRole == 'e') {
-                                // If user role is 'e' (employer), search by selected skills
-                                jobList = tempSearchJob.where((element) => element.selectedSkills.toString().toLowerCase().contains(text ?? "")).toList();
-                              }
-                            } else {
-                              jobList = tempSearchJob;
+          stream: isLoading.stream,
+          builder: (context, snapshot) {
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (String text) {
+                          if (text.isNotEmpty) {
+                            if (userRole == "e") {
+                              // Search by skills
+                              jobList = tempSearchJob
+                                  .where((element) =>
+                                  element.selectedSkills
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(text.toLowerCase()))
+                                  .toList();
+                            } else if (userRole == "j") {
+                              // Search by title
+                              jobList = tempSearchJob
+                                  .where((element) =>
+                                  element.title
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(text.toLowerCase()))
+                                  .toList();
                             }
-                            isLoading.refresh();
-                          },
+                          } else {
+                            jobList = tempSearchJob;
+                          }
+                          isLoading.refresh();
+                        },
 
-                          // autofocus: false,
+                        decoration: InputDecoration(
                           hintText: "Search...",
-                          alignment: Alignment.center,
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              // Clear text when the clear icon is clicked
+                              setState(() {
+                                jobList = tempSearchJob;
+                                isLoading.refresh();
+                              });
+                            },
+                          ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      if (jobList.isNotEmpty)
-                        ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: 12.v);
-                          },
-                          itemCount: jobList.length,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (context, index) {
-                            PostJobModel model = jobList[index];
-                            return SavedItemWidget(
-                              onTapBag: () {
-                                if (userRole == "e") {
-                                  Get.to(() => ApplyerListScreen(
-                                        jobId: model.id,
-                                      ));
-                                } else {
-                                  Get.to(() => ApplyJobScreen(
-                                        jobId: model.id,
-                                      ));
-                                }
-                              },
-                              model: model,
-                            );
-                          },
-                        ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 20),
+                    if (jobList.isNotEmpty)
+                      ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) {
+                          return SizedBox(height: 12.v);
+                        },
+                        itemCount: jobList.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          PostJobModel model = jobList[index];
+                          return SavedItemWidget(
+                            onTapBag: () {
+                              if (userRole == "e") {
+                                Get.to(() => ApplyerListScreen(
+                                  jobId: model.id,
+                                ));
+                              } else {
+                                Get.to(() => ApplyJobScreen(
+                                  jobId: model.id,
+                                ));
+                              }
+                            },
+                            model: model,
+                          );
+                        },
+                      ),
+                  ],
                 ),
-              );
-            }),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -141,13 +166,13 @@ class _SavedPageState extends State<SavedPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 48.h,
-      // leading: AppbarLeadingImage(
-      //   imagePath: ImageConstant.imgComponent1,
-      //   margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
-      //   onTap: () {
-      //     onTapImage(context);
-      //   },
-      // ),
+      leading: AppbarLeadingImage(
+        imagePath: ImageConstant.imgComponent1,
+        margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
+        onTap: () {
+          onTapImage(context);
+        },
+      ),
       centerTitle: true,
       title: AppbarTitle(text: "Jobs"),
       actions: [
