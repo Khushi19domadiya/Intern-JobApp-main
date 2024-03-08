@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/controller/authController.dart';
@@ -13,6 +15,8 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_bottom_bar.dart';
 import 'package:saumil_s_application/presentation/logout_popup_dialog/logout_popup_dialog.dart';
 
+import '../../util/colors.dart';
+import '../../util/common_methos.dart';
 import '../logout_popup_dialog/logout_popup_dialog.dart';
 import '../logout_popup_dialog/logout_popup_dialog.dart';
 import '../logout_popup_dialog/logout_popup_dialog.dart';
@@ -78,8 +82,8 @@ class SettingsScreen extends StatelessWidget {
                                 SizedBox(height: 28.v),
                                 GestureDetector(
                                     onTap: () {
-                                      // onTapTxtLargeLabelMedium(context);
-                                      controller.signOut();
+                                      onTapTxtLargeLabelMedium(context);
+                                      // controller.signOut();
                                     },
                                     child: Text("Logout",
                                         style: CustomTextStyles
@@ -289,6 +293,27 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
+  // void onTapTxtLargeLabelMedium(BuildContext context) {
+  //   print("Opening logout popup dialog...");
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       print("Building dialog...");
+  //       return AlertDialog(
+  //         content: LogoutPopupDialog(),
+  //         backgroundColor: Colors.transparent,
+  //         contentPadding: EdgeInsets.zero,
+  //         insetPadding: const EdgeInsets.only(left: 0),
+  //       );
+  //     },
+  //   ).then((value) {
+  //     print("Dialog closed with result: $value");
+  //   }).catchError((error) {
+  //     print("Error while showing dialog: $error");
+  //   });
+  // }
+
+
   /// Navigates back to the previous screen.
   onTapImage(BuildContext context) {
     Navigator.pop(context, AppRoutes.profilePage);
@@ -319,17 +344,48 @@ class SettingsScreen extends StatelessWidget {
     Navigator.pushNamed(context, AppRoutes.privacyScreen);
   }
 
-  /// Displays a dialog with the [LogoutPopupDialog] content.
-  onTapTxtLargeLabelMedium(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: LogoutPopupDialog(),
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              insetPadding: const EdgeInsets.only(left: 0),
-            ));
+  void onTapTxtLargeLabelMedium(BuildContext context) async {
+    try {
+      User? currentUser = await controller.getCurrentUser();
+      if (currentUser == null) {
+        // User is not logged in, show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: User is not logged in.'),
+          ),
+        );
+        return;
+      }
+
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('Users').doc(currentUser.uid).get();
+      bool isPasswordSet = userSnapshot.exists && userSnapshot.get('npassword') != null;
+
+      if (!isPasswordSet) {
+        // Redirect to forgot password screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+        );
+      } else {
+        // Password is set, show logout confirmation dialog
+        showDialog(
+          context: context,
+          builder: (_) => LogoutPopupDialog(),
+        );
+      }
+    } catch (e) {
+      // Handle error
+      print('Error during logout: $e');
+      CommonMethod().getXSnackBar("Error", 'First set the passowrd', red);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+      );
+    }
   }
+
+
+
 
   void onTapPassword(BuildContext context) {
     Navigator.push(

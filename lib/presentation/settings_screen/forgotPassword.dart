@@ -101,7 +101,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             return; // Return to prevent further execution
           }
           // Passwords match, proceed with password reset logic
-          _resetPassword(_newPasswordController.text, _confirmPasswordController.text);
+          _resetPassword(_newPasswordController.text);
         }
       },
     );
@@ -109,7 +109,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
 
 
-  void _resetPassword(String newPassword, String cPassword) async {
+  void _resetPassword(String newPassword) async {
     try {
       // Get the user's ID if they are logged in
       String? userId;
@@ -120,16 +120,20 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       // Update the password in Firestore
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
         'npassword': newPassword,
-        'cpassowrd': cPassword,
         // Assuming the field in Firestore is 'password'
       });
 
-      // Show success message or navigate to another screen
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password reset successfully'),
         ),
       );
+
+      // Redirect to the previous page after a short delay
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.pop(context, AppRoutes.settingsScreen); // Return to the previous page
+      });
     } catch (error) {
       // Show error message if password reset fails
       ScaffoldMessenger.of(context).showSnackBar(
@@ -139,5 +143,6 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       );
     }
   }
+
 
 }

@@ -229,6 +229,7 @@ class _SavedPageState extends State<SavedPage> {
     filteredJobs = tempSearchJob.where((job) {
       bool matchesJobCategory = true;
       bool matchesSelectedCategories = true;
+      bool matchesSalaryRange = true;
 
       // Filter by job category
       if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
@@ -244,13 +245,24 @@ class _SavedPageState extends State<SavedPage> {
         matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
       }
 
-      // Include job if it matches job category and selected categories
-      // Also, include if the job category is "Part Time" or "Full Time"
-      return (matchesJobCategory || job.selectedOption == widget.selectedJobCategory) && matchesSelectedCategories;
+      // Convert minSalary and maxSalary from string to double for comparison
+      double? minSalary = double.tryParse(job.lowestsalary);
+      double? maxSalary = double.tryParse(job.highestsalary);
+
+      // Check if conversion was successful before comparison
+      if (minSalary != null && maxSalary != null && widget.minSalary != null && widget.maxSalary != null) {
+        // Filter by salary range
+        matchesSalaryRange = minSalary >= widget.minSalary! && maxSalary <= widget.maxSalary!;
+      }
+
+      // Include job if it matches job category, selected categories, and salary range
+      return (matchesJobCategory || job.selectedOption == widget.selectedJobCategory) &&
+          matchesSelectedCategories && matchesSalaryRange;
     }).toList();
 
     return filteredJobs;
   }
+
 
 
 

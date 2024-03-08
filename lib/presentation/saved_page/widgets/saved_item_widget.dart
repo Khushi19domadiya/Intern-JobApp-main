@@ -62,6 +62,10 @@ class SavedItemWidget extends StatelessWidget {
                       "Experience: ${model.experience} Year",
                       style: CustomTextStyles.labelLargeGray500,
                     ),
+                    Text(
+                      "Job Type: ${model.jobType} ",
+                      style: CustomTextStyles.labelLargeGray500,
+                    ),
                     // SizedBox(height: 12.v),
                     Text(
                       "Salary: (${model.highestsalary} - ${model.lowestsalary})",

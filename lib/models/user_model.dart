@@ -6,6 +6,7 @@ class UserModel {
    String? password;
    String? lname;
    String? fname;
+   String? npassowrd;
    String? phonenumber;
    String? address;
    String? profileUrl;
@@ -19,6 +20,7 @@ class UserModel {
     this.token,
     this.fname,
     this.lname,
+     this.npassowrd,
     this.phonenumber,
     this.address,
     this.profileUrl,
@@ -32,6 +34,7 @@ class UserModel {
     token= data['token'];
     fname= data['fname'];
     lname= data['lname'];
+    npassowrd= data['npassowrd'];
     phonenumber= data['phonenumber'];
     address= data['address'];
     profileUrl= data['profileUrl'];
@@ -58,6 +61,7 @@ class UserModel {
       if (fname != null) "fname": fname,
       if (token != null) "token": token,
       if (lname != null) "lname": lname,
+      if (npassowrd != null) "npassowrd": npassowrd,
       if (phonenumber != null) "phonenumber": phonenumber,
       if (address != null) "address": address,
       if (profileUrl != null) "profileUrl": profileUrl,

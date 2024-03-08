@@ -3,18 +3,15 @@ import 'package:saumil_s_application/core/app_export.dart';
 
 import '../../../models/user_model.dart';
 
-// ignore: must_be_immutable
 class Fulltime7ItemWidget extends StatelessWidget {
+  final PostJobModel model;
+  final String? selectedJobType; // New variable to store selected job type
 
   Fulltime7ItemWidget({
     Key? key,
     required this.model,
-  }) : super(
-      key: key
-  );
-
-
-  PostJobModel model;
+    this.selectedJobType, // Pass selected job type as a parameter
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class Fulltime7ItemWidget extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      selected: false,
+      selected: selectedJobType == model.jobType, // Check if the job type matches the selected job type
       backgroundColor: appTheme.gray100,
       selectedColor: appTheme.gray100,
       shape: RoundedRectangleBorder(
