@@ -44,6 +44,11 @@ RxBool isLoading = false.obs;
         String userId = user?.uid ?? 'unique_user_id';
         String cvFileName = 'cv_$userId.pdf';
 
+
+        // Add the status field to the user table
+        await FirebaseFirestore.instance.collection('Users').doc(user?.uid).update({'status': 'P'});
+
+
         Reference storageReference = FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
         UploadTask uploadTask = storageReference.putFile(cvFile!);
         await uploadTask.whenComplete(() => print('CV Uploaded'));

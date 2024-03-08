@@ -131,8 +131,41 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                         ),
                         text: 'Reject',
                         // child: Text('Reject'),
-                        onPressed: () {
-                          // Add your reject logic here
+                        onPressed: () async {
+                          String token = "";
+                          allUserList.forEach((element) {
+                            if (element.id == userId) {
+                              token = (element.token ?? "");
+                            }
+                          });
+
+                          // Add your approve logic here
+                          Dio dio = Dio();
+                          var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+                          var headers = {
+                            'Content-type': 'application/json; charset=utf-8',
+                            "Authorization":
+                            "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
+                          };
+                          var responce = await dio.post(
+                            url,
+                            data: {
+                              "notification": {
+                                "title": "Job App",
+                                "body": "You are rejected for next process",
+                                "sound": "default"
+                              },
+                              "priority": "High",
+                              "to": token,
+                            },
+                            options: Options(headers: headers),
+                          );
+                          if (responce.statusCode == 200) {
+                            print("-dfdf----${responce.data.toString}");
+                            Get.back();
+                          }
                         },
                       ),
                     ),
