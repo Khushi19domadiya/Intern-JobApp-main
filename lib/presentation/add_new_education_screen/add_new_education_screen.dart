@@ -32,8 +32,7 @@ class AddNewEducationScreen extends StatelessWidget {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final userRepo = Get.put(UserRepository());
 
-  var collection = FirebaseFirestore.instance.collection("education");
-  User? userId = FirebaseAuth.instance.currentUser;
+
 
 
   @override

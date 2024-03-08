@@ -168,7 +168,7 @@ RxBool isLoading = false.obs;
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
-                      SizedBox(height: 270.0),
+                      SizedBox(height: 100.0),
                       _buildContinueButton(),
                     ],
                   ),
