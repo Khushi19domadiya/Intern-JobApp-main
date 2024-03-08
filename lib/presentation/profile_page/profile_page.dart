@@ -13,7 +13,14 @@ import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  ProfilePage({
+    Key? key,
+    this.onTapBag,
+    this.model,
+  }) : super(key: key);
+
+  final VoidCallback? onTapBag;
+  final UserModel? model;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +37,17 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   _buildBackground(context),
                   SizedBox(height: 16.v),
-                  Container(
-                    width: 273.h,
-                    margin: EdgeInsets.only(left: 51.h, right: 50.h),
-                    child: Text(
-                      "UI/UX Designer, Web Design, Mobile App Design",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
-                    ),
-                  ),
+                  // Container(
+                  //   width: 273.h,
+                  //   margin: EdgeInsets.only(left: 51.h, right: 50.h),
+                  //   child: Text(
+                  //     "UI/UX Designer, Web Design, Mobile App Design",
+                  //     maxLines: 2,
+                  //     overflow: TextOverflow.ellipsis,
+                  //     textAlign: TextAlign.center,
+                  //     style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
+                  //   ),
+                  // ),
                   SizedBox(height: 16.v),
                   _buildJobApplied(context),
                   SizedBox(height: 24.v),
@@ -96,13 +103,23 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        UserModel  userData = UserModel.fromMap(snapshot.data?.data() ?? {});
+        UserModel userData = UserModel.fromMap(snapshot.data?.data() ?? {});
         String firstName = userData.fname ?? 'Anonymous';
         String lastName =  userData.lname ?? '';
         String displayName = '$firstName $lastName';
 
-        // Check if 'photoUrl' is not null
+        if (FirebaseAuth.instance.currentUser == null) {
+          // User is not logged in, display a message
+          return Center(
+            child: Text(
+              'User is not logged in.',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          );
+        }
+
         if (userData.profileUrl != null) {
+          // User is logged in and has a profile URL
           String photoUrl = userData.profileUrl ?? "";
           return SizedBox(
             height: 225.v,
@@ -111,11 +128,10 @@ class ProfilePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 70.h, // Increase the radius for larger photo
+                  radius: 70.h, // Increase the radius for a larger photo
                   backgroundImage: NetworkImage(photoUrl),
                 ),
                 SizedBox(height: 9.v),
-                // Display full name without truncation
                 Text(
                   displayName,
                   style: CustomTextStyles.titleMediumBlack900,
@@ -152,53 +168,18 @@ class ProfilePage extends StatelessWidget {
             ),
           );
         } else {
-          // Placeholder widget or nothing if photoUrl is null
-          return SizedBox(
-            height: 225.v,
-            width: 327.h,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Display full name without truncation
-                Text(
-                  displayName,
-                  style: CustomTextStyles.titleMediumBlack900,
-                ),
-                SizedBox(height: 7.v),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 1.v),
-                      child: Text(
-                        "Open to work",
-                        style: CustomTextStyles.titleSmallGray500SemiBold_1,
-                      ),
-                    ),
-                    Container(
-                      height: 16.adaptSize,
-                      width: 16.adaptSize,
-                      margin: EdgeInsets.only(left: 10.h, bottom: 3.v),
-                      padding: EdgeInsets.all(3.h),
-                      decoration: AppDecoration.success.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder8,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgCheck,
-                        height: 9.adaptSize,
-                        width: 9.adaptSize,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          // User is logged in but doesn't have a profile URL
+          return Center(
+            child: Text(
+              'Profile photo not available.',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           );
         }
       },
     );
   }
+
 
 
   Widget _buildJobApplied(BuildContext context) {
@@ -256,65 +237,115 @@ class ProfilePage extends StatelessWidget {
       decoration: AppDecoration.outlineGray.copyWith(
         borderRadius: BorderRadiusStyle.circleBorder12,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 2.v),
-          _buildSkills(
-            context,
-            skillsText: "About Me",
-            editSquareImage: ImageConstant.imgEditSquare,
-          ),
-          SizedBox(height: 14.v),
-          Container(
-            width: 272.h,
-            margin: EdgeInsets.only(right: 22.h),
-            child: Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Libero, cursus molestie nullam ac pharetra est nec enim. Vel eleifend semper nunc faucibus donec pretium.",
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
-              style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
-            ),
-          ),
-        ],
+      child: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser?.uid).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          UserModel userData = UserModel.fromMap(snapshot.data?.data() ?? {});
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 2.v),
+              _buildSkills(
+                context,
+                skillsText: "About Me",
+              ),
+
+              SizedBox(height: 14.v),
+              Container(
+                width: 272.h,
+                margin: EdgeInsets.only(right: 22.h),
+                child: Text(
+                  userData.about ?? "", // Use the 'aboutMe' field from 'userData'
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                  style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
+
   Widget _buildSkillsList(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 23.h),
-      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 15.v),
-      decoration: AppDecoration.outlineGray.copyWith(
-        borderRadius: BorderRadiusStyle.circleBorder12,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 7.h),
-            child: _buildSkills(
-              context,
-              skillsText: "Skills",
-              editSquareImage: ImageConstant.imgEditSquare,
-            ),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Placeholder widget while data is loading
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Display error if any
+        }
+        List<dynamic>? skillsData = snapshot.data?['skills'];
+        List<String> skills =
+            skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
+
+        return Container(
+          width: 310, // Set the desired width here
+          padding: EdgeInsets.all(15.h),
+          decoration: AppDecoration.outlineGray.copyWith(
+            borderRadius: BorderRadiusStyle.circleBorder12,
           ),
-          SizedBox(height: 12.v),
-          Wrap(
-            runSpacing: 12.v,
-            spacing: 12.h,
-            children: List<Widget>.generate(
-              8,
-                  (index) => FortysevenItemWidget(),
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSkills(
+                context,
+                skillsText: "Skills",
+                // onTapEditSquare: () {
+                //   onTapEditSquare(context);
+                // },
+              ),
+              SizedBox(height: 15.v),
+              ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                separatorBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 11.5.v),
+                    child: SizedBox(
+                      width: 295.h,
+                      child: Divider(
+                        height: 1.v,
+                        thickness: 1.v,
+                        color: appTheme.gray300,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: skills.length,
+                itemBuilder: (context, index) {
+                  // Display each skill fetched from Firestore
+                  return Text(
+                    skills[index],
+                    style: TextStyle(fontSize: 16),
+                  );
+                },
+              ),
+            ],
           ),
-          SizedBox(height: 17.v),
-        ],
-      ),
+        );
+      },
     );
   }
+
+
 
   Widget _buildExperience1(BuildContext context) {
     return Container(
@@ -330,7 +361,7 @@ class ProfilePage extends StatelessWidget {
           _buildSkills(
             context,
             skillsText: "Experience",
-            editSquareImage: ImageConstant.imgEditSquarePrimary,
+            // editSquareImage: ImageConstant.imgEditSquarePrimary,
           ),
           SizedBox(height: 22.v),
           ListView.separated(
@@ -373,7 +404,7 @@ class ProfilePage extends StatelessWidget {
           _buildSkills(
             context,
             skillsText: "Education",
-            editSquareImage: ImageConstant.imgEditSquarePrimary,
+            // editSquareImage: ImageConstant.imgEditSquarePrimary,
           ),
           SizedBox(height: 24.v),
           Padding(
@@ -441,7 +472,7 @@ class ProfilePage extends StatelessWidget {
   Widget _buildSkills(
       BuildContext context, {
         required String skillsText,
-        required String editSquareImage,
+
       }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -453,11 +484,11 @@ class ProfilePage extends StatelessWidget {
             style: theme.textTheme.titleMedium!.copyWith(color: theme.colorScheme.primary),
           ),
         ),
-        CustomImageView(
-          imagePath: editSquareImage,
-          height: 24.adaptSize,
-          width: 24.adaptSize,
-        ),
+        // CustomImageView(
+        //   imagePath: editSquareImage,
+        //   height: 24.adaptSize,
+        //   width: 24.adaptSize,
+        // ),
       ],
     );
   }

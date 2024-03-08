@@ -45,6 +45,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController aboutController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final userRepo = Get.put(UserRepository());
 
@@ -186,6 +187,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           _buildPersonalInfoPhone(context),
                           SizedBox(height: 18.v),
                           _buildPersonalInfoLocation(context),
+                          SizedBox(height: 18.v),
+                          _buildAboutMe(context),
                         ],
                       ),
                     ),
@@ -347,6 +350,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
+  Widget _buildAboutMe(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("About", style: theme.textTheme.titleSmall),
+        SizedBox(height: 9.v),
+        CustomTextFormField(
+          controller: aboutController,
+          hintText: "Enter about you",
+          textInputAction: TextInputAction.done,
+          maxLines: 6,
+          contentPadding:
+          EdgeInsets.symmetric(horizontal: 16.h, vertical: 20.v),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please fill about filed';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
   void saveProfile() async {
     log("----saveProfileCalled-----");
     String fname = firstNameController.text;
@@ -355,6 +382,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     String phonenumber = phoneController.text;
     String address = addressController.text;
     String? imageUrl;
+    String? about= aboutController.text;
 
     CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
     if (_image != null) {
@@ -369,7 +397,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           lname: lname,
           phonenumber: phonenumber,
           address: address,
-          profileUrl: imageUrl.toString()));
+          profileUrl: imageUrl.toString(),
+          about: about,));
     // }
 
     await CommonMethod()

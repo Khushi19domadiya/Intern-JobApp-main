@@ -88,15 +88,14 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Skills added successfully'),
-            duration: Duration(seconds: 2),
           ),
         );
 
         // Redirect to the experience screen
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => ExperienceSettingScreen()), // Replace ExperienceScreen with your actual screen
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ExperienceSettingScreen()), // Replace ExperienceScreen with your actual screen
+        );
       } else {
         // Show a message if user is not logged in
         ScaffoldMessenger.of(context).showSnackBar(

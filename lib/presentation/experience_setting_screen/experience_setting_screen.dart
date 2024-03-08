@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../experience_setting_screen/widgets/experiencesetting_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
@@ -70,49 +73,81 @@ class ExperienceSettingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillsSection(BuildContext context) { // Renamed the method
-    return Container(
-      padding: EdgeInsets.all(15.h),
-      decoration: AppDecoration.outlineGray.copyWith(
-        borderRadius: BorderRadiusStyle.circleBorder12,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildSkills(
-            context,
-            skillsText: "Skills",
-            onTapEditSquare: () {
-              onTapEditSquare(context);
-            },
-          ),
-          SizedBox(height: 15.v),
-          ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            separatorBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 11.5.v),
-                child: SizedBox(
-                  width: 295.h,
-                  child: Divider(
-                    height: 1.v,
-                    thickness: 1.v,
-                    color: appTheme.gray300,
-                  ),
-                ),
-              );
-            },
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return FortysevenItemWidget();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildSkillsSection(BuildContext context) {
+  //   return StreamBuilder<DocumentSnapshot>(
+  //     stream: FirebaseFirestore.instance
+  //         .collection('Users')
+  //         .doc(FirebaseAuth.instance.currentUser?.uid)
+  //         .snapshots(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator(); // Placeholder widget while data is loading
+  //       }
+  //       if (snapshot.hasError) {
+  //         return Text('Error: ${snapshot.error}'); // Display error if any
+  //       }
+  //       List<dynamic>? skillsData = snapshot.data?['skills'];
+  //       List<String> skills = skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
+  //
+  //       return Container(
+  //         padding: EdgeInsets.all(15.h),
+  //         decoration: AppDecoration.outlineGray.copyWith(
+  //           borderRadius: BorderRadiusStyle.circleBorder12,
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Text(
+  //                   "Skills",
+  //                   style: theme.textTheme.titleMedium!.copyWith(color: theme.colorScheme.primary),
+  //                 ),
+  //                 // Replace this icon button with your desired icon or remove it completely
+  //                 IconButton(
+  //                   icon: Icon(Icons.edit),
+  //                   onPressed: () {
+  //                     // Add your edit functionality here
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //             SizedBox(height: 15.v),
+  //             ListView.separated(
+  //               physics: NeverScrollableScrollPhysics(),
+  //               shrinkWrap: true,
+  //               separatorBuilder: (context, index) {
+  //                 return Padding(
+  //                   padding: EdgeInsets.symmetric(vertical: 11.5.v),
+  //                   child: SizedBox(
+  //                     width: 295.h,
+  //                     child: Divider(
+  //                       height: 1.v,
+  //                       thickness: 1.v,
+  //                       color: appTheme.gray300,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //               itemCount: skills.length,
+  //               itemBuilder: (context, index) {
+  //                 // Display each skill fetched from Firestore
+  //                 return Text(
+  //                   skills[index],
+  //                   style: TextStyle(fontSize: 16),
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
 
   Widget _buildExperience1(BuildContext context) {
     return Container(
@@ -243,6 +278,71 @@ class ExperienceSettingScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildSkillsSection(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Placeholder widget while data is loading
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Display error if any
+        }
+        List<dynamic>? skillsData = snapshot.data?['skills'];
+        List<String> skills = skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
+
+        return Container(
+          padding: EdgeInsets.all(15.h),
+          decoration: AppDecoration.outlineGray.copyWith(
+            borderRadius: BorderRadiusStyle.circleBorder12,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSkills(
+                context,
+                skillsText: "Skills",
+                onTapEditSquare: () {
+                  onTapEditSquare(context);
+                },
+              ),
+              SizedBox(height: 15.v),
+              ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                separatorBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 11.5.v),
+                    child: SizedBox(
+                      width: 295.h,
+                      child: Divider(
+                        height: 1.v,
+                        thickness: 1.v,
+                        color: appTheme.gray300,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: skills.length,
+                itemBuilder: (context, index) {
+                  // Display each skill fetched from Firestore
+                  return Text(
+                    skills[index],
+                    style: TextStyle(fontSize: 16),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildSkills(
       BuildContext context, {
         required String skillsText,
@@ -258,16 +358,20 @@ class ExperienceSettingScreen extends StatelessWidget {
             style: CustomTextStyles.titleMediumBold_1.copyWith(color: theme.colorScheme.primary),
           ),
         ),
-        CustomImageView(
-          imagePath: ImageConstant.imgEditSquarePrimary,
-          height: 24.adaptSize,
-          width: 24.adaptSize,
+        GestureDetector(
           onTap: () {
-            onTapEditSquare!.call();
+            onTapEditSquare?.call();
           },
+          child: CustomImageView(
+            imagePath: ImageConstant.imgEditSquarePrimary,
+            height: 24.adaptSize,
+            width: 24.adaptSize,
+          ),
         ),
       ],
     );
+  }
+
   }
 
   Widget _buildEducation(
@@ -320,4 +424,4 @@ class ExperienceSettingScreen extends StatelessWidget {
   onTapAddNewEducation(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.addNewEducationScreen);
   }
-}
+

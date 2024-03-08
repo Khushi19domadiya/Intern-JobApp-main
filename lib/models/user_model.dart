@@ -12,6 +12,7 @@ class UserModel {
    String? profileUrl;
    String? role;
    String? token;
+   String? about;
 
    UserModel({
     required this.id,
@@ -25,6 +26,7 @@ class UserModel {
     this.address,
     this.profileUrl,
     this.role,
+     this.about,
   });
 
    UserModel.fromMap(data) {
@@ -39,6 +41,8 @@ class UserModel {
     address= data['address'];
     profileUrl= data['profileUrl'];
     role  = data['role'];
+    about  = data['about'];
+
     // return UserModel(
     //   id: data['id'],
     //   email: data['email'],
@@ -66,6 +70,7 @@ class UserModel {
       if (address != null) "address": address,
       if (profileUrl != null) "profileUrl": profileUrl,
       if (role != null) "role": role,
+      if (about != null) "about": about,
     };
   }
 
