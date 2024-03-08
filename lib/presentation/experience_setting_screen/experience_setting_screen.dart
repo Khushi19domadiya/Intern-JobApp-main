@@ -29,7 +29,8 @@ class ExperienceSettingScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 5.v),
+                    padding: EdgeInsets.only(
+                        left: 24.h, right: 24.h, bottom: 5.v),
                     child: Column(
                       children: [
                         _buildExperience1(context),
@@ -146,7 +147,6 @@ class ExperienceSettingScreen extends StatelessWidget {
   //     },
   //   );
   // }
-
 
 
   Widget _buildExperience1(BuildContext context) {
@@ -291,8 +291,19 @@ class ExperienceSettingScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
+
         List<dynamic>? skillsData = snapshot.data?['skills'];
         List<String> skills = skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
+
+        if (skills.isEmpty) {
+          // If skills are not selected or not available, display a message
+          return Center(
+            child: Text(
+              "No skills selected", // You can customize this message
+              style: TextStyle(fontSize: 16),
+            ),
+          );
+        }
 
         return Container(
           padding: EdgeInsets.all(15.h),
@@ -343,11 +354,10 @@ class ExperienceSettingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSkills(
-      BuildContext context, {
-        required String skillsText,
-        Function? onTapEditSquare,
-      }) {
+  Widget _buildSkills(BuildContext context, {
+    required String skillsText,
+    Function? onTapEditSquare,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -355,7 +365,8 @@ class ExperienceSettingScreen extends StatelessWidget {
           padding: EdgeInsets.only(top: 2.v),
           child: Text(
             skillsText,
-            style: CustomTextStyles.titleMediumBold_1.copyWith(color: theme.colorScheme.primary),
+            style: CustomTextStyles.titleMediumBold_1.copyWith(
+                color: theme.colorScheme.primary),
           ),
         ),
         GestureDetector(
@@ -372,13 +383,11 @@ class ExperienceSettingScreen extends StatelessWidget {
     );
   }
 
-  }
 
-  Widget _buildEducation(
-      BuildContext context, {
-        required String educationText,
-        Function? onTapEditSquare,
-      }) {
+  Widget _buildEducation(BuildContext context, {
+    required String educationText,
+    Function? onTapEditSquare,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -386,7 +395,8 @@ class ExperienceSettingScreen extends StatelessWidget {
           padding: EdgeInsets.only(top: 2.v),
           child: Text(
             educationText,
-            style: CustomTextStyles.titleMediumBold_1.copyWith(color: theme.colorScheme.primary),
+            style: CustomTextStyles.titleMediumBold_1.copyWith(
+                color: theme.colorScheme.primary),
           ),
         ),
         CustomImageView(
@@ -410,7 +420,8 @@ class ExperienceSettingScreen extends StatelessWidget {
   onTapEditSquare(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddSkillsScreen()), // Replace AddSkillsScreen with the name of your screen
+      MaterialPageRoute(builder: (context) =>
+          AddSkillsScreen()), // Replace AddSkillsScreen with the name of your screen
     );
   }
 
@@ -424,4 +435,4 @@ class ExperienceSettingScreen extends StatelessWidget {
   onTapAddNewEducation(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.addNewEducationScreen);
   }
-
+}

@@ -95,7 +95,8 @@ class ProfilePage extends StatelessWidget {
 
   Widget _buildBackground(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser?.uid).snapshots(),
+      stream: FirebaseFirestore.instance.collection('Users').doc(
+          FirebaseAuth.instance.currentUser?.uid).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
@@ -105,7 +106,7 @@ class ProfilePage extends StatelessWidget {
         }
         UserModel userData = UserModel.fromMap(snapshot.data?.data() ?? {});
         String firstName = userData.fname ?? 'Anonymous';
-        String lastName =  userData.lname ?? '';
+        String lastName = userData.lname ?? '';
         String displayName = '$firstName $lastName';
 
         if (FirebaseAuth.instance.currentUser == null) {
@@ -168,11 +169,47 @@ class ProfilePage extends StatelessWidget {
             ),
           );
         } else {
-          // User is logged in but doesn't have a profile URL
-          return Center(
-            child: Text(
-              'Profile photo not available.',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          // Placeholder widget or nothing if photoUrl is null
+          return SizedBox(
+            height: 225.v,
+            width: 327.h,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Display full name without truncation
+                Text(
+                  displayName,
+                  style: CustomTextStyles.titleMediumBlack900,
+                ),
+                SizedBox(height: 7.v),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 1.v),
+                      child: Text(
+                        "Open to work",
+                        style: CustomTextStyles.titleSmallGray500SemiBold_1,
+                      ),
+                    ),
+                    Container(
+                      height: 16.adaptSize,
+                      width: 16.adaptSize,
+                      margin: EdgeInsets.only(left: 10.h, bottom: 3.v),
+                      padding: EdgeInsets.all(3.h),
+                      decoration: AppDecoration.success.copyWith(
+                        borderRadius: BorderRadiusStyle.roundedBorder8,
+                      ),
+                      child: CustomImageView(
+                        imagePath: ImageConstant.imgCheck,
+                        height: 9.adaptSize,
+                        width: 9.adaptSize,
+                        alignment: Alignment.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         }

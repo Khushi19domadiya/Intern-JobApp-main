@@ -19,7 +19,7 @@ class AddNewEducationScreen extends StatelessWidget {
 
   TextEditingController clgController = TextEditingController();
 
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
+  List<String> dropdownItemList = ["BCA", "MCA", "B Tech"];
 
   TextEditingController fieldController = TextEditingController();
 
