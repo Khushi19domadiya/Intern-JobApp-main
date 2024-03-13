@@ -48,9 +48,9 @@ class ProfilePage extends StatelessWidget {
                   //     style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
                   //   ),
                   // ),
-                  // SizedBox(height: 16.v),
-                  // _buildJobApplied(context),
-                  SizedBox(height: 4.v),
+                  SizedBox(height: 16.v),
+                  _buildJobApplied(context),
+                  SizedBox(height: 24.v),
                   Divider(color: appTheme.gray300),
                   SizedBox(height: 22.v),
                   _buildAboutMe(context),
@@ -219,53 +219,53 @@ class ProfilePage extends StatelessWidget {
 
 
 
-  // Widget _buildJobApplied(BuildContext context) {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: 24.h),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Expanded(
-  //           child: Container(
-  //             padding: EdgeInsets.symmetric(horizontal: 40.h, vertical: 12.v),
-  //             decoration: AppDecoration.fillGray.copyWith(
-  //               borderRadius: BorderRadiusStyle.roundedBorder24,
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               crossAxisAlignment: CrossAxisAlignment.end,
-  //               children: [
-  //                 Padding(
-  //                   padding: EdgeInsets.only(top: 2.v),
-  //                   child: Text(
-  //                     "25",
-  //                     style: CustomTextStyles.titleMediumBold_1,
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: EdgeInsets.only(top: 5.v),
-  //                   child: Text(
-  //                     "Applied",
-  //                     style: theme.textTheme.labelLarge,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: CustomElevatedButton(
-  //             height: 48.v,
-  //             text: "10",
-  //             margin: EdgeInsets.only(left: 19.h),
-  //             buttonStyle: CustomButtonStyles.fillGrayTL241,
-  //             buttonTextStyle: CustomTextStyles.titleMediumBold_1,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildJobApplied(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 40.h, vertical: 12.v),
+              decoration: AppDecoration.fillGray.copyWith(
+                borderRadius: BorderRadiusStyle.roundedBorder24,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 2.v),
+                    child: Text(
+                      "25",
+                      style: CustomTextStyles.titleMediumBold_1,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 5.v),
+                    child: Text(
+                      "Applied",
+                      style: theme.textTheme.labelLarge,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: CustomElevatedButton(
+              height: 48.v,
+              text: "10",
+              margin: EdgeInsets.only(left: 19.h),
+              buttonStyle: CustomButtonStyles.fillGrayTL241,
+              buttonTextStyle: CustomTextStyles.titleMediumBold_1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildAboutMe(BuildContext context) {
     return Container(
@@ -328,13 +328,15 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
-        List<dynamic>? skillsData = snapshot.data?['skills'];
+          UserModel userDeta = UserModel.fromMap(snapshot.data?.data() ?? {});
+        List<String>? skillsData = userDeta.skills;
         List<String> skills =
             skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
 
         return Container(
-          width: 310, // Set the desired width here
+          // width: 310, // Set the desired width here
           padding: EdgeInsets.all(15.h),
+          margin: EdgeInsets.all(16.h),
           decoration: AppDecoration.outlineGray.copyWith(
             borderRadius: BorderRadiusStyle.circleBorder12,
           ),

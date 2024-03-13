@@ -191,6 +191,39 @@ class _SavedPageState extends State<SavedPage> {
     );
   }
 
+  // void showFilterBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return FilterBottomsheet(
+  //         onJobCategorySelected: (category) {
+  //           setState(() {
+  //             widget.selectedJobCategory = category;
+  //           });
+  //         },
+  //         onCategories: (categories) {
+  //           setState(() {
+  //             widget.selectedCategories = categories;
+  //           });
+  //         },
+  //         minSalary: widget.minSalary ?? 5000,
+  //         maxSalary: widget.maxSalary ?? 100000,
+  //       );
+  //     },
+  //   ).then((value) {
+  //     if (value != null) {
+  //       setState(() {
+  //         widget.minSalary = value['minSalary'];
+  //         widget.maxSalary = value['maxSalary'];
+  //         // Filter the job list based on the selected criteria
+  //         jobList = _getFilteredJobs();
+  //       });
+  //     }
+  //   });
+  // }
+
+
+
   void showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -215,12 +248,56 @@ class _SavedPageState extends State<SavedPage> {
         setState(() {
           widget.minSalary = value['minSalary'];
           widget.maxSalary = value['maxSalary'];
+          // Update selected type
+          widget.selectedJobCategory = value['selectedType'];
           // Filter the job list based on the selected criteria
           jobList = _getFilteredJobs();
         });
       }
     });
   }
+
+  // List<PostJobModel> _getFilteredJobs() {
+  //   List<PostJobModel> filteredJobs = [];
+  //
+  //   // Filter job list based on selected criteria
+  //   filteredJobs = tempSearchJob.where((job) {
+  //     bool matchesJobCategory = true;
+  //     bool matchesSelectedCategories = true;
+  //     bool matchesSalaryRange = true;
+  //
+  //     // Filter by job category
+  //     if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
+  //       matchesJobCategory = (job.selectedOption == widget.selectedJobCategory);
+  //     }
+  //
+  //     // Filter by selected categories
+  //     if (widget.selectedCategories != null && widget.selectedCategories != '') {
+  //       // Split selected categories into a list
+  //       List<String> selectedCategoriesList = widget.selectedCategories!.split(',');
+  //
+  //       // Check if any of the selected categories match job's selectedOption
+  //       matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
+  //     }
+  //
+  //     // Convert minSalary and maxSalary from string to double for comparison
+  //     double? minSalary = double.tryParse(job.lowestsalary);
+  //     double? maxSalary = double.tryParse(job.highestsalary);
+  //
+  //     // Check if conversion was successful before comparison
+  //     if (minSalary != null && maxSalary != null && widget.minSalary != null && widget.maxSalary != null) {
+  //       // Filter by salary range
+  //       matchesSalaryRange = minSalary >= widget.minSalary! && maxSalary <= widget.maxSalary!;
+  //     }
+  //
+  //     // Include job if it matches job category, selected categories, and salary range
+  //     return (matchesJobCategory || job.selectedOption == widget.selectedJobCategory) &&
+  //         matchesSelectedCategories && matchesSalaryRange;
+  //   }).toList();
+  //
+  //   return filteredJobs;
+  // }
+
 
   List<PostJobModel> _getFilteredJobs() {
     List<PostJobModel> filteredJobs = [];
@@ -230,6 +307,7 @@ class _SavedPageState extends State<SavedPage> {
       bool matchesJobCategory = true;
       bool matchesSelectedCategories = true;
       bool matchesSalaryRange = true;
+      bool matchesType = true;
 
       // Filter by job category
       if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
@@ -255,9 +333,13 @@ class _SavedPageState extends State<SavedPage> {
         matchesSalaryRange = minSalary >= widget.minSalary! && maxSalary <= widget.maxSalary!;
       }
 
-      // Include job if it matches job category, selected categories, and salary range
-      return (matchesJobCategory || job.selectedOption == widget.selectedJobCategory) &&
-          matchesSelectedCategories && matchesSalaryRange;
+      // Filter by type
+      if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
+        matchesType = (job.jobType == widget.selectedJobCategory);
+      }
+
+      // Include job if it matches job category, selected categories, salary range, and type
+      return matchesJobCategory && matchesSelectedCategories && matchesSalaryRange && matchesType;
     }).toList();
 
     return filteredJobs;

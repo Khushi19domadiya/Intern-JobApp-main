@@ -11,6 +11,7 @@ class UserModel {
    String? address;
    String? profileUrl;
    String? role;
+   List<String>? skills;
    String? token;
    String? about;
 
@@ -19,6 +20,7 @@ class UserModel {
     required this.email,
     this.password,
     this.token,
+     this.skills,
     this.fname,
     this.lname,
      this.npassowrd,
@@ -40,6 +42,7 @@ class UserModel {
     phonenumber= data['phonenumber'];
     address= data['address'];
     profileUrl= data['profileUrl'];
+    skills = data['skills'] == null ? null : data['skills'].cast<String>();
     role  = data['role'];
     about  = data['about'];
 
@@ -70,6 +73,8 @@ class UserModel {
       if (address != null) "address": address,
       if (profileUrl != null) "profileUrl": profileUrl,
       if (role != null) "role": role,
+      if (skills != null) "skills": skills,
+
       if (about != null) "about": about,
     };
   }

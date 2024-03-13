@@ -80,14 +80,10 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                         text: 'Approve',
                         // child: Text('Approve'),
                         onPressed: () async {
-                          // Check if status is already 'A' or 'R' before updating
-
                           String token = "";
                           allUserList.forEach((element) {
                             if (element.id == userId) {
-                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'A'});
                               token = (element.token ?? "");
-                              // currentStatus = (element.status ?? "");
                             }
                           });
 
@@ -99,7 +95,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           var headers = {
                             'Content-type': 'application/json; charset=utf-8',
                             "Authorization":
-                            "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
+                                "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
                           };
                           var responce = await dio.post(
                             url,
@@ -128,7 +124,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                         height: 46,
                         buttonStyle: ButtonStyle(
                           backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
+                            (Set<MaterialState> states) {
                               return Colors.red;
                             },
                           ),
@@ -139,7 +135,6 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           String token = "";
                           allUserList.forEach((element) {
                             if (element.id == userId) {
-                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'R'});
                               token = (element.token ?? "");
                             }
                           });
@@ -206,53 +201,15 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     );
   }
 
-  // Widget _buildPersonalInfoWebsite(BuildContext context) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-  //       SizedBox(height: 9.0),
-  //       Text(frameOneController.text, style: TextStyle(fontSize: 16.0)),
-  //     ],
-  //   );
-  // }
-
-  bool isValidUrl = true; // Flag to track if URL is valid
-
-  @override
   Widget _buildPersonalInfoWebsite(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
         SizedBox(height: 9.0),
-        TextFormField(
-          controller: frameOneController,
-          decoration: InputDecoration(
-            hintText: "Enter URL",
-            errorText: isValidUrl ? null : "Please enter a valid URL",
-          ),
-          onChanged: (value) {
-            setState(() {
-              isValidUrl = _isValidUrl(value); // Check URL validity on change
-            });
-          },
-        ),
+        Text(frameOneController.text, style: TextStyle(fontSize: 16.0)),
       ],
     );
-  }
-
-  // Function to validate URL using regular expression
-  bool _isValidUrl(String url) {
-    // Regular expression for URL validation
-    // This expression allows URLs starting with http:// or https://
-    // For simplicity, it doesn't cover all possible valid URL patterns
-    RegExp urlRegExp = RegExp(
-        r"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)\.[a-z]{2,5}(:[0-9]{1,5})?(\/.)?$",
-        caseSensitive: false,
-        multiLine: false);
-
-    return urlRegExp.hasMatch(url);
   }
 
   Widget _buildCvFields() {

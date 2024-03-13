@@ -119,12 +119,12 @@ class _HomePageState extends State<HomePage> {
   //   });
   // }
 
-  @override
-  void dispose() {
-    searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   searchController.removeListener(_onSearchChanged);
+  //   // searchController.dispose();
+  //   // super.dispose();
+  // }
 
 
 
@@ -225,29 +225,29 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
 
-        floatingActionButton: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NotificationsGeneralPage(),
-              ),
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.black87,
-            ),
-            child: Icon(
-              Icons.notifications,
-              color: Colors.white, // Change color to black or any other dark color
-              size: 30,
-            ),
-          ),
-        ),
+        // floatingActionButton: GestureDetector(
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => NotificationsGeneralPage(),
+        //       ),
+        //     );
+        //   },
+        //   child: Container(
+        //     margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
+        //     padding: EdgeInsets.all(12),
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       color: Colors.black87,
+        //     ),
+        //     child: Icon(
+        //       Icons.notifications,
+        //       color: Colors.white, // Change color to black or any other dark color
+        //       size: 30,
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

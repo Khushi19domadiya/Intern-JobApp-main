@@ -51,143 +51,7 @@ class JobDetailsPageState extends State<JobDetailsPage>
                         overflow: TextOverflow.ellipsis,
                         style: CustomTextStyles.titleSmallBluegray400
                             .copyWith(height: 1.57))),
-                SizedBox(height: 20),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Lowest Salary",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.lowestsalary  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Highest Salary",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.highestsalary  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Address",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.address  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Job Type",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.jobType  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Skills",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.selectedSkills  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Category",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.selectedOption  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Gender",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.gender  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text("Experience",
-                            style: CustomTextStyles.titleMediumBold_1))),
-                SizedBox(height: 20.v),
-                Container(
-                    width: 319.h,
-                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
-                    child: Text(
-                        "${widget.postJobModel?.experience  ?? ""}",
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: CustomTextStyles.titleSmallBluegray400
-                            .copyWith(height: 1.57))),
-                SizedBox(height: 20.v),
+                SizedBox(height: 30),
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -204,7 +68,24 @@ class JobDetailsPageState extends State<JobDetailsPage>
                         overflow: TextOverflow.ellipsis,
                         style: CustomTextStyles.titleSmallBluegray400
                             .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Address",
+                            style: CustomTextStyles.titleMediumBold_1))),
                 SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.address  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -221,13 +102,115 @@ class JobDetailsPageState extends State<JobDetailsPage>
                         overflow: TextOverflow.ellipsis,
                         style: CustomTextStyles.titleSmallBluegray400
                             .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Lowest Salary",
+                            style: CustomTextStyles.titleMediumBold_1))),
                 SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.lowestsalary  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Highest Salary",
+                            style: CustomTextStyles.titleMediumBold_1))),
+                SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.highestsalary  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Gender",
+                            style: CustomTextStyles.titleMediumBold_1))),
+                SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.gender  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Experience",
+                            style: CustomTextStyles.titleMediumBold_1))),
+                SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.experience  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Category",
+                            style: CustomTextStyles.titleMediumBold_1))),
+                SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.selectedOption  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text("Skills",
+                            style: CustomTextStyles.titleMediumBold_1))),
+                SizedBox(height: 20.v),
+                Container(
+                    width: 319.h,
+                    margin: EdgeInsets.only(left: 31.h, right: 24.h),
+                    child: Text(
+                        "${widget.postJobModel?.selectedSkills  ?? ""}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: CustomTextStyles.titleSmallBluegray400
+                            .copyWith(height: 1.57))),
+                SizedBox(height: 3.v),
                 Container(
                     padding:
                     EdgeInsets.symmetric(horizontal: 24.h, vertical: 28.v),
                     decoration: AppDecoration.linear,
                     child: Column(children: [
-                      SizedBox(height: 10.v),
+                      SizedBox(height: 350.v),
                       CustomElevatedButton(
 
                           text: "Apply Now",

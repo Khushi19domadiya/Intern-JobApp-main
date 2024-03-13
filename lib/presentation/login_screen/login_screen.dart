@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saumil_s_application/aDMIN/admin_home_screen.dart';
 import 'package:saumil_s_application/core/app_export.dart';
+import 'package:saumil_s_application/presentation/home_page/admin_screen.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
@@ -16,6 +18,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
   TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   var controller = Get.put(AuthController());
 
@@ -100,9 +103,21 @@ class LoginScreen extends StatelessWidget {
                               _buildInputField(context),
                               SizedBox(height: 40.v),
                               CustomElevatedButton(text: "Continue with Email",
-                              onPressed: ()async{
-                                controller
-                                    .signInWithEmailAndPassword(context);
+                              onPressed: (){
+                                // controller
+                                //     .signInWithEmailAndPassword(context);
+
+                                if (emailController.text.toString().toLowerCase() == "admin@gmail.com" && passwordController.text.toString().toLowerCase() == "admin@123") {
+                                  // Navigate to the admin screen
+                                  // Navigator.push(
+                                  print("-------------------${emailController.text.toString()}-------------------");
+                                  print("-------------------${passwordController.text.toString()}-------------------");
+                                    Get.to(()=> AdminHomeScreen());
+                                  // );
+                                } else {
+                                  // For other users, perform the login operation
+                                  controller.signInWithEmailAndPassword(context);
+                                }
                               },),
 
                               SizedBox(height: 26.v),
@@ -212,7 +227,7 @@ class LoginScreen extends StatelessWidget {
           SizedBox(height: 9.v),
           CustomTextFormField(
             // You can use a different controller for the password field if needed
-            // passwordController,
+            controller: passwordController,
             hintText: "Enter your password",
             textInputAction: TextInputAction.done,
             textInputType: TextInputType.visiblePassword,
