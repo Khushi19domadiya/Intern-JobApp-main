@@ -387,9 +387,9 @@ class ExperienceSettingScreen extends StatelessWidget {
               _buildSkills(
                 context,
                 skillsText: "Skills",
-                onTapEditSquare: () {
-                  onTapEditSquare(context);
-                },
+                // onTapEditSquare: () {
+                //   onTapEditSquare(context);
+                // },
               ),
               SizedBox(height: 15.v),
               ListView.separated(
