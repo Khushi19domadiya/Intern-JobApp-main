@@ -12,6 +12,7 @@ class UserModel {
    String? profileUrl;
    String? role;
    List<String>? skills;
+   String? registrationDateTime;
    String? token;
    String? status;
    String? about;
@@ -24,6 +25,7 @@ class UserModel {
      this.skills,
     this.fname,
     this.lname,
+    this.registrationDateTime,
      this.npassowrd,
     this.phonenumber,
     this.address,
@@ -39,6 +41,7 @@ class UserModel {
     password=  data['password'];
     token= data['token'];
     fname= data['fname'];
+    registrationDateTime= data['registrationDateTime'] == null ? null : data['registrationDateTime'].toString() ;
     lname= data['lname'];
     npassowrd= data['npassowrd'];
     phonenumber= data['phonenumber'];
@@ -70,6 +73,7 @@ class UserModel {
       if (password != null) "password": password,
       if (fname != null) "fname": fname,
       if (token != null) "token": token,
+      if (registrationDateTime != null) "registrationDateTime": registrationDateTime,
       if (lname != null) "lname": lname,
       if (npassowrd != null) "npassowrd": npassowrd,
       if (phonenumber != null) "phonenumber": phonenumber,
@@ -77,6 +81,7 @@ class UserModel {
       if (profileUrl != null) "profileUrl": profileUrl,
       if (role != null) "role": role,
       if (skills != null) "skills": skills,
+      if (skills != null) "status": status,
 
       if (about != null) "about": about,
     };

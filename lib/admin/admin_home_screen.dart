@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:saumil_s_application/admin/admin_employer_screen.dart';
 import 'package:saumil_s_application/admin/admin_job_screen.dart';
 import 'package:saumil_s_application/admin/admin_jobseeker_screen.dart';
@@ -18,6 +20,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     AdminEmployerScreen(),
     AdminJobScreen(),
   ];
+
+
+  RxInt selectInt =  0.obs;
 
   DateTime? selectedDate;
 
@@ -40,16 +45,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 ),
               ),
               Spacer(),
-              IconButton(
-                icon: Icon(
-                  Icons.filter_alt,
-                  size: 30, // Increase the size of the icon
-                  color: Colors.white, // Change the color to white
-                ),
-                onPressed: () {
-                  _showFilterPopup(context);
-                },
-              ),
             ],
           ),
           bottom: TabBar(
@@ -59,6 +54,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;
+                selectInt.value = _selectedIndex;
               });
             },
             tabs: [
@@ -137,6 +133,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   //   );
   // }
 
+  TextEditingController selectFilterDate = TextEditingController();
 
   void _showFilterPopup(BuildContext context) {
     showDialog(
@@ -147,40 +144,75 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton(
-                onPressed: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(), // Set lastDate to today
-                  );
-                  if (picked != null && picked != selectedDate) {
-                    setState(() {
-                      selectedDate = picked;
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
-                ),
-                child: Text(
-                  selectedDate == null ? 'Select Date' : 'Change Date',
-                  style: TextStyle(fontSize: 18), // Increase text size
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     final DateTime? picked = await showDatePicker(
+              //       context: context,
+              //       initialDate: DateTime.now(),
+              //       firstDate: DateTime(2000),
+              //       lastDate: DateTime.now(), // Set lastDate to today
+              //     );
+              //     if (picked != null && picked != selectedDate) {
+              //       setState(() {
+              //         selectedDate = picked;
+              //       });
+              //     }
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
+              //   ),
+              //   child: Text(
+              //     selectedDate == null ? 'Select Date' : 'Change Date',
+              //     style: TextStyle(fontSize: 18,color: Colors.white), // Increase text size
+              //   ),
+              // ),
+              SizedBox(
+                height: 45,
+                child: TextFormField(
+                  controller: selectFilterDate,
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      hintText: "Select Date",
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(), // Set lastDate to today
+                          );
+                          if (picked != null && picked != selectedDate) {
+                            setState(() {
+                              selectedDate = picked;
+                              selectFilterDate.text = (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.date_range),
+                      )),
                 ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Add your filter functionality here
+
+                  if(selectInt.value == 0){
+
+                  }
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
+                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
                 ),
                 child: Text(
                   'Apply Now',
-                  style: TextStyle(fontSize: 18), // Increase text size
+                  style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
                 ),
               ),
             ],
@@ -189,6 +221,4 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       },
     );
   }
-
-
 }

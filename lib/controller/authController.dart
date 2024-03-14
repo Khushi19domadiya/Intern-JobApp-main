@@ -119,7 +119,7 @@ class AuthController extends GetxController {
           .set({
         'email': userModel.email,
         'password': userModel.password,
-        'registrationDateTime': DateTime.now(), // Store registration datetime
+        'registrationDateTime': DateTime.now().toString(), // Store registration datetime
       });
     }
   }
@@ -148,6 +148,7 @@ class AuthController extends GetxController {
   await CommonMethod()
       .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
   }
+  return null;
   }
 
 
@@ -276,7 +277,7 @@ class AuthController extends GetxController {
           await FirebaseFirestore.instance
               .collection('Users')
               .doc(user.uid)
-              .set({'registrationDateTime': DateTime.now()}, SetOptions(merge: true));
+              .set({'registrationDateTime': DateTime.now().toString()}, SetOptions(merge: true));
         }
 
         // Navigate to JobTypeScreen after signing in
@@ -385,6 +386,7 @@ class AuthController extends GetxController {
     } else {
       print('----User is not signed in.');
     }
+    return null;
   }
 
   Future<UserModel?> getUserById(String userId) async {

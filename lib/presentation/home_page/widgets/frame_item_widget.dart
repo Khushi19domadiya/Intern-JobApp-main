@@ -94,11 +94,9 @@ class FrameItemWidget extends StatelessWidget {
                         SizedBox(height: 9.v),
                         Opacity(
                           opacity: 0.8,
-                          child: Expanded(
-                            child: Text(
-                              "Skills: ${model.selectedSkills} ",
-                              style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
-                            ),
+                          child: Text(
+                            "Skills: ${model.selectedSkills} ",
+                            style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
                           ),
                         ),
                       ],
