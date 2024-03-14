@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 
-class AdminUserScreen extends StatefulWidget {
-  const AdminUserScreen({super.key});
+class AdminJobseekerScreen extends StatefulWidget {
+  const AdminJobseekerScreen({super.key});
 
   @override
-  State<AdminUserScreen> createState() => _AdminUserScreenState();
+  State<AdminJobseekerScreen> createState() => _AdminJobseekerScreenState();
 }
 
-class _AdminUserScreenState extends State<AdminUserScreen> {
+class _AdminJobseekerScreenState extends State<AdminJobseekerScreen> {
 
   List<UserModel> allUserList = [];
   fetchAllUsers() async {
