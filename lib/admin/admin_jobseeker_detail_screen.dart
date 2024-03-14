@@ -16,7 +16,13 @@ class AdminJobseekerDetailScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text('First Name: ${user.fname}'),
+            Text('Last Name: ${user.lname}'),
             Text('Email: ${user.email}'),
+            Text('Phone Number: ${user.phonenumber}'),
+            Text('About: ${user.about}'),
+            Text('Address: ${user.address}'),
+            Text('Skills: ${user.skills}'),
             // Add more details as needed
           ],
         ),
