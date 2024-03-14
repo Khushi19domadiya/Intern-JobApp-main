@@ -231,8 +231,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
               Get.to(() => PdfViewerPage(pdfUrl: jobData!['cv_url']));
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.black, // Set the button's background color
-              onPrimary: Colors.white, // Set the text color
+              foregroundColor: Colors.white, backgroundColor: Colors.black, // Set the text color
             ),
             child: Text('View CV'),
           ),

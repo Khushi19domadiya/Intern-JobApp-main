@@ -210,7 +210,7 @@ class JobDetailsPageState extends State<JobDetailsPage>
                     EdgeInsets.symmetric(horizontal: 24.h, vertical: 28.v),
                     decoration: AppDecoration.linear,
                     child: Column(children: [
-                      SizedBox(height: 350.v),
+                      SizedBox(height: 50.v),
                       CustomElevatedButton(
 
                           text: "Apply Now",

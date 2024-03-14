@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 
-class AdminJobseekerDetailScreen extends StatelessWidget {
+class AdminEmployerDetailScreen extends StatelessWidget {
   final UserModel user;
 
-  const AdminJobseekerDetailScreen({required this.user});
+  const AdminEmployerDetailScreen({required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Seeker Details'),
+        title: Text('Employer Details'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -34,6 +34,8 @@ class AdminJobseekerDetailScreen extends StatelessWidget {
             Text('Address: ${user.address}'),
             SizedBox(height: 15),
             Text('Skills: ${user.skills}'),
+            SizedBox(height: 15),
+            Text('User Role: ${user.role}'),
             // Add more details as needed
           ],
         ),

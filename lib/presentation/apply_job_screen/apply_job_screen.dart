@@ -115,7 +115,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
-                      SizedBox(height: 270.0),
+                      SizedBox(height: 100.0),
                       _buildContinueButton(),
                     ],
                   ),
@@ -197,6 +197,17 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter your Website, Blog, or Portfolio name';
+            }
+            // Regular expression for URL validation
+            // This regex pattern allows URLs starting with http:// or https://
+            // and must contain at least one dot after the protocol (e.g., .com, .org)
+            // This pattern does not cover all possible URL formats, but it's a basic validation
+            bool isValidUrl = RegExp(
+              r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
+              r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
+            ).hasMatch(value);
+            if (!isValidUrl) {
+              return 'Please enter a valid website URL';
             }
             return null;
           },

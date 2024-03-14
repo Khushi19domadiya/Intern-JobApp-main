@@ -48,7 +48,8 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
                 _addSkillsToCurrentUser(_selectedSkills); // Call function to add skills to Firestore
               },
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColor,
+                // primary: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).primaryColor,
                 fixedSize: Size.fromHeight(50),
               ),
               child: Text(

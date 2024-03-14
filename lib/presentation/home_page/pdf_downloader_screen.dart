@@ -60,18 +60,46 @@ class _PdfDownloaderState extends State<PdfDownloader> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PDF Downloader'),
+        title: Text('PDF Download'),
       ),
       body: Center(
         child: _downloading
             ? CircularProgressIndicator()
             : ElevatedButton(
           onPressed: _downloadPdf,
-          child: Text('Download PDF'),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.blue, // Set text color
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Set button padding
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8), // Set button border radius
+            ),
+          ),
+          child: Text(
+            'Download',
+            style: TextStyle(fontSize: 18), // Set button text style
+          ),
         ),
       ),
     );
   }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text('PDF Downloader'),
+  //     ),
+  //     body: Center(
+  //       child: _downloading
+  //           ? CircularProgressIndicator()
+  //           : ElevatedButton(
+  //         onPressed: _downloadPdf,
+  //         child: Text('Download'),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 void main() {

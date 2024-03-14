@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:saumil_s_application/admin/admin_employer_detail_screen.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 
 class AdminEmployerScreen extends StatefulWidget {
@@ -39,6 +40,14 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(allUserList[index].email ??""),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminEmployerDetailScreen(user: allUserList[index]),
+                ),
+              );
+            },
           );
         },
       ),

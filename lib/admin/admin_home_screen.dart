@@ -32,6 +32,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
+              color: Colors.white, // Set the text color to white
             ),
           ),
           bottom: TabBar(

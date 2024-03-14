@@ -179,8 +179,7 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 25.h),
-                                onPrimary: Colors.white,
+                                foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 25.h),
                               ),
                               child: Text(
                                 "Post Job",

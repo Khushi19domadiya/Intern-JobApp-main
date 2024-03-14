@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/admin/admin_job_detail_screen.dart';
 
 class AdminJobScreen extends StatefulWidget {
   const AdminJobScreen({Key? key}) : super(key: key);
@@ -15,10 +16,10 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
 
   List<PostJobModel> allJobList = [];
 
-  fetchAllUsers() async {
-    QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('postJob').get();
+  fetchAllJobs() async {
+    QuerySnapshot jobDocs = await FirebaseFirestore.instance.collection('postJob').get();
     List<PostJobModel> jobs = [];
-    userDocs.docs.forEach((doc) {
+    jobDocs.docs.forEach((doc) {
       jobs.add(PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>));
     });
     setState(() {
@@ -29,7 +30,7 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    fetchAllUsers();
+    fetchAllJobs();
     _controller = AnimationController(
       duration: Duration(milliseconds: 500),
       vsync: this,
@@ -51,6 +52,15 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(allJobList[index].title ?? ""),
+                  onTap: () {
+                    // Navigate to job detail screen when the user taps on a job
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdminJobDetailScreen(job: allJobList[index]),
+                      ),
+                    );
+                  },
                 );
               },
             ),
