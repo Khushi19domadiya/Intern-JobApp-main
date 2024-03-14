@@ -83,6 +83,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           String token = "";
                           allUserList.forEach((element) {
                             if (element.id == userId) {
+                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'A'});
                               token = (element.token ?? "");
                             }
                           });
@@ -95,7 +96,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           var headers = {
                             'Content-type': 'application/json; charset=utf-8',
                             "Authorization":
-                                "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
+                            "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
                           };
                           var responce = await dio.post(
                             url,
@@ -124,7 +125,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                         height: 46,
                         buttonStyle: ButtonStyle(
                           backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
+                                (Set<MaterialState> states) {
                               return Colors.red;
                             },
                           ),
@@ -135,6 +136,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           String token = "";
                           allUserList.forEach((element) {
                             if (element.id == userId) {
+                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'R'});
                               token = (element.token ?? "");
                             }
                           });

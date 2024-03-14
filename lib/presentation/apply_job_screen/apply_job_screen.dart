@@ -9,12 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_text_form_field.dart';
-import '../../theme/theme_helper.dart';
-import '../../util/colors.dart';
-import '../../util/common_methos.dart';
-import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
   final String jobId;
@@ -34,7 +31,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   User? user = FirebaseAuth.instance.currentUser;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-RxBool isLoading = false.obs;
+  RxBool isLoading = false.obs;
   File? cvFile;
 
   Future<void> _uploadCV() async {
@@ -43,11 +40,6 @@ RxBool isLoading = false.obs;
       try {
         String userId = user?.uid ?? 'unique_user_id';
         String cvFileName = 'cv_$userId.pdf';
-
-
-        // Add the status field to the user table
-        await FirebaseFirestore.instance.collection('Users').doc(user?.uid).update({'status': 'P'});
-
 
         Reference storageReference = FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
         UploadTask uploadTask = storageReference.putFile(cvFile!);
@@ -69,56 +61,11 @@ RxBool isLoading = false.obs;
           'jobId':widget.jobId
         });
 
-
-        var docApplyCount = FirebaseFirestore.instance.collection('postJob').doc(widget.jobId);
-
-        FirebaseFirestore.instance.runTransaction((transaction) async {
-          DocumentSnapshot snapshot = await transaction.get(docApplyCount);
-
-          // if (!snapshot.exists) {
-          //   throw Exception("Document does not exist!"); // Handle case where document does not exist
-          // }
-
-          if (snapshot.data() is Map<String, dynamic> && (snapshot.data() as Map<String, dynamic>).containsKey('applyCount')) {
-            var applyCount = snapshot.get('applyCount') ?? 0; // Get current apply count or default to 0
-            applyCount++; // Increment apply count
-
-            transaction.update(docApplyCount, {'applyCount': applyCount}); // Update document with new apply count
-          } else {
-
-            transaction.update(docApplyCount, {'applyCount': 1}); //
-          }
-
-        });
-
-        var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
-        print("============{{}}}}${userData.data()!["token"]}}");
-        Dio dio = Dio();
-        var url = 'https://fcm.googleapis.com/fcm/send';
-//queryParameters will the parameter required by your API.
-//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
-        var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
-        var responce = await dio.post(url,
-          data:  {
-            "notification": {
-              "title": "Job App",
-              "body": "${fullNameController.text} was recently applied in ${widget.jobTitle} job",
-              "sound": "default"
-            },
-            "priority": "High",
-            "to": "${userData.data()!["token"]}",
-
-          },
-          options: Options(
-              headers: headers
-          ),);
-        if(responce.statusCode == 200){
-          print("-dfdf----${responce.data.toString}");
-        }
         // Now update the document with the job ID
         await docRef.update({'id': docRef.id});
 
-        print('Job application data stored successfully');
+        // Update the status field in the user table to "P"
+        await FirebaseFirestore.instance.collection('Users').doc(user?.uid).update({'status': 'P'});
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -168,24 +115,24 @@ RxBool isLoading = false.obs;
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
-                      SizedBox(height: 100.0),
+                      SizedBox(height: 270.0),
                       _buildContinueButton(),
                     ],
                   ),
                 ),
               ),
             ),
-          StreamBuilder(
-            stream: isLoading.stream,
-            builder: (context, snapshot) {
-              return isLoading.value ?   Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.black.withOpacity(.3),
-                  child: Center(child: CircularProgressIndicator()),
-                ) : SizedBox();
-            }
-          ),
+            StreamBuilder(
+                stream: isLoading.stream,
+                builder: (context, snapshot) {
+                  return isLoading.value ?   Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.black.withOpacity(.3),
+                    child: Center(child: CircularProgressIndicator()),
+                  ) : SizedBox();
+                }
+            ),
           ],
         ),
       ),
