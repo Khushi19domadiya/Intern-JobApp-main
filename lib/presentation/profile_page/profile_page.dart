@@ -12,8 +12,6 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
-import '../experience_setting_screen/AddSkillsScreen.dart';
-
 class ProfilePage extends StatelessWidget {
   ProfilePage({
     Key? key,
@@ -38,7 +36,7 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   _buildBackground(context),
-                  // SizedBox(height: 16.v),
+                  SizedBox(height: 16.v),
                   // Container(
                   //   width: 273.h,
                   //   margin: EdgeInsets.only(left: 51.h, right: 50.h),
@@ -52,13 +50,16 @@ class ProfilePage extends StatelessWidget {
                   // ),
                   // SizedBox(height: 16.v),
                   // _buildJobApplied(context),
-                  SizedBox(height: 24.v),
+                  SizedBox(height: 4.v),
                   Divider(color: appTheme.gray300),
                   SizedBox(height: 22.v),
                   _buildAboutMe(context),
                   SizedBox(height: 24.v),
                   _buildSkillsList(context),
-
+                  SizedBox(height: 24.v),
+                  _buildExperience1(context),
+                  SizedBox(height: 24.v),
+                  _buildEducation1(context),
                 ],
               ),
             ),
@@ -327,15 +328,13 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
-        UserModel userDeta = UserModel.fromMap(snapshot.data?.data() ?? {});
-        List<String>? skillsData = userDeta.skills;
+        List<dynamic>? skillsData = snapshot.data?['skills'];
         List<String> skills =
             skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
 
         return Container(
-          // width: 310, // Set the desired width here
+          width: 310, // Set the desired width here
           padding: EdgeInsets.all(15.h),
-          margin: EdgeInsets.all(16.h),
           decoration: AppDecoration.outlineGray.copyWith(
             borderRadius: BorderRadiusStyle.circleBorder12,
           ),
@@ -346,9 +345,9 @@ class ProfilePage extends StatelessWidget {
               _buildSkills(
                 context,
                 skillsText: "Skills",
-                onTapEditSquare: () {
-                  onTapEditSquare(context);
-                },
+                // onTapEditSquare: () {
+                //   onTapEditSquare(context);
+                // },
               ),
               SizedBox(height: 15.v),
               ListView.separated(
@@ -383,10 +382,135 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSkills(BuildContext context, {
-    required String skillsText,
-    Function? onTapEditSquare,
-  }) {
+
+
+  Widget _buildExperience1(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.h),
+      padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 14.v),
+      decoration: AppDecoration.outlineGray.copyWith(
+        borderRadius: BorderRadiusStyle.circleBorder12,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildSkills(
+            context,
+            skillsText: "Experience",
+            // editSquareImage: ImageConstant.imgEditSquarePrimary,
+          ),
+          SizedBox(height: 22.v),
+          ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            separatorBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 11.5.v),
+                child: SizedBox(
+                  width: 235.h,
+                  child: Divider(
+                    height: 1.v,
+                    thickness: 1.v,
+                    color: appTheme.gray300,
+                  ),
+                ),
+              );
+            },
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return ProfileItemWidget();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEducation1(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.h),
+      padding: EdgeInsets.all(15.h),
+      decoration: AppDecoration.outlineGray.copyWith(
+        borderRadius: BorderRadiusStyle.circleBorder12,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSkills(
+            context,
+            skillsText: "Education",
+            // editSquareImage: ImageConstant.imgEditSquarePrimary,
+          ),
+          SizedBox(height: 24.v),
+          Padding(
+            padding: EdgeInsets.only(right: 83.h),
+            child: Row(
+              children: [
+                CustomIconButton(
+                  height: 48.adaptSize,
+                  width: 48.adaptSize,
+                  padding: EdgeInsets.all(8.h),
+                  child: CustomImageView(
+                    imagePath: ImageConstant.imgFrame162724,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12.h, top: 5.v),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "University of Oxford",
+                          style: CustomTextStyles.titleSmallSemiBold,
+                        ),
+                        SizedBox(height: 6.v),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 1.v),
+                                child: Text(
+                                  "Computer Science",
+                                  style: theme.textTheme.labelLarge,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 4.h, top: 1.v),
+                              child: Text(
+                                "•",
+                                style: theme.textTheme.labelLarge,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 4.h),
+                              child: Text(
+                                "2019",
+                                style: theme.textTheme.labelLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkills(
+      BuildContext context, {
+        required String skillsText,
+
+      }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -394,156 +518,18 @@ class ProfilePage extends StatelessWidget {
           padding: EdgeInsets.only(top: 2.v),
           child: Text(
             skillsText,
-            style: CustomTextStyles.titleMediumBold_1.copyWith(
-                color: theme.colorScheme.primary),
+            style: theme.textTheme.titleMedium!.copyWith(color: theme.colorScheme.primary),
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            onTapEditSquare?.call();
-          },
-          child: CustomImageView(
-            imagePath: ImageConstant.imgEditSquarePrimary,
-            height: 24.adaptSize,
-            width: 24.adaptSize,
-          ),
-        ),
+        // CustomImageView(
+        //   imagePath: editSquareImage,
+        //   height: 24.adaptSize,
+        //   width: 24.adaptSize,
+        // ),
       ],
     );
   }
 
-
-  // Widget _buildExperience1(BuildContext context) {
-  //   return Container(
-  //     margin: EdgeInsets.symmetric(horizontal: 24.h),
-  //     padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 14.v),
-  //     decoration: AppDecoration.outlineGray.copyWith(
-  //       borderRadius: BorderRadiusStyle.circleBorder12,
-  //     ),
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         _buildSkills(
-  //           context,
-  //           skillsText: "Experience",
-  //           // editSquareImage: ImageConstant.imgEditSquarePrimary,
-  //         ),
-  //         SizedBox(height: 22.v),
-  //         ListView.separated(
-  //           physics: NeverScrollableScrollPhysics(),
-  //           shrinkWrap: true,
-  //           separatorBuilder: (context, index) {
-  //             return Padding(
-  //               padding: EdgeInsets.symmetric(vertical: 11.5.v),
-  //               child: SizedBox(
-  //                 width: 235.h,
-  //                 child: Divider(
-  //                   height: 1.v,
-  //                   thickness: 1.v,
-  //                   color: appTheme.gray300,
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //           itemCount: 3,
-  //           itemBuilder: (context, index) {
-  //             return ProfileItemWidget();
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildEducation1(BuildContext context) {
-  //   return Container(
-  //     margin: EdgeInsets.symmetric(horizontal: 24.h),
-  //     padding: EdgeInsets.all(15.h),
-  //     decoration: AppDecoration.outlineGray.copyWith(
-  //       borderRadius: BorderRadiusStyle.circleBorder12,
-  //     ),
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         _buildSkills(
-  //           context,
-  //           skillsText: "Education",
-  //           // editSquareImage: ImageConstant.imgEditSquarePrimary,
-  //         ),
-  //         SizedBox(height: 24.v),
-  //         Padding(
-  //           padding: EdgeInsets.only(right: 83.h),
-  //           child: Row(
-  //             children: [
-  //               CustomIconButton(
-  //                 height: 48.adaptSize,
-  //                 width: 48.adaptSize,
-  //                 padding: EdgeInsets.all(8.h),
-  //                 child: CustomImageView(
-  //                   imagePath: ImageConstant.imgFrame162724,
-  //                 ),
-  //               ),
-  //               Expanded(
-  //                 child: Padding(
-  //                   padding: EdgeInsets.only(left: 12.h, top: 5.v),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         "University of Oxford",
-  //                         style: CustomTextStyles.titleSmallSemiBold,
-  //                       ),
-  //                       SizedBox(height: 6.v),
-  //                       Row(
-  //                         children: [
-  //                           Expanded(
-  //                             child: Padding(
-  //                               padding: EdgeInsets.only(top: 1.v),
-  //                               child: Text(
-  //                                 "Computer Science",
-  //                                 style: theme.textTheme.labelLarge,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                             padding: EdgeInsets.only(left: 4.h, top: 1.v),
-  //                             child: Text(
-  //                               "•",
-  //                               style: theme.textTheme.labelLarge,
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                             padding: EdgeInsets.only(left: 4.h),
-  //                             child: Text(
-  //                               "2019",
-  //                               style: theme.textTheme.labelLarge,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-
-  /// Navigates to the newPositionScreen when the action is triggered.
-  onTapEditSquare(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) =>
-          AddSkillsScreen()), // Replace AddSkillsScreen with the name of your screen
-    );
-  }
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
   }
