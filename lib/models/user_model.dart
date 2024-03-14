@@ -126,6 +126,7 @@ class educationModel{
     };
   }
 }
+
 class PostJobModel {
   final String id;
   final String? userId;
@@ -140,7 +141,7 @@ class PostJobModel {
   final String? gender;
   final List<dynamic> selectedSkills;
   final String? selectedOption;
-  final Timestamp postDateTime; // Field to store the post datetime
+
 
   PostJobModel({
     required this.id,
@@ -155,8 +156,8 @@ class PostJobModel {
     this.jobType,
     this.gender,
     required this.selectedSkills,
-    required this.selectedOption,
-    required this.postDateTime, // Include post datetime in the constructor
+    required  this.selectedOption,
+
   });
 
   Map<String, dynamic> toJson() {
@@ -174,10 +175,8 @@ class PostJobModel {
       'gender': gender,
       'selectedSkills': selectedSkills,
       'selectedOption': selectedOption,
-      'postDateTime': postDateTime, // Add post datetime to the JSON representation
     };
   }
-
   factory PostJobModel.fromSnapshot(Map<String, dynamic> data) =>
       PostJobModel(
         id: data["id"],
@@ -193,6 +192,5 @@ class PostJobModel {
         gender: data["gender"],
         selectedSkills: data["selectedSkills"],
         selectedOption: data["selectedOption"],
-        postDateTime: data["postDateTime"], // Assign post datetime from snapshot
-      );
+    );
 }

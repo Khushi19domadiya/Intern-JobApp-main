@@ -50,12 +50,11 @@ class AuthController extends GetxController {
   // }
 
 
-
-
+  // Register with email and password
   Future<void> registerWithEmailAndPassword(BuildContext context) async {
     try {
       UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(
+          await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text,
       );
@@ -63,21 +62,19 @@ class AuthController extends GetxController {
       if (userCredential.user != null) {
         User user = userCredential.user!;
         // Send email verification
-        await userCredential.user!.sendEmailVerification().whenComplete(() async {
-          // Save user details and registration datetime
-          await saveUserDetails(UserModel(
-              id: user.uid.toString(),
-              email: user.email.toString().trim(),
-              password: passwordController.text));
-          // Show success message
-          await CommonMethod()
-              .getXSnackBar(
-            "Success",
-            'Verification email sent to ${userCredential.user!.email}',
-            Colors.green,
-          )
-              .then((value) => Get.to(() => LoginScreen()));
-        });
+        await userCredential.user!.sendEmailVerification().whenComplete(
+            () async => saveUserDetails(UserModel(
+                id: user.uid.toString(),
+                email: user.email.toString().trim(),
+                password: passwordController.text)));
+
+        await CommonMethod()
+            .getXSnackBar(
+              "Success",
+              'Verification email sent to ${userCredential.user!.email}',
+              Colors.green,
+            )
+            .then((value) => Get.to(() => LoginScreen()));
       }
     } on FirebaseAuthException catch (e) {
       // Handle specific error cases
@@ -104,155 +101,54 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> saveUserDetails(UserModel userModel) async {
-    // Check if the user already exists in Firestore
-    final userSnapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userModel.id)
-        .get();
-
-    // If the user doesn't exist, save the user details with registration datetime
-    if (!userSnapshot.exists) {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userModel.id)
-          .set({
-        'email': userModel.email,
-        'password': userModel.password,
-        'registrationDateTime': DateTime.now(), // Store registration datetime
-      });
-    }
+  Future saveUserDetails(UserModel user) async {
+    userRepo.createUser(user);
+    // controller.registerWithEmailAndPassword(context);
   }
 
   // Sign in with email and password
   Future<String?> signInWithEmailAndPassword(BuildContext context) async {
-  try {
-  UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-  email: emailController.text.trim().toString(),
-  password: passwordController.text);
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: emailController.text.trim().toString(),
+          password: passwordController.text);
 
-  if (userCredential.user!.emailVerified) {
-  // User is signed in and email is verified
-  await CommonMethod()
-      .getXSnackBar("Success", 'Sign-in successfully', success)
-      .whenComplete(() => Get.to(() => JobTypeScreen()));
-  } else {
-  // Email is not verified, handle accordingly
-  await CommonMethod().getXSnackBar(
-  "Error",
-  'Email not verified. Check your inbox for the verification email.',
-  red);
-  print('');
+      if (userCredential.user!.emailVerified) {
+        // User is signed in and email is verified
+        await CommonMethod()
+            .getXSnackBar("Success", 'Sign-in successfully', success)
+            .whenComplete(() => Get.to(() => JobTypeScreen()));
+      } else {
+        // Email is not verified, handle accordingly
+        await CommonMethod().getXSnackBar(
+            "Error",
+            'Email not verified. Check your inbox for the verification email.',
+            red);
+        print('');
+      }
+    } on FirebaseAuthException catch (e) {
+      await CommonMethod()
+          .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
+    }
   }
-  } on FirebaseAuthException catch (e) {
-  await CommonMethod()
-      .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
-  }
-  }
 
-
-
-
-  // Register with email and password
-  // Future<void> registerWithEmailAndPassword(BuildContext context) async {
-  //   try {
-  //     UserCredential userCredential =
-  //         await _auth.createUserWithEmailAndPassword(
-  //       email: emailController.text.trim(),
-  //       password: passwordController.text,
-  //     );
-  //
-  //     if (userCredential.user != null) {
-  //       User user = userCredential.user!;
-  //       // Send email verification
-  //       await userCredential.user!.sendEmailVerification().whenComplete(
-  //           () async => saveUserDetails(UserModel(
-  //               id: user.uid.toString(),
-  //               email: user.email.toString().trim(),
-  //               password: passwordController.text)));
-  //
-  //       await CommonMethod()
-  //           .getXSnackBar(
-  //             "Success",
-  //             'Verification email sent to ${userCredential.user!.email}',
-  //             Colors.green,
-  //           )
-  //           .then((value) => Get.to(() => LoginScreen()));
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     // Handle specific error cases
-  //     if (e.code == 'email-already-in-use') {
-  //       await CommonMethod().getXSnackBar(
-  //         "Error",
-  //         'The email address is already in use. Please use a different email.',
-  //         Colors.red,
-  //       );
-  //     } else if (e.code == 'weak-password') {
-  //       await CommonMethod().getXSnackBar(
-  //         "Error",
-  //         'The password provided is too weak. Please choose a stronger password.',
-  //         Colors.red,
-  //       );
-  //     } else {
-  //       // Handle other authentication errors
-  //       await CommonMethod().getXSnackBar(
-  //         "Error",
-  //         'Failed to register: ${e.message}',
-  //         Colors.red,
-  //       );
-  //     }
-  //   }
-  // }
-  //
-  // Future saveUserDetails(UserModel user) async {
-  //   userRepo.createUser(user);
-  //   // controller.registerWithEmailAndPassword(context);
-  // }
-  //
-  // // Sign in with email and password
-  // Future<String?> signInWithEmailAndPassword(BuildContext context) async {
-  //   try {
-  //     UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-  //         email: emailController.text.trim().toString(),
-  //         password: passwordController.text);
-  //
-  //     if (userCredential.user!.emailVerified) {
-  //       // User is signed in and email is verified
-  //       await CommonMethod()
-  //           .getXSnackBar("Success", 'Sign-in successfully', success)
-  //           .whenComplete(() => Get.to(() => JobTypeScreen()));
-  //     } else {
-  //       // Email is not verified, handle accordingly
-  //       await CommonMethod().getXSnackBar(
-  //           "Error",
-  //           'Email not verified. Check your inbox for the verification email.',
-  //           red);
-  //       print('');
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     await CommonMethod()
-  //         .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
-  //   }
-  // }
-  //
-
-
-// Sign in with Google
+  // Sign in with Google
   Future<User?> handleSignInGoogle() async {
     try {
-      await googleSignIn.signOut(); // Sign out to allow multiple account selection
+      await googleSignIn
+          .signOut(); // Sign out to allow multiple account selection
       final GoogleSignInAccount? googleSignInAccount =
-      await googleSignIn.signIn();
+          await googleSignIn.signIn();
 
       if (googleSignInAccount == null) {
         // User canceled Google Sign-In
-        await CommonMethod().getXSnackBar(
-            "Info", 'Google Sign-In canceled by user', red);
+        await CommonMethod()
+            .getXSnackBar("Info", 'Google Sign-In canceled by user', red);
         return null;
       }
 
       final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
+          await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -260,27 +156,14 @@ class AuthController extends GetxController {
       );
 
       final UserCredential authResult =
-      await _auth.signInWithCredential(credential);
+          await _auth.signInWithCredential(credential);
       final User? user = authResult.user;
 
       if (user != null) {
         // Successfully signed in with Google
-        await CommonMethod().getXSnackBar(
-            "Success", 'Signed in: ${user.displayName}', success);
-
-        // Check if the user is signing in for the first time
-        final isFirstSignIn = await checkFirstSignIn(user.uid);
-
-        if (isFirstSignIn) {
-          // If it's the first sign-in, store the current datetime in Firestore
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(user.uid)
-              .set({'registrationDateTime': DateTime.now()}, SetOptions(merge: true));
-        }
-
-        // Navigate to JobTypeScreen after signing in
-        await Get.to(() => JobTypeScreen());
+        await CommonMethod()
+            .getXSnackBar("Success", 'Signed in: ${user.displayName}', success)
+            .whenComplete(() => Get.to(() => JobTypeScreen()));
       }
 
       return user;
@@ -291,74 +174,13 @@ class AuthController extends GetxController {
             "Error", 'Firebase Auth Error: ${error.message}', red);
       } else {
         // Handle other errors
-        await CommonMethod().getXSnackBar(
-            "Error", 'Error signing in with Google: $error', red);
+        await CommonMethod()
+            .getXSnackBar("Error", 'Error signing in with Google: $error', red);
         log("----errorGoogle--->> " + error.toString());
       }
       return null;
     }
   }
-
-// Function to check if it's the first sign-in for the user
-  Future<bool> checkFirstSignIn(String userId) async {
-    final userData = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .get();
-
-    return !userData.exists;
-  }
-
-
-  // // Sign in with Google
-  // Future<User?> handleSignInGoogle() async {
-  //   try {
-  //     await googleSignIn
-  //         .signOut(); // Sign out to allow multiple account selection
-  //     final GoogleSignInAccount? googleSignInAccount =
-  //         await googleSignIn.signIn();
-  //
-  //     if (googleSignInAccount == null) {
-  //       // User canceled Google Sign-In
-  //       await CommonMethod()
-  //           .getXSnackBar("Info", 'Google Sign-In canceled by user', red);
-  //       return null;
-  //     }
-  //
-  //     final GoogleSignInAuthentication googleSignInAuthentication =
-  //         await googleSignInAccount.authentication;
-  //
-  //     final AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleSignInAuthentication.accessToken,
-  //       idToken: googleSignInAuthentication.idToken,
-  //     );
-  //
-  //     final UserCredential authResult =
-  //         await _auth.signInWithCredential(credential);
-  //     final User? user = authResult.user;
-  //
-  //     if (user != null) {
-  //       // Successfully signed in with Google
-  //       await CommonMethod()
-  //           .getXSnackBar("Success", 'Signed in: ${user.displayName}', success)
-  //           .whenComplete(() => Get.to(() => JobTypeScreen()));
-  //     }
-  //
-  //     return user;
-  //   } catch (error) {
-  //     // Handle specific error cases
-  //     if (error is FirebaseAuthException) {
-  //       await CommonMethod().getXSnackBar(
-  //           "Error", 'Firebase Auth Error: ${error.message}', red);
-  //     } else {
-  //       // Handle other errors
-  //       await CommonMethod()
-  //           .getXSnackBar("Error", 'Error signing in with Google: $error', red);
-  //       log("----errorGoogle--->> " + error.toString());
-  //     }
-  //     return null;
-  //   }
-  // }
 
   // Check if the user is currently signed in
   Future<bool> isUserSignedIn() async {

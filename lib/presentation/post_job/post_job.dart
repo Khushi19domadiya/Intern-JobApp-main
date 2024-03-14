@@ -634,7 +634,7 @@ class _PostJobState extends State<PostJob> {
   }
 
   Future<void> saveJobPost({
-    required String id,
+    required String id, // Accept document ID as a parameter
     required String title,
     required String lowestsalary,
     required String highestsalary,
@@ -643,20 +643,16 @@ class _PostJobState extends State<PostJob> {
     required String about,
     required String deadline,
     required List<String> selectedSkills,
-    required String? selectedOption,
+    required String? selectedOption, // Add selected option parameter
   }) async {
     try {
-      CollectionReference jobCollection =
-      FirebaseFirestore.instance.collection("postJob");
+      // Reference to the "postJob" collection
+      CollectionReference jobCollection = FirebaseFirestore.instance.collection("postJob");
 
       User? currentUser = FirebaseAuth.instance.currentUser;
 
-      // Create a timestamp for the post datetime
-      Timestamp postDateTime = Timestamp.now();
-
       PostJobModel job = PostJobModel(
-        id: id,
-        userId: currentUser!.uid,
+        id: id, // Assign the document ID to the model
         title: title,
         lowestsalary: lowestsalary,
         highestsalary: highestsalary,
@@ -667,8 +663,8 @@ class _PostJobState extends State<PostJob> {
         jobType: _selectedRadio,
         gender: _selectGender,
         selectedSkills: selectedSkills,
-        selectedOption: selectedOption,
-        postDateTime: postDateTime, // Assign the post datetime
+        selectedOption: selectedOption, // Assign the selected option to the model
+        userId: currentUser!.uid,
       );
       await jobCollection.doc(id).set(job.toJson());
       allUserList.clear();
