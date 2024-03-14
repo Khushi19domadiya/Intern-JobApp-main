@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../models/user_model.dart';
 import '../experience_setting_screen/widgets/experiencesetting_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
@@ -278,6 +279,82 @@ class ExperienceSettingScreen extends StatelessWidget {
     );
   }
 
+  // Widget _buildSkillsSection(BuildContext context) {
+  //   return StreamBuilder<DocumentSnapshot>(
+  //     stream: FirebaseFirestore.instance
+  //         .collection('Users')
+  //         .doc(FirebaseAuth.instance.currentUser?.uid)
+  //         .snapshots(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator(); // Placeholder widget while data is loading
+  //       }
+  //       if (snapshot.hasError) {
+  //         return Text('Error: ${snapshot.error}'); // Display error if any
+  //       }
+  //
+  //       List<dynamic>? skillsData = snapshot.data?['skills'];
+  //       List<String> skills = skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
+  //
+  //       if (skills.isEmpty) {
+  //         // If skills are not selected or not available, display a message
+  //         return Center(
+  //           child: Text(
+  //             "No skills selected", // You can customize this message
+  //             style: TextStyle(fontSize: 16),
+  //           ),
+  //         );
+  //       }
+  //
+  //       return Container(
+  //         padding: EdgeInsets.all(15.h),
+  //         decoration: AppDecoration.outlineGray.copyWith(
+  //           borderRadius: BorderRadiusStyle.circleBorder12,
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             _buildSkills(
+  //               context,
+  //               skillsText: "Skills",
+  //               onTapEditSquare: () {
+  //                 onTapEditSquare(context);
+  //               },
+  //             ),
+  //             SizedBox(height: 15.v),
+  //             ListView.separated(
+  //               physics: NeverScrollableScrollPhysics(),
+  //               shrinkWrap: true,
+  //               separatorBuilder: (context, index) {
+  //                 return Padding(
+  //                   padding: EdgeInsets.symmetric(vertical: 11.5.v),
+  //                   child: SizedBox(
+  //                     width: 295.h,
+  //                     child: Divider(
+  //                       height: 1.v,
+  //                       thickness: 1.v,
+  //                       color: appTheme.gray300,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //               itemCount: skills.length,
+  //               itemBuilder: (context, index) {
+  //                 // Display each skill fetched from Firestore
+  //                 return Text(
+  //                   skills[index],
+  //                   style: TextStyle(fontSize: 16),
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
   Widget _buildSkillsSection(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
@@ -291,22 +368,15 @@ class ExperienceSettingScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
-
-        List<dynamic>? skillsData = snapshot.data?['skills'];
-        List<String> skills = skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
-
-        if (skills.isEmpty) {
-          // If skills are not selected or not available, display a message
-          return Center(
-            child: Text(
-              "No skills selected", // You can customize this message
-              style: TextStyle(fontSize: 16),
-            ),
-          );
-        }
+        UserModel userDeta = UserModel.fromMap(snapshot.data?.data() ?? {});
+        List<String>? skillsData = userDeta.skills;
+        List<String> skills =
+            skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>
 
         return Container(
+          // width: 310, // Set the desired width here
           padding: EdgeInsets.all(15.h),
+          margin: EdgeInsets.all(16.h),
           decoration: AppDecoration.outlineGray.copyWith(
             borderRadius: BorderRadiusStyle.circleBorder12,
           ),
