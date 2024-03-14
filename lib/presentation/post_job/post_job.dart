@@ -665,6 +665,7 @@ class _PostJobState extends State<PostJob> {
         selectedSkills: selectedSkills,
         selectedOption: selectedOption, // Assign the selected option to the model
         userId: currentUser!.uid,
+
       );
       await jobCollection.doc(id).set(job.toJson());
       allUserList.clear();

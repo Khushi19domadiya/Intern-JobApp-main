@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
-import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_text_form_field.dart';
+import '../../theme/theme_helper.dart';
+import '../../util/colors.dart';
+import '../../util/common_methos.dart';
+import '../home_container_screen/home_container_screen.dart';
 
 class ApplyJobScreen extends StatefulWidget {
   final String jobId;
@@ -41,6 +44,11 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         String userId = user?.uid ?? 'unique_user_id';
         String cvFileName = 'cv_$userId.pdf';
 
+
+        // Add the status field to the user table
+        await FirebaseFirestore.instance.collection('Users').doc(user?.uid).update({'status': 'P'});
+
+
         Reference storageReference = FirebaseStorage.instance.ref().child('cv_files/$cvFileName');
         UploadTask uploadTask = storageReference.putFile(cvFile!);
         await uploadTask.whenComplete(() => print('CV Uploaded'));
@@ -61,11 +69,56 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'jobId':widget.jobId
         });
 
+
+        var docApplyCount = FirebaseFirestore.instance.collection('postJob').doc(widget.jobId);
+
+        FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentSnapshot snapshot = await transaction.get(docApplyCount);
+
+          // if (!snapshot.exists) {
+          //   throw Exception("Document does not exist!"); // Handle case where document does not exist
+          // }
+
+          if (snapshot.data() is Map<String, dynamic> && (snapshot.data() as Map<String, dynamic>).containsKey('applyCount')) {
+            var applyCount = snapshot.get('applyCount') ?? 0; // Get current apply count or default to 0
+            applyCount++; // Increment apply count
+
+            transaction.update(docApplyCount, {'applyCount': applyCount}); // Update document with new apply count
+          } else {
+
+            transaction.update(docApplyCount, {'applyCount': 1}); //
+          }
+
+        });
+
+        var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
+        print("============{{}}}}${userData.data()!["token"]}}");
+        Dio dio = Dio();
+        var url = 'https://fcm.googleapis.com/fcm/send';
+//queryParameters will the parameter required by your API.
+//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+        var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
+        var responce = await dio.post(url,
+          data:  {
+            "notification": {
+              "title": "Job App",
+              "body": "${fullNameController.text} was recently applied in ${widget.jobTitle} job",
+              "sound": "default"
+            },
+            "priority": "High",
+            "to": "${userData.data()!["token"]}",
+
+          },
+          options: Options(
+              headers: headers
+          ),);
+        if(responce.statusCode == 200){
+          print("-dfdf----${responce.data.toString}");
+        }
         // Now update the document with the job ID
         await docRef.update({'id': docRef.id});
 
-        // Update the status field in the user table to "P"
-        await FirebaseFirestore.instance.collection('Users').doc(user?.uid).update({'status': 'P'});
+        print('Job application data stored successfully');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -197,17 +250,6 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter your Website, Blog, or Portfolio name';
-            }
-            // Regular expression for URL validation
-            // This regex pattern allows URLs starting with http:// or https://
-            // and must contain at least one dot after the protocol (e.g., .com, .org)
-            // This pattern does not cover all possible URL formats, but it's a basic validation
-            bool isValidUrl = RegExp(
-              r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
-              r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
-            ).hasMatch(value);
-            if (!isValidUrl) {
-              return 'Please enter a valid website URL';
             }
             return null;
           },

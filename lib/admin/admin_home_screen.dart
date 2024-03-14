@@ -19,6 +19,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     AdminJobScreen(),
   ];
 
+  DateTime? selectedDate;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -27,13 +29,28 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
           automaticallyImplyLeading: false, // Remove back button
-          title: Text(
-            'Admin Dashboard',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white, // Set the text color to white
-            ),
+          title: Row(
+            children: [
+              Text(
+                'Admin Dashboard',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                icon: Icon(
+                  Icons.filter_alt,
+                  size: 30, // Increase the size of the icon
+                  color: Colors.white, // Change the color to white
+                ),
+                onPressed: () {
+                  _showFilterPopup(context);
+                },
+              ),
+            ],
           ),
           bottom: TabBar(
             indicatorColor: Colors.white,
@@ -79,4 +96,99 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       ),
     );
   }
+
+  // void _showFilterPopup(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Filter by Date'),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             ElevatedButton(
+  //               onPressed: () async {
+  //                 final DateTime? picked = await showDatePicker(
+  //                   context: context,
+  //                   initialDate: DateTime.now(),
+  //                   firstDate: DateTime(2000),
+  //                   lastDate: DateTime(2101),
+  //                 );
+  //                 if (picked != null && picked != selectedDate) {
+  //                   setState(() {
+  //                     selectedDate = picked;
+  //                   });
+  //                 }
+  //               },
+  //               child: Text(selectedDate == null ? 'Select Date' : 'Change Date'),
+  //             ),
+  //             SizedBox(height: 10),
+  //             ElevatedButton(
+  //               onPressed: () {
+  //                 // Add your filter functionality here
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: Text('Apply Now'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
+  void _showFilterPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Filter by Date'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now(), // Set lastDate to today
+                  );
+                  if (picked != null && picked != selectedDate) {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
+                ),
+                child: Text(
+                  selectedDate == null ? 'Select Date' : 'Change Date',
+                  style: TextStyle(fontSize: 18), // Increase text size
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Add your filter functionality here
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
+                ),
+                child: Text(
+                  'Apply Now',
+                  style: TextStyle(fontSize: 18), // Increase text size
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
 }

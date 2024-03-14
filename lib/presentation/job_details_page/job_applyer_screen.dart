@@ -54,7 +54,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Applyer Screen'),
+        title: Text('Job Applier Screen'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -78,48 +78,35 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                     Expanded(
                       child: CustomElevatedButton(
                         text: 'Approve',
-                        // child: Text('Approve'),
                         onPressed: () async {
                           String token = "";
+                          String currentStatus = "";
+
                           allUserList.forEach((element) {
                             if (element.id == userId) {
-                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'A'});
-                              token = (element.token ?? "");
+                              currentStatus = element.status ?? "";
+                              token = element.token ?? "";
                             }
                           });
 
-                          // Add your approve logic here
-                          Dio dio = Dio();
-                          var url = 'https://fcm.googleapis.com/fcm/send';
-//queryParameters will the parameter required by your API.
-//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
-                          var headers = {
-                            'Content-type': 'application/json; charset=utf-8',
-                            "Authorization":
-                            "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
-                          };
-                          var responce = await dio.post(
-                            url,
-                            data: {
-                              "notification": {
-                                "title": "Job App",
-                                "body": "You are approve for next process",
-                                "sound": "default"
-                              },
-                              "priority": "High",
-                              "to": token,
-                            },
-                            options: Options(headers: headers),
-                          );
-                          if (responce.statusCode == 200) {
-                            print("-dfdf----${responce.data.toString}");
+                          if (currentStatus == 'A' || currentStatus == 'R') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('You have already been processed for this job application.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'A'});
+                            sendNotification(token, 'Your application has been approved. You will be notified about the next steps.');
                             Get.back();
                           }
+
                         },
                         height: 46,
                       ),
                     ),
-                    SizedBox(width: 16), // Add some spacing between the buttons
+                    SizedBox(width: 16),
                     Expanded(
                       child: CustomElevatedButton(
                         height: 46,
@@ -131,41 +118,27 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           ),
                         ),
                         text: 'Reject',
-                        // child: Text('Reject'),
                         onPressed: () async {
                           String token = "";
+                          String currentStatus = "";
+
                           allUserList.forEach((element) {
                             if (element.id == userId) {
-                              FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'R'});
-                              token = (element.token ?? "");
+                              currentStatus = element.status ?? "";
+                              token = element.token ?? "";
                             }
                           });
 
-                          // Add your approve logic here
-                          Dio dio = Dio();
-                          var url = 'https://fcm.googleapis.com/fcm/send';
-//queryParameters will the parameter required by your API.
-//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
-                          var headers = {
-                            'Content-type': 'application/json; charset=utf-8',
-                            "Authorization":
-                            "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
-                          };
-                          var responce = await dio.post(
-                            url,
-                            data: {
-                              "notification": {
-                                "title": "Job App",
-                                "body": "You are rejected for next process",
-                                "sound": "default"
-                              },
-                              "priority": "High",
-                              "to": token,
-                            },
-                            options: Options(headers: headers),
-                          );
-                          if (responce.statusCode == 200) {
-                            print("-dfdf----${responce.data.toString}");
+                          if (currentStatus == 'A' || currentStatus == 'R') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('You have already been processed for this job application.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'R'});
+                            sendNotification(token, 'You are rejected for the next process');
                             Get.back();
                           }
                         },
@@ -203,15 +176,53 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     );
   }
 
+  bool isValidUrl = true; // Flag to track if URL is valid
+
+  // Widget _buildPersonalInfoWebsite(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+  //       SizedBox(height: 9.0),
+  //       TextFormField(
+  //         controller: frameOneController,
+  //         decoration: InputDecoration(
+  //           hintText: "Enter URL",
+  //           errorText: isValidUrl ? null : "Please enter a valid URL",
+  //         ),
+  //         onChanged: (value) {
+  //           setState(() {
+  //             isValidUrl = _isValidUrl(value); // Check URL validity on change
+  //           });
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
+
+
   Widget _buildPersonalInfoWebsite(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
         SizedBox(height: 9.0),
-        Text(frameOneController.text, style: TextStyle(fontSize: 16.0)),
+        Text(
+          frameOneController.text,
+          style: TextStyle(fontSize: 16.0),
+        ),
       ],
     );
+  }
+
+
+  bool _isValidUrl(String url) {
+    RegExp urlRegExp = RegExp(
+        r"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)\.[a-z]{2,5}(:[0-9]{1,5})?(\/.)?$",
+        caseSensitive: false,
+        multiLine: false);
+
+    return urlRegExp.hasMatch(url);
   }
 
   Widget _buildCvFields() {
@@ -219,21 +230,21 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Upload CV',
+          'Click below button for download Resume',
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 7.0),
         SizedBox(
-          height: 30.0, // Set the desired height
-          width: 120.0, // Make the button take full width
+          height: 46.0,
+          width: 120.0,
           child: ElevatedButton(
             onPressed: () async {
               Get.to(() => PdfViewerPage(pdfUrl: jobData!['cv_url']));
             },
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.black, // Set the text color
+              foregroundColor: Colors.white, backgroundColor: Colors.black,
             ),
-            child: Text('View CV'),
+            child: Text('View Resume'),
           ),
         ),
       ],
@@ -245,11 +256,37 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
-      users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
+      users.add(UserModel.fromMap(doc.data()));
     });
     setState(() {
       allUserList = users;
     });
-    // Proceed with the rest of your logic here
+  }
+
+  void sendNotification(String token, String message) async {
+    Dio dio = Dio();
+    var url = 'https://fcm.googleapis.com/fcm/send';
+    var headers = {
+      'Content-type': 'application/json; charset=utf-8',
+      "Authorization":
+      "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"
+    };
+    var responce = await dio.post(
+      url,
+      data: {
+        "notification": {
+          "title": "Job App",
+          "body": message,
+          "sound": "default"
+        },
+        "priority": "High",
+        "to": token,
+      },
+      options: Options(headers: headers),
+    );
+    if (responce.statusCode == 200) {
+      print("-dfdf----${responce.data.toString}");
+      Get.back();
+    }
   }
 }
