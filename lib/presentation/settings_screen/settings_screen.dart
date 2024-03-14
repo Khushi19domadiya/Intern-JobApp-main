@@ -167,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
           experienceText: "Personal Info", onTapPrivacy: () {
         onTapAccount(context);
       }),
-      SizedBox(height: 16.v),
+      // SizedBox(height: 16.v),
       // Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
       // SizedBox(height: 15.v),
       // _buildPrivacy(context,
@@ -175,7 +175,7 @@ class SettingsScreen extends StatelessWidget {
       //     experienceText: "Experience", onTapPrivacy: () {
       //   onTapPrivacy(context);
       // }),
-      // SizedBox(height: 14.v),
+      SizedBox(height: 14.v),
       Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
       SizedBox(height: 14.v),
       _buildPrivacy(context,
