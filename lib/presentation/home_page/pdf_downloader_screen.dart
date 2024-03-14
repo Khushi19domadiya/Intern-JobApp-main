@@ -16,6 +16,43 @@ class PdfDownloader extends StatefulWidget {
 class _PdfDownloaderState extends State<PdfDownloader> {
   bool _downloading = false;
 
+  // Future<void> _downloadPdf(String downloadPath) async {
+  //   setState(() {
+  //     _downloading = true;
+  //   });
+  //
+  //   try {
+  //     // Make GET request to download PDF
+  //     var response = await http.get(Uri.parse(widget.pdfUrl));
+  //
+  //     if (response.statusCode == 200) {
+  //       // Create custom directory if not exists
+  //       Directory(downloadPath).createSync(recursive: true);
+  //
+  //       // Write response body to file
+  //       File pdfFile = File('$downloadPath/${DateTime.now().microsecondsSinceEpoch}.pdf');
+  //       await pdfFile.writeAsBytes(response.bodyBytes);
+  //
+  //       setState(() {
+  //         _downloading = false;
+  //       });
+  //
+  //       print('PDF downloaded successfully');
+  //       print('PDF downloaded to: $downloadPath');
+  //     } else {
+  //       print('Failed to download PDF: ${response.statusCode}');
+  //       setState(() {
+  //         _downloading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error downloading PDF: $e');
+  //     setState(() {
+  //       _downloading = false;
+  //     });
+  //   }
+  // }
+
   Future<void> _downloadPdf(String downloadPath) async {
     setState(() {
       _downloading = true;
@@ -29,8 +66,14 @@ class _PdfDownloaderState extends State<PdfDownloader> {
         // Create custom directory if not exists
         Directory(downloadPath).createSync(recursive: true);
 
+        // Get current date and time
+        DateTime now = DateTime.now();
+
+        // Construct file name with timestamp
+        String fileName = '${now.year}_${now.month}_${now.day}_${now.hour}-${now.minute}-${now.second}.pdf';
+
         // Write response body to file
-        File pdfFile = File('$downloadPath/${DateTime.now().microsecondsSinceEpoch}.pdf');
+        File pdfFile = File('$downloadPath/$fileName');
         await pdfFile.writeAsBytes(response.bodyBytes);
 
         setState(() {
@@ -38,7 +81,7 @@ class _PdfDownloaderState extends State<PdfDownloader> {
         });
 
         print('PDF downloaded successfully');
-        print('PDF downloaded to: $downloadPath');
+        print('PDF downloaded to: $downloadPath/$fileName');
       } else {
         print('Failed to download PDF: ${response.statusCode}');
         setState(() {
@@ -53,26 +96,72 @@ class _PdfDownloaderState extends State<PdfDownloader> {
     }
   }
 
+
+  // Future<void> _showDownloadLocationDialog() async {
+  //   String? downloadPath = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Select Download Location'),
+  //         content: Text('Choose where you want to save the PDF file.'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop('/storage/emulated/0/Download/Resume file/MyResume');
+  //             },
+  //             child: Text('Resume Directory'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop('/storage/emulated/0/Download');
+  //             },
+  //             child: Text('Download Directory'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(null); // Cancel button
+  //             },
+  //             child: Text('Cancel'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  //
+  //   if (downloadPath != null) {
+  //     _downloadPdf(downloadPath);
+  //   }
+  // }
+
+
   Future<void> _showDownloadLocationDialog() async {
     String? downloadPath = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Select Download Location'),
-          content: Text('Choose where you want to save the PDF file.'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              ListTile(
+                leading: Icon(Icons.folder_special),
+                title: Text('Resume Directory'),
+                onTap: () {
+                  Navigator.of(context).pop('/storage/emulated/0/Download/Resume file/MyResume');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.folder),
+                title: Text('Download Directory'),
+                onTap: () {
+                  Navigator.of(context).pop('/storage/emulated/0/Download');
+                },
+              ),
+            ],
+          ),
           actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('/storage/emulated/0/Download/Resume file/MyResume');
-              },
-              child: Text('Resume Directory'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('/storage/emulated/0/Download');
-              },
-              child: Text('Download Directory'),
-            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(null); // Cancel button
@@ -88,6 +177,7 @@ class _PdfDownloaderState extends State<PdfDownloader> {
       _downloadPdf(downloadPath);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
