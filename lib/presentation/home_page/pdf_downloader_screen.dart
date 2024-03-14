@@ -16,7 +16,7 @@ class PdfDownloader extends StatefulWidget {
 class _PdfDownloaderState extends State<PdfDownloader> {
   bool _downloading = false;
 
-  Future<void> _downloadPdf() async {
+  Future<void> _downloadPdf(String downloadPath) async {
     setState(() {
       _downloading = true;
     });
@@ -26,9 +26,6 @@ class _PdfDownloaderState extends State<PdfDownloader> {
       var response = await http.get(Uri.parse(widget.pdfUrl));
 
       if (response.statusCode == 200) {
-        // Define the custom download path
-        String downloadPath = '/storage/emulated/0/Download/Resume file/MyResume';
-
         // Create custom directory if not exists
         Directory(downloadPath).createSync(recursive: true);
 
@@ -56,6 +53,42 @@ class _PdfDownloaderState extends State<PdfDownloader> {
     }
   }
 
+  Future<void> _showDownloadLocationDialog() async {
+    String? downloadPath = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Download Location'),
+          content: Text('Choose where you want to save the PDF file.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('/storage/emulated/0/Download/Resume file/MyResume');
+              },
+              child: Text('Resume Directory'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('/storage/emulated/0/Download');
+              },
+              child: Text('Download Directory'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null); // Cancel button
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (downloadPath != null) {
+      _downloadPdf(downloadPath);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,40 +99,23 @@ class _PdfDownloaderState extends State<PdfDownloader> {
         child: _downloading
             ? CircularProgressIndicator()
             : ElevatedButton(
-          onPressed: _downloadPdf,
+          onPressed: _showDownloadLocationDialog,
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.blue, // Set text color
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Set button padding
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.blue,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // Set button border radius
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
           child: Text(
             'Download',
-            style: TextStyle(fontSize: 18), // Set button text style
+            style: TextStyle(fontSize: 18),
           ),
         ),
       ),
     );
   }
-
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('PDF Downloader'),
-  //     ),
-  //     body: Center(
-  //       child: _downloading
-  //           ? CircularProgressIndicator()
-  //           : ElevatedButton(
-  //         onPressed: _downloadPdf,
-  //         child: Text('Download'),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 void main() {
@@ -113,7 +129,7 @@ void main() {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            String pdfUrl = snapshot.data!['pdfUrl']; // Assuming 'pdfUrl' is the field containing the URL of the PDF file
+            String pdfUrl = snapshot.data!['pdfUrl'];
             return Center(
               child: PdfDownloader(pdfUrl: pdfUrl),
             );
