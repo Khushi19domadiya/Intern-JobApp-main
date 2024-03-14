@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:saumil_s_application/presentation/experience_setting_screen/experience_setting_screen.dart'; // Import Firebase Authentication
+import 'package:saumil_s_application/presentation/experience_setting_screen/experience_setting_screen.dart';
+import 'package:saumil_s_application/presentation/profile_page/profile_page.dart'; // Import Firebase Authentication
 
 class AddSkillsScreen extends StatefulWidget {
   @override
@@ -95,7 +96,7 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
         // Redirect to the experience screen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ExperienceSettingScreen()), // Replace ExperienceScreen with your actual screen
+          MaterialPageRoute(builder: (context) => ProfilePage()), // Replace ExperienceScreen with your actual screen
         );
       } else {
         // Show a message if user is not logged in
