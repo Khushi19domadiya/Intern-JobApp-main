@@ -10,7 +10,7 @@ class AdminJobseekerDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Jobseeker Details'),
+        title: Text('Job Seeker Details'),
       ),
       body: Center(
         child: Column(
