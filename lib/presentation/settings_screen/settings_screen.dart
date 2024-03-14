@@ -23,90 +23,74 @@ import '../logout_popup_dialog/logout_popup_dialog.dart';
 import 'forgotPassword.dart';
 
 // ignore_for_file: must_be_immutable
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+class SettingsScreen extends StatelessWidget {
+  SettingsScreen({Key? key}) : super(key: key);
 
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
+  GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-  final controller = Get.put(AuthController());
-  String? userId;
-  String? userRole;
-
-
-  fetchUserRole() async {
-    var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    setState(()  {
-      userRole = userDoc['role'];
-    });
-    // pOPJobs.value =    await controller.fetchUserPostedJobs(userId);
-    // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
-  }
+  var controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          appBar: _buildAppBar(context),
-          body: SizedBox(
-              width: double.maxFinite,
-              child: Column(children: [
-                SizedBox(height: 28.v),
-                Expanded(
-                    child: SingleChildScrollView(
-                        child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 24.h, right: 24.h, bottom: 5.v),
-                            child: Column(children: [
-                              _buildBannerProgress(context),
-                              SizedBox(height: 32.v),
-                              _buildAccount1(context),
-                              SizedBox(height: 26.v),
-                              _buildGeneral(context),
-                              SizedBox(height: 26.v),
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("About",
-                                      style: CustomTextStyles
-                                          .labelLargeSemiBold)),
-                              SizedBox(height: 16.v),
-                              _buildPrivacy(context,
-                                  thumbsUpImage: ImageConstant.imgShield,
-                                  experienceText: "Legal and Policies",
-                                  onTapPrivacy: () {
-                                    onTapLegalAndPolicies(context);
-                                  }),
-                              SizedBox(height: 15.v),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Divider(indent: 36.h)),
-                              SizedBox(height: 16.v),
-                              _buildPrivacy(context,
-                                  thumbsUpImage: ImageConstant.imgProfile,
-                                  experienceText: "Help & Feedback"),
-                              SizedBox(height: 17.v),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Divider(indent: 36.h)),
-                              SizedBox(height: 16.v),
-                              _buildPrivacy(context,
-                                  thumbsUpImage: ImageConstant.imgVideoCamera,
-                                  experienceText: "About Us"),
-                              SizedBox(height: 28.v),
-                              GestureDetector(
-                                  onTap: () {
-                                    onTapTxtLargeLabelMedium(context);
-                                    // controller.signOut();
-                                  },
-                                  child: Text("Logout",
-                                      style: CustomTextStyles
-                                          .titleMediumOnPrimary))
-                            ]))))
-              ])),
-        ));
+            appBar: _buildAppBar(context),
+            body: SizedBox(
+                width: double.maxFinite,
+                child: Column(children: [
+                  SizedBox(height: 28.v),
+                  Expanded(
+                      child: SingleChildScrollView(
+                          child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 24.h, right: 24.h, bottom: 5.v),
+                              child: Column(children: [
+                                _buildBannerProgress(context),
+                                SizedBox(height: 32.v),
+                                _buildAccount1(context),
+                                SizedBox(height: 26.v),
+                                _buildGeneral(context),
+                                SizedBox(height: 26.v),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("About",
+                                        style: CustomTextStyles
+                                            .labelLargeSemiBold)),
+                                SizedBox(height: 16.v),
+                                _buildPrivacy(context,
+                                    thumbsUpImage: ImageConstant.imgShield,
+                                    experienceText: "Legal and Policies",
+                                    onTapPrivacy: () {
+                                  onTapLegalAndPolicies(context);
+                                }),
+                                SizedBox(height: 15.v),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Divider(indent: 36.h)),
+                                SizedBox(height: 16.v),
+                                _buildPrivacy(context,
+                                    thumbsUpImage: ImageConstant.imgProfile,
+                                    experienceText: "Help & Feedback"),
+                                SizedBox(height: 17.v),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Divider(indent: 36.h)),
+                                SizedBox(height: 16.v),
+                                _buildPrivacy(context,
+                                    thumbsUpImage: ImageConstant.imgVideoCamera,
+                                    experienceText: "About Us"),
+                                SizedBox(height: 28.v),
+                                GestureDetector(
+                                    onTap: () {
+                                      onTapTxtLargeLabelMedium(context);
+                                      // controller.signOut();
+                                    },
+                                    child: Text("Logout",
+                                        style: CustomTextStyles
+                                            .titleMediumOnPrimary))
+                              ]))))
+                ])),
+));
   }
 
   /// Section Widget
@@ -172,40 +156,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   /// Section Widget
-  // Widget _buildAccount1(BuildContext context) {
-  //   return Column(children: [
-  //     Align(
-  //         alignment: Alignment.centerLeft,
-  //         child: Text("Account", style: CustomTextStyles.labelLargeSemiBold)),
-  //     SizedBox(height: 15.v),
-  //     _buildPrivacy(context,
-  //         thumbsUpImage: ImageConstant.imgPerson,
-  //         experienceText: "Personal Info", onTapPrivacy: () {
-  //       onTapAccount(context);
-  //     }),
-  //     SizedBox(height: 16.v),
-  //     if(userRole == 'e' || userRole == null)
-  //     Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
-  //     SizedBox(height: 15.v),
-  //
-  //     _buildPrivacy(context,
-  //         thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
-  //         experienceText: "Experience", onTapPrivacy: () {
-  //       onTapPrivacy(context);
-  //     }),
-  //     SizedBox(height: 14.v),
-  //     Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
-  //     SizedBox(height: 14.v),
-  //     _buildPrivacy(context,
-  //         thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
-  //         experienceText: "Change Passoword", onTapPrivacy: () {
-  //           onTapPassword(context);
-  //         }),
-  //     SizedBox(height: 14.v),
-  //     Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h))
-  //   ]);
-  // }
-
   Widget _buildAccount1(BuildContext context) {
     return Column(children: [
       Align(
@@ -215,28 +165,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _buildPrivacy(context,
           thumbsUpImage: ImageConstant.imgPerson,
           experienceText: "Personal Info", onTapPrivacy: () {
-        print("=====================${userRole}===========================");
-            onTapAccount(context);
-          }),
+        onTapAccount(context);
+      }),
       SizedBox(height: 16.v),
-      if (userRole == 'e') // Display for user role 'j'
-        Align(
-            alignment: Alignment.centerRight,
-            child: Divider(indent: 36.h)),
-      SizedBox(height: 15.v),
-      if (userRole == 'e') // Display for user role 'j'
-        _buildPrivacy(context,
-            thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
-            experienceText: "Experience", onTapPrivacy: () {
-              onTapPrivacy(context);
-            }),
-      SizedBox(height: 14.v),
-      if (userRole == 'e') // Display for user role 'j'
-        Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
+      // Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
+      // SizedBox(height: 15.v),
+      // _buildPrivacy(context,
+      //     thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
+      //     experienceText: "Experience", onTapPrivacy: () {
+      //   onTapPrivacy(context);
+      // }),
+      // SizedBox(height: 14.v),
+      Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
       SizedBox(height: 14.v),
       _buildPrivacy(context,
           thumbsUpImage: ImageConstant.imgThumbsUpPrimary,
-          experienceText: "Change Password", onTapPrivacy: () {
+          experienceText: "Change Passoword", onTapPrivacy: () {
             onTapPassword(context);
           }),
       SizedBox(height: 14.v),
@@ -254,16 +198,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _buildPrivacy(context,
           thumbsUpImage: ImageConstant.imgBell,
           experienceText: "Notification", onTapPrivacy: () {
-            onTapNotification(context);
-          }),
+        onTapNotification(context);
+      }),
       SizedBox(height: 16.v),
       Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
       SizedBox(height: 15.v),
       _buildPrivacy(context,
           thumbsUpImage: ImageConstant.imgGlobe,
           experienceText: "Language", onTapPrivacy: () {
-            onTapLanguage(context);
-          }),
+        onTapLanguage(context);
+      }),
       SizedBox(height: 14.v),
       Align(alignment: Alignment.centerRight, child: Divider(indent: 36.h)),
       SizedBox(height: 15.v),
@@ -285,11 +229,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Common widget
   Widget _buildPrivacy(
-      BuildContext context, {
-        required String thumbsUpImage,
-        required String experienceText,
-        Function? onTapPrivacy,
-      }) {
+    BuildContext context, {
+    required String thumbsUpImage,
+    required String experienceText,
+    Function? onTapPrivacy,
+  }) {
     return GestureDetector(
         onTap: () {
           onTapPrivacy!.call();
