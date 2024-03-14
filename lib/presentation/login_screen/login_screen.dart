@@ -107,7 +107,7 @@ class LoginScreen extends StatelessWidget {
                                 // controller
                                 //     .signInWithEmailAndPassword(context);
 
-                                if (emailController.text.toString().toLowerCase() == "admin@gmail.com" && passwordController.text.toString().toLowerCase() == "admin@123") {
+                                if (emailController.text.toString().trim().toLowerCase() == "admin@gmail.com" && passwordController.text.toString().trim().toLowerCase() == "admin@123") {
                                   // Navigate to the admin screen
                                   // Navigator.push(
                                   print("-------------------${emailController.text.toString()}-------------------");

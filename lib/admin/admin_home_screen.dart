@@ -25,7 +25,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.deepPurple,
+          automaticallyImplyLeading: false, // Remove back button
           title: Text(
             'Admin Dashboard',
             style: TextStyle(
