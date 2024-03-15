@@ -651,6 +651,13 @@ class _PostJobState extends State<PostJob> {
 
       User? currentUser = FirebaseAuth.instance.currentUser;
 
+      // Get the current date and time
+      DateTime currentTime = DateTime.now();
+
+      // Format the date and time as a string in the desired format
+      String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').format(currentTime);
+
+
       PostJobModel job = PostJobModel(
         id: id, // Assign the document ID to the model
         title: title,
@@ -659,6 +666,7 @@ class _PostJobState extends State<PostJob> {
         address: address,
         experience: experience,
         about: about,
+        postJobDate: formattedDateTime,
         deadline: deadline,
         jobType: _selectedRadio,
         gender: _selectGender,

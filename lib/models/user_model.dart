@@ -144,6 +144,7 @@ class PostJobModel {
   final String address;
   final String experience;
   final String about;
+  final String postJobDate;
   final String deadline;
   final String? jobType;
   final String? gender;
@@ -160,6 +161,7 @@ class PostJobModel {
     required this.address,
     required this.experience,
     required this.about,
+    required this.postJobDate,
     required this.deadline,
     this.jobType,
     this.gender,
@@ -178,6 +180,7 @@ class PostJobModel {
       'address': address,
       'experience': experience,
       'about': about,
+      'postJobDate': postJobDate,
       'deadline': deadline,
       'jobType': jobType,
       'gender': gender,
@@ -195,6 +198,7 @@ class PostJobModel {
         address: data["address"],
         experience: data["experience"],
         about: data["about"],
+        postJobDate: data["postJobDate"],
         deadline: data["deadline"],
         jobType: data["jobType"],
         gender: data["gender"],
