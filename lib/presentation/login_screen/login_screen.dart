@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/aDMIN/admin_home_screen.dart';
 import 'package:saumil_s_application/core/app_export.dart';
-import 'package:saumil_s_application/presentation/home_page/admin_screen.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
