@@ -666,7 +666,7 @@ class _PostJobState extends State<PostJob> {
         address: address,
         experience: experience,
         about: about,
-        postJobDate: formattedDateTime,
+        // postJobDate: formattedDateTime,
         deadline: deadline,
         jobType: _selectedRadio,
         gender: _selectGender,

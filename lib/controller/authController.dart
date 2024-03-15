@@ -126,29 +126,29 @@ class AuthController extends GetxController {
 
   // Sign in with email and password
   Future<String?> signInWithEmailAndPassword(BuildContext context) async {
-  try {
-  UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-  email: emailController.text.trim().toString(),
-  password: passwordController.text);
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: emailController.text.trim().toString(),
+          password: passwordController.text);
 
-  if (userCredential.user!.emailVerified) {
-  // User is signed in and email is verified
-  await CommonMethod()
-      .getXSnackBar("Success", 'Sign-in successfully', success)
-      .whenComplete(() => Get.to(() => JobTypeScreen()));
-  } else {
-  // Email is not verified, handle accordingly
-  await CommonMethod().getXSnackBar(
-  "Error",
-  'Email not verified. Check your inbox for the verification email.',
-  red);
-  print('');
-  }
-  } on FirebaseAuthException catch (e) {
-  await CommonMethod()
-      .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
-  }
-  return null;
+      if (userCredential.user!.emailVerified) {
+        // User is signed in and email is verified
+        await CommonMethod()
+            .getXSnackBar("Success", 'Sign-in successfully', success)
+            .whenComplete(() => Get.to(() => JobTypeScreen()));
+      } else {
+        // Email is not verified, handle accordingly
+        await CommonMethod().getXSnackBar(
+            "Error",
+            'Email not verified. Check your inbox for the verification email.',
+            red);
+        print('');
+      }
+    } on FirebaseAuthException catch (e) {
+      await CommonMethod()
+          .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
+    }
+    return null;
   }
 
 
@@ -399,7 +399,7 @@ class AuthController extends GetxController {
       if (userSnapshot.exists) {
         // User document exists, create a UserModel instance
         UserModel userData =
-            UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+        UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
         return userData;
       } else {
         // User document doesn't exist

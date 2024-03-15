@@ -1,41 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-   String? id;
-   String? email;
-   String? password;
-   String? lname;
-   String? fname;
-   String? npassowrd;
-   String? phonenumber;
-   String? address;
-   String? profileUrl;
-   String? role;
-   List<String>? skills;
-   String? registrationDateTime;
-   String? token;
-   String? status;
-   String? about;
+  String? id;
+  String? email;
+  String? password;
+  String? lname;
+  String? fname;
+  String? npassowrd;
+  String? phonenumber;
+  String? address;
+  String? profileUrl;
+  String? role;
+  List<String>? skills;
+  String? registrationDateTime;
+  String? token;
+  String? status;
+  String? about;
 
-   UserModel({
+  UserModel({
     required this.id,
     required this.email,
     this.password,
     this.token,
-     this.skills,
+    this.skills,
     this.fname,
     this.lname,
     this.registrationDateTime,
-     this.npassowrd,
+    this.npassowrd,
     this.phonenumber,
     this.address,
     this.profileUrl,
-     this.status,
+    this.status,
     this.role,
-     this.about,
+    this.about,
   });
 
-   UserModel.fromMap(data) {
+  UserModel.fromMap(data) {
     id= data['id'];
     email= data['email'];
     password=  data['password'];
@@ -96,7 +96,7 @@ class UserModel {
   Map<String, dynamic> toUpdateMap() {
     Map<String, dynamic> map = toMap();
     map.removeWhere(
-        (key, value) => value == null || value is List && value.isEmpty);
+            (key, value) => value == null || value is List && value.isEmpty);
     return map;
   }
 }
@@ -144,7 +144,7 @@ class PostJobModel {
   final String address;
   final String experience;
   final String about;
-  final String postJobDate;
+  // final String postJobDate;
   final String deadline;
   final String? jobType;
   final String? gender;
@@ -161,7 +161,7 @@ class PostJobModel {
     required this.address,
     required this.experience,
     required this.about,
-    required this.postJobDate,
+    // required this.postJobDate,
     required this.deadline,
     this.jobType,
     this.gender,
@@ -180,7 +180,7 @@ class PostJobModel {
       'address': address,
       'experience': experience,
       'about': about,
-      'postJobDate': postJobDate,
+      // 'postJobDate': postJobDate,
       'deadline': deadline,
       'jobType': jobType,
       'gender': gender,
@@ -198,11 +198,11 @@ class PostJobModel {
         address: data["address"],
         experience: data["experience"],
         about: data["about"],
-        postJobDate: data["postJobDate"],
+        // postJobDate: data["postJobDate"],
         deadline: data["deadline"],
         jobType: data["jobType"],
         gender: data["gender"],
         selectedSkills: data["selectedSkills"],
         selectedOption: data["selectedOption"],
-    );
+      );
 }

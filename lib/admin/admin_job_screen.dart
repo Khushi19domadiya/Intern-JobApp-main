@@ -170,14 +170,14 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                 onPressed: () {
                   if (selectedDate != null) {
                     // Filter the job list based on the selected date
-                    List<PostJobModel> filteredJobs = allJobList.where((job) {
-                      return job.postJobDate == DateFormat("yyyyMMdd").format(selectedDate!);
-                    }).toList();
+                    // List<PostJobModel> filteredJobs = allJobList.where((job) {
+                    //   return job.postJobDate == DateFormat("yyyyMMdd").format(selectedDate!);
+                    // }).toList();
 
                     // Update the job list with the filtered jobs
-                    setState(() {
-                      allJobList = filteredJobs;
-                    });
+                    // setState(() {
+                    //   allJobList = filteredJobs;
+                    // });
                   }
                   Navigator.of(context).pop(); // Close the filter dialog
                 },
