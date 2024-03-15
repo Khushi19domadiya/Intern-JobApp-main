@@ -251,54 +251,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget _buildEightyEight(BuildContext context) {
-  //   return Align(
-  //     alignment: Alignment.center,
-  //     child: Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 24.h),
-  //       child: StreamBuilder<QuerySnapshot>(
-  //         stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
-  //         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-  //           if (snapshot.hasError) {
-  //             return Text('Something went wrong');
-  //           }
-  //
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return Center(child: CircularProgressIndicator());
-  //           }
-  //
-  //           if (snapshot.data!.docs.isEmpty) {
-  //             return Center(child: Text('No jobs available'));
-  //           }
-  //
-  //           return ListView.separated(
-  //             physics: NeverScrollableScrollPhysics(),
-  //             shrinkWrap: true,
-  //             separatorBuilder: (context, index) {
-  //               return SizedBox(height: 16.v);
-  //             },
-  //             itemCount: snapshot.data!.docs.length,
-  //             itemBuilder: (context, index) {
-  //               final DocumentSnapshot document = snapshot.data!.docs[index];
-  //               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-  //               return EightyeightItemWidget(jobData: data);
-  //             },
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
-
   Widget _buildEightyEight(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.h),
         child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('postJob').snapshots(),
+          stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               return Text('Something went wrong');
@@ -312,25 +271,15 @@ class _HomePageState extends State<HomePage> {
               return Center(child: Text('No jobs available'));
             }
 
-            // Filter out jobs posted by the user when their role is "j"
-            List<DocumentSnapshot> filteredJobs = snapshot.data!.docs.where((job) {
-              if (userRole == 'j') {
-                // Check if the job was posted by the current user
-                return job['userId'] == userId;
-              } else {
-                return true; // Show all jobs for other roles
-              }
-            }).toList();
-
             return ListView.separated(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               separatorBuilder: (context, index) {
                 return SizedBox(height: 16.v);
               },
-              itemCount: filteredJobs.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                final DocumentSnapshot document = filteredJobs[index];
+                final DocumentSnapshot document = snapshot.data!.docs[index];
                 Map<String, dynamic> data = document.data() as Map<String, dynamic>;
                 return EightyeightItemWidget(jobData: data);
               },
@@ -340,6 +289,57 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+
+
+  // Widget _buildEightyEight(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.center,
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 24.h),
+  //       child: StreamBuilder<QuerySnapshot>(
+  //         stream: FirebaseFirestore.instance.collection('postJob').snapshots(),
+  //         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //           if (snapshot.hasError) {
+  //             return Text('Something went wrong');
+  //           }
+  //
+  //           if (snapshot.connectionState == ConnectionState.waiting) {
+  //             return Center(child: CircularProgressIndicator());
+  //           }
+  //
+  //           if (snapshot.data!.docs.isEmpty) {
+  //             return Center(child: Text('No jobs available'));
+  //           }
+  //
+  //           // Filter out jobs posted by the user when their role is "j"
+  //           List<DocumentSnapshot> filteredJobs = snapshot.data!.docs.where((job) {
+  //             if (userRole == 'j') {
+  //               // Check if the job was posted by the current user
+  //               return job['userId'] == userId;
+  //             } else {
+  //               return true; // Show all jobs for other roles
+  //             }
+  //           }).toList();
+  //
+  //           return ListView.separated(
+  //             physics: NeverScrollableScrollPhysics(),
+  //             shrinkWrap: true,
+  //             separatorBuilder: (context, index) {
+  //               return SizedBox(height: 16.v);
+  //             },
+  //             itemCount: filteredJobs.length,
+  //             itemBuilder: (context, index) {
+  //               final DocumentSnapshot document = filteredJobs[index];
+  //               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  //               return EightyeightItemWidget(jobData: data);
+  //             },
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
 
