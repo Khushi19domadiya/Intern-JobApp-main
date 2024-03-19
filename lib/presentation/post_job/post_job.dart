@@ -660,7 +660,7 @@ class _PostJobState extends State<PostJob> {
 
       PostJobModel job = PostJobModel(
         id: id, // Assign the document ID to the model
-        title: title,
+        title: title,createAt: DateTime.now().toString(),
         lowestsalary: lowestsalary,
         highestsalary: highestsalary,
         address: address,

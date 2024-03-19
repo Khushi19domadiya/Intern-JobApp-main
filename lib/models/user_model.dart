@@ -147,6 +147,7 @@ class PostJobModel {
   // final String postJobDate;
   final String deadline;
   final String? jobType;
+  final String? createAt;
   final String? gender;
   final List<dynamic> selectedSkills;
   final String? selectedOption;
@@ -155,6 +156,7 @@ class PostJobModel {
   PostJobModel({
     required this.id,
     required this.userId,
+    required this.createAt,
     required this.title,
     required this.lowestsalary,
     required this.highestsalary,
@@ -174,6 +176,7 @@ class PostJobModel {
     return {
       'id': id,
       'userId': userId,
+      'createAt': createAt,
       'title': title,
       'lowestsalary': lowestsalary,
       'highestsalary': highestsalary,
@@ -193,6 +196,7 @@ class PostJobModel {
         id: data["id"],
         userId: data["userId"],
         title: data["title"],
+        createAt: data["createAt"],
         lowestsalary: data["lowestsalary"],
         highestsalary: data["highestsalary"],
         address: data["address"],

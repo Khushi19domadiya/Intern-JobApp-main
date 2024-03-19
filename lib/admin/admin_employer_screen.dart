@@ -12,16 +12,16 @@ class AdminEmployerScreen extends StatefulWidget {
 }
 
 class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
-
   List<UserModel> allUserList = [];
   fetchAllUsers() async {
-    QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').where("role",isEqualTo: "e").get();
+    QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').where("role", isEqualTo: "e").get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
       users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
     });
     setState(() {
       allUserList = users;
+      tempData = allUserList;
     });
     // Proceed with the rest of your logic here
   }
@@ -46,7 +46,7 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(allUserList[index].email ??""),
+            title: Text(allUserList[index].email ?? ""),
             onTap: () {
               Navigator.push(
                 context,
@@ -65,94 +65,103 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
   DateTime? selectedDate;
   List<UserModel> tempData = [];
 
-
-
   _showFilterPopup(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          insetPadding: EdgeInsets.all(10),
           title: Text('Filter by Date'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     final DateTime? picked = await showDatePicker(
-              //       context: context,
-              //       initialDate: DateTime.now(),
-              //       firstDate: DateTime(2000),
-              //       lastDate: DateTime.now(), // Set lastDate to today
-              //     );
-              //     if (picked != null && picked != selectedDate) {
-              //       setState(() {
-              //         selectedDate = picked;
-              //       });
-              //     }
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
-              //   ),
-              //   child: Text(
-              //     selectedDate == null ? 'Select Date' : 'Change Date',
-              //     style: TextStyle(fontSize: 18,color: Colors.white), // Increase text size
-              //   ),
-              // ),
+              SizedBox(height: 10),
               SizedBox(
                 height: 45,
-                child: TextFormField(
-                  controller: selectFilterDate,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      hintText: "Select Date",
-                      suffixIcon: IconButton(
-                        onPressed: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now(), // Set lastDate to today
-                          );
-                          if (picked != null && picked != selectedDate) {
-                            setState(() {
-                              selectedDate = picked;
-                              selectFilterDate.text = (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
-                            });
-                          }
-                        },
-                        icon: Icon(Icons.date_range),
-                      )),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextFormField(
+                    controller: selectFilterDate,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        hintText: "Select Date",
+                        suffixIcon: IconButton(
+                          onPressed: () async {
+                            final DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(), // Set lastDate to today
+                            );
+                            if (picked != null && picked != selectedDate) {
+                              setState(() {
+                                selectedDate = picked;
+                                selectFilterDate.text =
+                                    (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
+                              });
+                            }
+                          },
+                          icon: Icon(Icons.date_range),
+                        )),
+                  ),
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  tempData.forEach((element) {
-                    print(element.registrationDateTime);
-                    print(element.email);
-                  });
-                  allUserList = tempData
-                      .where((element) =>
-                  ((element.registrationDateTime?.isEmpty ?? true)
-                      ? ""
-                      : DateFormat("YYYYMMDD").format(DateTime.parse(element.registrationDateTime ?? ""))) ==
-                      DateFormat("YYYYMMDD").format(selectedDate!))
-                      .toList();
-                  Navigator.of(context).pop();
-                  setState(() {});
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
-                ),
-                child: Text(
-                  'Apply Now',
-                  style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          tempData.forEach((element) {
+                            print(element.registrationDateTime);
+                            print(element.email);
+                          });
+                          allUserList = tempData
+                              .where((element) =>
+                                  ((element.registrationDateTime?.isEmpty ?? true)
+                                      ? ""
+                                      : DateFormat("YYYYMMDD").format(DateTime.parse(element.registrationDateTime ?? ""))) ==
+                                  DateFormat("YYYYMMDD").format(selectedDate!))
+                              .toList();
+                          Navigator.of(context).pop();
+                          setState(() {});
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
+                        ),
+                        child: Text(
+                          'Apply',
+                          style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          allUserList = tempData;
+                          Navigator.of(context).pop();
+                          setState(() {});
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -161,5 +170,4 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
       },
     );
   }
-
 }
