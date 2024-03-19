@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "914831420083-5tbpm7r6v8j5jef0c88ms1uin4lrota8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saumilsapplication.app",
+            "certificate_hash": "93f851d9cdc1c4635fc008c75584fa6cbc924708"
+          }
+        },
+        {
           "client_id": "914831420083-aou2vlprqmgk5c4ucnr0q84vpjj0m8u2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

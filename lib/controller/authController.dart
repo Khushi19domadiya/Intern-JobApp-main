@@ -125,8 +125,10 @@ class AuthController extends GetxController {
   }
 
   // Sign in with email and password
-  Future<String?> signInWithEmailAndPassword(BuildContext context) async {
-    try {
+  Future<String?>   signInWithEmailAndPassword(BuildContext context) async {
+    // try {
+    print("----${emailController.text}");
+    print("----${passwordController.text}");
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: emailController.text.trim().toString(),
           password: passwordController.text);
@@ -144,10 +146,11 @@ class AuthController extends GetxController {
             red);
         print('');
       }
-    } on FirebaseAuthException catch (e) {
-      await CommonMethod()
-          .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
-    }
+    // } on FirebaseAuthException catch (e) {
+    //   print("---->>>>>>${e}");
+    //   await CommonMethod()
+    //       .getXSnackBar("Error", 'Failed to sign in: ${e.message}', red);
+    // }
     return null;
   }
 

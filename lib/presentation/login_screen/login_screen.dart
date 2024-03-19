@@ -16,8 +16,6 @@ import '../../controller/authController.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
 
   var controller = Get.put(AuthController());
 
@@ -105,13 +103,13 @@ class LoginScreen extends StatelessWidget {
                               onPressed: (){
                                 // controller
                                 //     .signInWithEmailAndPassword(context);
-                                emailController.text = "admin@gmail.com";
-                                passwordController.text = "admin@123";
-                                if (emailController.text.toString().trim().toLowerCase() == "admin@gmail.com" && passwordController.text.toString().trim().toLowerCase() == "admin@123") {
+                                // emailController.text = "admin@gmail.com";
+                                // passwordController.text = "admin@123";
+                                if (controller.emailController.text.toString().trim().toLowerCase() == "admin@gmail.com" && controller.passwordController.text.toString().trim().toLowerCase() == "admin@123") {
                                   // Navigate to the admin screen
                                   // Navigator.push(
-                                  print("-------------------${emailController.text.toString()}-------------------");
-                                  print("-------------------${passwordController.text.toString()}-------------------");
+                                  print("-------------------${controller.emailController.text.toString()}-------------------");
+                                  print("-------------------${controller.passwordController.text.toString()}-------------------");
                                     Get.to(()=> AdminHomeScreen());
                                   // );
                                 } else {
@@ -217,7 +215,7 @@ class LoginScreen extends StatelessWidget {
           Text("Email", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
           CustomTextFormField(
-            controller: emailController,
+            controller: controller.emailController,
             hintText: "Enter your email address",
             textInputAction: TextInputAction.next,
             textInputType: TextInputType.emailAddress,
@@ -227,7 +225,7 @@ class LoginScreen extends StatelessWidget {
           SizedBox(height: 9.v),
           CustomTextFormField(
             // You can use a different controller for the password field if needed
-            controller: passwordController,
+            controller: controller.passwordController,
             hintText: "Enter your password",
             textInputAction: TextInputAction.done,
             textInputType: TextInputType.visiblePassword,

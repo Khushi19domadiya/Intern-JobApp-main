@@ -11,6 +11,7 @@ dependencies:
   firebase_app_check:
   animations: ^2.0.11
   file_picker: ^6.2.0
+  firebase_auth_platform_interface: ^7.0.9
   image_picker: ^1.0.7
   image_cropper: ^5.0.1
   path_provider: ^2.1.2
