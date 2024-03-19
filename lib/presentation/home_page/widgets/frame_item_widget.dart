@@ -63,7 +63,7 @@ class FrameItemWidget extends StatelessWidget {
                         Opacity(
                           opacity: 0.8,
                           child: Text(
-                            "Salary: (${model.highestsalary} - ${model.lowestsalary})",
+                            "Salary: (${model.lowestsalary} - ${model.highestsalary})",
                             style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
                           ),
                         ),
