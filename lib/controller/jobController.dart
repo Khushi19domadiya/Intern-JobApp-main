@@ -14,10 +14,78 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/user_repository/user_repository.dart';
 
-class jobController extends GetxController{
+class JobController extends GetxController{
+  String? selectedJobType;
+  String? selectedCategory;
+  RxDouble minSalary =RxDouble(5000.0);
+  RxDouble maxSalary =RxDouble(100000.0);
+  RxList<PostJobModel> tempSearchJob = <PostJobModel>[].obs;
+  RxList<PostJobModel> jobList = <PostJobModel>[].obs;
+  RxBool isLoading = false.obs;
+  String? userRole;
+  final User? user = FirebaseAuth.instance.currentUser;
+
+  Future<List<PostJobModel>> getJobsFuture() async {
+    if (userRole == 'e') {
+      // Fetch only current user's posted jobs
+      return fetchUserPostedJobs(user!.uid);
+    } else {
+      // Fetch all jobs
+      return fetchJobDataFromFirestore(userRole!);
+    }
+  }
+  Future getFilteredJobs() async {
+    List<PostJobModel> filteredJobs = [];
+    log("----selectedJobType---${selectedJobType}");
+    log("----selectedCategory---${selectedCategory}");
+    // Filter job list based on selected criteria
+    filteredJobs = tempSearchJob.where((job) {
+      bool matchesJobCategory = true;
+      bool matchesSelectedCategories = true;
+      bool matchesSalaryRange = true;
+      bool matchesType = true;
+
+      // Filter by job category
+      if (selectedJobType != null && selectedJobType != '') {
+        // matchesJobCategory = (job.jobType == selectedJobType);
+        matchesJobCategory = (job.selectedOption == selectedCategory);
+      }
+
+      // Filter by selected categories
+      if (selectedCategory != null && selectedCategory != '') {
+        // Split selected categories into a list
+        List<String> selectedCategoriesList = selectedCategory!.split(',');
+
+        // Check if any of the selected categories match job's selectedOption
+        matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
+      }
+
+      // Convert minSalary and maxSalary from string to double for comparison
+      double? minSalary = double.tryParse(job.lowestsalary);
+      double? maxSalary = double.tryParse(job.highestsalary);
+
+      // Check if conversion was successful before comparison
+      if (minSalary != null && maxSalary != null && minSalary != null && maxSalary != null) {
+        // Filter by salary range
+        matchesSalaryRange = minSalary >= minSalary! && maxSalary <= maxSalary!;
+      }
+
+      // Filter by type
+      if (selectedJobType != null && selectedJobType != '') {
+        matchesType = (job.jobType == selectedJobType);
+      }
+
+      // Include job if it matches job category, selected categories, salary range, and type
+      return matchesJobCategory && matchesSelectedCategories && matchesSalaryRange && matchesType;
+    }).toList();
+    jobList.value = filteredJobs;
+    jobList.refresh();
+    update();
+    // return filteredJobs!;
+  }
+
 
   // RxList<postjobModel> jobDataList = <postjobModel>[].obs;
-  User? user = FirebaseAuth.instance.currentUser;
 
   Future<List<PostJobModel>>  fetchJobDataFromFirestore(String role) async {
     try {

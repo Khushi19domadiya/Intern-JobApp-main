@@ -1,22 +1,26 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
 import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/jobs_item_widget.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 
+import '../../controller/jobController.dart';
 
 class FilterBottomsheet extends StatefulWidget {
-  Function(String?) onJobCategorySelected;
-  Function(String?) onCategories;
-  double minSalary;
-  double maxSalary;
+  // Function(String?) onJobCategorySelected;
+  // Function(String?) onCategories;
+  // double minSalary;
+  // double maxSalary;
 
   FilterBottomsheet({
     Key? key,
-    required this.onJobCategorySelected,
-    required this.onCategories,
-    required this.minSalary,
-    required this.maxSalary,
+    // required this.onJobCategorySelected,
+    // required this.onCategories,
+    // required this.minSalary,
+    // required this.maxSalary,
   }) : super(key: key);
 
   @override
@@ -24,8 +28,10 @@ class FilterBottomsheet extends StatefulWidget {
 }
 
 class _FilterBottomsheetState extends State<FilterBottomsheet> {
-  String? selectedJobCategory;
-  String? selectedCategories;
+  var jobController = Get.put(JobController());
+
+  // String? selectedJobCategory;
+  // String? selectedCategories;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +53,12 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             SizedBox(height: 30.v),
             CustomElevatedButton(
               text: "Apply Filter",
-              onPressed: () {
-                widget.onJobCategorySelected(selectedJobCategory);
-                widget.onCategories(selectedCategories);
-                Navigator.pop(context, {'minSalary': widget.minSalary, 'maxSalary': widget.maxSalary});
+              onPressed: () async {
+                // widget.onJobCategorySelected(selectedJobCategory);
+                // widget.onCategories(selectedCategories);
+                // Navigator.pop(context, {'minSalary': widget.minSalary, 'maxSalary': widget.maxSalary});
+
+                await jobController.getFilteredJobs().whenComplete(() => Get.back());
               },
             ),
             SizedBox(height: 15.v),
@@ -77,9 +85,17 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
           child: Text("Filter", style: CustomTextStyles.titleMedium18),
         ),
         Spacer(),
-        Padding(
-          padding: EdgeInsets.only(top: 3.v, bottom: 2.v),
-          child: Text("Reset Filters", style: CustomTextStyles.titleSmallDeeporangeA200),
+        InkWell(
+          onTap: () async {
+            jobController.jobList.value = await jobController.getJobsFuture();
+            jobController.tempSearchJob = jobController.jobList;
+            jobController.jobList.refresh();
+            jobController.tempSearchJob.refresh();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: 3.v, bottom: 2.v),
+            child: Text("Reset Filters", style: CustomTextStyles.titleSmallDeeporangeA200),
+          ),
         ),
       ],
     );
@@ -99,15 +115,45 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             children: [
               FiftyfiveItemWidget(
                 categories: "Backend",
-                onCategories: _handleCategorySelected,
+                isSelected: jobController.selectedCategory == "Backend", onTap: () { if (jobController.selectedCategory == "Backend") {
+                jobController.selectedCategory = null;
+              } else {
+                jobController.selectedCategory = "Backend";
+              }
+              setState(() {
+
+              });
+              log("-----jobController.selectedCategory------${jobController.selectedCategory }"); },
               ),
               FiftyfiveItemWidget(
                 categories: "Frontend",
-                onCategories: _handleCategorySelected,
+                isSelected: jobController.selectedCategory == "Frontend", onTap: () {
+                if (jobController.selectedCategory == "Frontend") {
+                  jobController.selectedCategory = null;
+                } else {
+                  jobController.selectedCategory = "Frontend";
+                }
+                setState(() {
+
+                });
+                log("-----jobController.selectedCategory------${jobController.selectedCategory }");
+              },
               ),
               FiftyfiveItemWidget(
                 categories: "Database",
-                onCategories: _handleCategorySelected,
+                isSelected: jobController.selectedCategory == "Database",
+                 onTap: () {
+                if (jobController.selectedCategory == "Database") {
+                  jobController.selectedCategory = null;
+                } else {
+                  jobController.selectedCategory = "Database";
+                }
+                setState(() {
+
+                });
+                log("-----jobController.selectedCategory------${jobController.selectedCategory }");
+
+              },
               ),
             ],
           ),
@@ -119,9 +165,9 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   Widget _buildSalariesColumn(BuildContext context) {
     return Column(
       children: [
-        _buildPrice(context, priceText1: "Min Salary", priceText2: "${widget.minSalary.toInt()}.000/Month"),
+        _buildPrice(context, priceText1: "Min Salary", priceText2: "${jobController.minSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
-        _buildPrice(context, priceText1: "Max Salary", priceText2: "${widget.maxSalary.toInt()}.000/Month"),
+        _buildPrice(context, priceText1: "Max Salary", priceText2: "${jobController.maxSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
         SliderTheme(
           data: SliderThemeData(
@@ -132,19 +178,21 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             thumbShape: RoundSliderThumbShape(),
           ),
           child: RangeSlider(
-            values: RangeValues(widget.minSalary, widget.maxSalary),
+            values: RangeValues(jobController.minSalary.value, jobController.maxSalary.value),
             min: 5000.0,
             max: 100000.0,
             onChanged: (values) {
               setState(() {
-                widget.minSalary = (values.start / 1000).round() * 1000;
-                widget.maxSalary = (values.end / 1000).round() * 1000;
+                // jobController.minSalary = (values.start / 1000).round() * 1000;
+                // jobController.maxSalary = (values.end / 1000).round() * 1000;
+                jobController.minSalary.value = (values.start / 1000).roundToDouble() * 1000;
+                jobController.maxSalary.value = (values.end / 1000).roundToDouble() * 1000;
               });
             },
           ),
         ),
         SizedBox(height: 2.v),
-        _buildPrice(context, priceText1: "${widget.minSalary.toInt()}", priceText2: "${widget.maxSalary.toInt()}.000"),
+        _buildPrice(context, priceText1: "${jobController.minSalary.toInt()}", priceText2: "${jobController.maxSalary.toInt()}.000"),
       ],
     );
   }
@@ -163,11 +211,19 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             children: [
               JobsItemWidget(
                 jobCategory: "Part Time",
-                onJobCategorySelected: _handleJobCategorySelected,
+                onJobCategorySelected: (value) {
+                  jobController.selectedJobType = value;
+                  setState(() {});
+                },
+                isSelected: jobController.selectedJobType == "Part Time",
               ),
               JobsItemWidget(
                 jobCategory: "Full Time",
-                onJobCategorySelected: _handleJobCategorySelected,
+                onJobCategorySelected: (value) {
+                  jobController.selectedJobType = value;
+                  setState(() {});
+                },
+                isSelected: jobController.selectedJobType == "Full Time",
               ),
             ],
           ),
@@ -176,7 +232,8 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
     );
   }
 
-  Widget _buildPrice(BuildContext context, {
+  Widget _buildPrice(
+    BuildContext context, {
     required String priceText1,
     required String priceText2,
   }) {
@@ -198,16 +255,21 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   void onTapImgClose(BuildContext context) {
     Navigator.pop(context);
   }
-
-  void _handleJobCategorySelected(String? category) {
-    setState(() {
-      selectedJobCategory = category;
-    });
-  }
-
-  void _handleCategorySelected(String? categories) {
-    setState(() {
-      selectedCategories = categories;
-    });
-  }
+  //
+  // void _handleJobCategorySelected(String? category) {
+  //   log("-----_handleJobCategorySelected----${category}");
+  //   // widget.onJobCategorySelected(category);
+  //
+  //   setState(() {
+  //     jobController.selectedJobCategory = category;
+  //   });
+  // }
+  //
+  // void _handleCategorySelected(String? categories) {
+  //   // widget.onJobCategorySelected(categories);
+  //
+  //   setState(() {
+  //     jobController.selectedCategories = categories;
+  //   });
+  // }
 }

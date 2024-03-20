@@ -40,10 +40,11 @@ class _AdminJobseekerScreenState extends State<AdminJobseekerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.yellow,
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           _showFilterPopup(context);
         },
+        child: Icon(Icons.filter_list, color: Colors.white), // Filter icon
       ),
       body: ListView.builder(
         itemCount: allUserList.length,

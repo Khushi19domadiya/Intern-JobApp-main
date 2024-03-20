@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,31 +22,28 @@ import '../../widgets/app_bar/appbar_title.dart';
 import '../job_details_page/job_details_page.dart';
 
 class SavedPage extends StatefulWidget {
-  String? selectedJobCategory;
-  String? selectedCategories;
-  double? minSalary;
-  double? maxSalary;
+  // String? selectedJobCategory;
+  // String? selectedCategories;
+  // double? minSalary;
+  // double? maxSalary;
 
-  SavedPage({
-    Key? key,
-    this.selectedJobCategory,
-    this.selectedCategories,
-    this.minSalary,
-    this.maxSalary,
-  }) : super(key: key);
+  // SavedPage({
+  //   Key? key,
+  //   this.selectedJobCategory,
+  //   this.selectedCategories,
+  //   this.minSalary,
+  //   this.maxSalary,
+  // }) : super(key: key);
 
   @override
   State<SavedPage> createState() => _SavedPageState();
 }
 
 class _SavedPageState extends State<SavedPage> {
-  final TextEditingController _searchController = TextEditingController();
-  final jobController _controller = Get.put(jobController());
-  List<PostJobModel> jobList = <PostJobModel>[];
-  RxBool isLoading = false.obs;
-  String? userRole;
 
-  final User? _user = FirebaseAuth.instance.currentUser;
+  final TextEditingController _searchController = TextEditingController();
+  var  jobController = Get.put(JobController());
+
 
   getData() async {}
 
@@ -56,23 +55,22 @@ class _SavedPageState extends State<SavedPage> {
   }
 
   void fetchUserRole() async {
-    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(_user!.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('Users').doc(jobController.user!.uid).get();
     setState(() {
-      userRole = userDoc['role'];
+      jobController.userRole = userDoc['role'];
     });
-    jobList = await _getJobsFuture();
-    tempSearchJob = jobList;
-    isLoading.refresh();
+    jobController.jobList.value = await jobController.getJobsFuture();
+    jobController.tempSearchJob = jobController.jobList;
+    jobController.isLoading.refresh();
   }
 
-  List<PostJobModel> tempSearchJob = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: StreamBuilder(
-          stream: isLoading.stream,
+          stream: jobController.isLoading.stream,
           builder: (context, snapshot) {
             return Padding(
               padding: EdgeInsets.only(left: 24.h, top: 30.v, right: 24.h),
@@ -85,18 +83,18 @@ class _SavedPageState extends State<SavedPage> {
                         controller: _searchController,
                         onChanged: (String text) {
                           if (text.isNotEmpty) {
-                            if (userRole == "e") {
+                            if (jobController.userRole == "e") {
                               // Search by skills
-                              jobList = tempSearchJob
+                              jobController.jobList.value = jobController.tempSearchJob
                                   .where((element) =>
                                   element.selectedSkills
                                       .toString()
                                       .toLowerCase()
                                       .contains(text.toLowerCase()))
                                   .toList();
-                            } else if (userRole == "j") {
+                            } else if (jobController.userRole == "j") {
                               // Search by title
-                              jobList = tempSearchJob
+                              jobController.jobList.value = jobController.tempSearchJob
                                   .where((element) =>
                                   element.title
                                       .toString()
@@ -105,9 +103,9 @@ class _SavedPageState extends State<SavedPage> {
                                   .toList();
                             }
                           } else {
-                            jobList = tempSearchJob;
+                            jobController.jobList = jobController.tempSearchJob;
                           }
-                          isLoading.refresh();
+                          jobController.refresh();
                         },
 
                         decoration: InputDecoration(
@@ -118,8 +116,8 @@ class _SavedPageState extends State<SavedPage> {
                               _searchController.clear();
                               // Clear text when the clear icon is clicked
                               setState(() {
-                                jobList = tempSearchJob;
-                                isLoading.refresh();
+                                jobController.jobList = jobController.tempSearchJob;
+                                jobController.isLoading.refresh();
                               });
                             },
                           ),
@@ -127,20 +125,21 @@ class _SavedPageState extends State<SavedPage> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    if (jobList.isNotEmpty)
+
+                    Obx(()=>
                       ListView.separated(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         separatorBuilder: (context, index) {
                           return SizedBox(height: 12.v);
                         },
-                        itemCount: jobList.length,
+                        itemCount: jobController.jobList.length,
                         scrollDirection: Axis.vertical,
                         itemBuilder: (context, index) {
-                          PostJobModel model = jobList[index];
+                          PostJobModel model = jobController.jobList[index];
                           return SavedItemWidget(
                             onTapBag: () {
-                              if (userRole == "e") {
+                              if (jobController.userRole == "e") {
                                 Get.to(() => ApplyerListScreen(
                                   jobId: model.id,
                                 ));
@@ -156,7 +155,7 @@ class _SavedPageState extends State<SavedPage> {
                             model: model,
                           );
                         },
-                      ),
+                      )),
                   ],
                 ),
               ),
@@ -225,33 +224,37 @@ class _SavedPageState extends State<SavedPage> {
 
 
   void showFilterBottomSheet(BuildContext context) {
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return FilterBottomsheet(
-          onJobCategorySelected: (category) {
-            setState(() {
-              widget.selectedJobCategory = category;
-            });
-          },
-          onCategories: (categories) {
-            setState(() {
-              widget.selectedCategories = categories;
-            });
-          },
-          minSalary: widget.minSalary ?? 5000,
-          maxSalary: widget.maxSalary ?? 100000,
+//           onJobCategorySelected: (category) {
+// log("-----onJobCategorySelected----${category}");
+//             setState(() {
+//               selectedJobCategory = category;
+//             });
+//           },
+//           onCategories: (categories) {
+//             log("-----onCategories----${categories}");
+//
+//             setState(() {
+//               selectedCategories = categories;
+//             });
+//           },
+//           minSalary: minSalary ?? 5000,
+//           maxSalary: maxSalary ?? 100000,
         );
       },
     ).then((value) {
       if (value != null) {
         setState(() {
-          widget.minSalary = value['minSalary'];
-          widget.maxSalary = value['maxSalary'];
-          // Update selected type
-          widget.selectedJobCategory = value['selectedType'];
-          // Filter the job list based on the selected criteria
-          jobList = _getFilteredJobs();
+          // minSalary = value['minSalary'];
+          // maxSalary = value['maxSalary'];
+          // // Update selected type
+          // selectedJobCategory = value['selectedType'];
+          // // Filter the job list based on the selected criteria
+          // jobList = _getFilteredJobs();
         });
       }
     });
@@ -299,52 +302,53 @@ class _SavedPageState extends State<SavedPage> {
   // }
 
 
-  List<PostJobModel> _getFilteredJobs() {
-    List<PostJobModel> filteredJobs = [];
-
-    // Filter job list based on selected criteria
-    filteredJobs = tempSearchJob.where((job) {
-      bool matchesJobCategory = true;
-      bool matchesSelectedCategories = true;
-      bool matchesSalaryRange = true;
-      bool matchesType = true;
-
-      // Filter by job category
-      if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
-        matchesJobCategory = (job.selectedOption == widget.selectedJobCategory);
-      }
-
-      // Filter by selected categories
-      if (widget.selectedCategories != null && widget.selectedCategories != '') {
-        // Split selected categories into a list
-        List<String> selectedCategoriesList = widget.selectedCategories!.split(',');
-
-        // Check if any of the selected categories match job's selectedOption
-        matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
-      }
-
-      // Convert minSalary and maxSalary from string to double for comparison
-      double? minSalary = double.tryParse(job.lowestsalary);
-      double? maxSalary = double.tryParse(job.highestsalary);
-
-      // Check if conversion was successful before comparison
-      if (minSalary != null && maxSalary != null && widget.minSalary != null && widget.maxSalary != null) {
-        // Filter by salary range
-        matchesSalaryRange = minSalary >= widget.minSalary! && maxSalary <= widget.maxSalary!;
-      }
-
-      // Filter by type
-      if (widget.selectedJobCategory != null && widget.selectedJobCategory != '') {
-        matchesType = (job.jobType == widget.selectedJobCategory);
-      }
-
-      // Include job if it matches job category, selected categories, salary range, and type
-      return matchesJobCategory && matchesSelectedCategories && matchesSalaryRange && matchesType;
-    }).toList();
-
-    return filteredJobs;
-  }
-
+//   List<PostJobModel> _getFilteredJobs() {
+//     List<PostJobModel> filteredJobs = [];
+// log("----widget.selectedJobCategory---${selectedJobCategory}");
+// log("----widget.selectedCategories---${selectedJobCategory}");
+//     // Filter job list based on selected criteria
+//     filteredJobs = tempSearchJob.where((job) {
+//       bool matchesJobCategory = true;
+//       bool matchesSelectedCategories = true;
+//       bool matchesSalaryRange = true;
+//       bool matchesType = true;
+//
+//       // Filter by job category
+//       if (selectedJobCategory != null && selectedJobCategory != '') {
+//         matchesJobCategory = (job.selectedOption == selectedJobCategory);
+//       }
+//
+//       // Filter by selected categories
+//       if (selectedCategories != null && selectedCategories != '') {
+//         // Split selected categories into a list
+//         List<String> selectedCategoriesList = selectedCategories!.split(',');
+//
+//         // Check if any of the selected categories match job's selectedOption
+//         matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
+//       }
+//
+//       // Convert minSalary and maxSalary from string to double for comparison
+//       double? minSalary = double.tryParse(job.lowestsalary);
+//       double? maxSalary = double.tryParse(job.highestsalary);
+//
+//       // Check if conversion was successful before comparison
+//       if (minSalary != null && maxSalary != null && minSalary != null && maxSalary != null) {
+//         // Filter by salary range
+//         matchesSalaryRange = minSalary >= minSalary! && maxSalary <= maxSalary!;
+//       }
+//
+//       // Filter by type
+//       if (selectedJobCategory != null &&selectedJobCategory != '') {
+//         matchesType = (job.jobType == selectedJobCategory);
+//       }
+//
+//       // Include job if it matches job category, selected categories, salary range, and type
+//       return matchesJobCategory && matchesSelectedCategories && matchesSalaryRange && matchesType;
+//     }).toList();
+//
+//     return filteredJobs;
+//   }
+//
 
 
 
@@ -381,13 +385,5 @@ class _SavedPageState extends State<SavedPage> {
     Navigator.pop(context);
   }
 
-  Future<List<PostJobModel>> _getJobsFuture() async {
-    if (userRole == 'e') {
-      // Fetch only current user's posted jobs
-      return _controller.fetchUserPostedJobs(_user!.uid);
-    } else {
-      // Fetch all jobs
-      return _controller.fetchJobDataFromFirestore(userRole!);
-    }
-  }
+
 }

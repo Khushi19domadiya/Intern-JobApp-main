@@ -3,6 +3,9 @@ description: A new Flutter project.
 version: 1.0.0+1
 environment:
   sdk: '>=2.17.0 <3.0.0'
+#dependency_overrides:
+#  firebase_core_platform_interface: 4.5.1
+
 dependencies:
   flutter:
     sdk: flutter
@@ -31,9 +34,13 @@ dependencies:
   get: ^4.6.6
   google_sign_in:
   flutter_pdfview: any
+  firebase_core_platform_interface:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+#dependency_overrides:
+
 flutter:
   uses-material-design: true
   assets:

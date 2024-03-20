@@ -3,16 +3,17 @@ import 'package:saumil_s_application/core/app_export.dart';
 
 class JobsItemWidget extends StatefulWidget {
   final String jobCategory;
+   bool isSelected = false;
   final Function(String) onJobCategorySelected; // Add callback function
 
-  const JobsItemWidget({Key? key, required this.jobCategory, required this.onJobCategorySelected}) : super(key: key);
+   JobsItemWidget({Key? key, required this.jobCategory, required this.onJobCategorySelected,required this.isSelected}) : super(key: key);
 
   @override
   _JobsItemWidgetState createState() => _JobsItemWidgetState();
 }
 
 class _JobsItemWidgetState extends State<JobsItemWidget> {
-  bool isSelected = false;
+  // bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class _JobsItemWidgetState extends State<JobsItemWidget> {
       label: Text(
         widget.jobCategory,
         style: TextStyle(
-          color: isSelected ? Colors.white : Colors.black,
+          color: widget.isSelected ? Colors.white : Colors.black,
           fontSize: 12.fSize,
           fontFamily: 'Plus Jakarta Sans',
           fontWeight: FontWeight.w600,
@@ -39,9 +40,9 @@ class _JobsItemWidgetState extends State<JobsItemWidget> {
         width: 18.adaptSize,
         margin: EdgeInsets.only(right: 4.h),
       ),
-      selected: isSelected,
-      backgroundColor: isSelected ? appTheme.deepOrangeA200 : Colors.white,
-      selectedColor: isSelected ? Colors.deepOrange : Colors.transparent,
+      selected: widget.isSelected,
+      backgroundColor: widget.isSelected ? appTheme.deepOrangeA200 : Colors.white,
+      selectedColor: widget.isSelected ? Colors.deepOrange : Colors.transparent,
       shape: RoundedRectangleBorder(
         side: BorderSide.none,
         borderRadius: BorderRadius.circular(
@@ -50,7 +51,7 @@ class _JobsItemWidgetState extends State<JobsItemWidget> {
       ),
       onSelected: (value) {
         setState(() {
-          isSelected = value;
+          widget.isSelected = value;
           if (value) {
             // Notify the parent widget when job category is selected
             widget.onJobCategorySelected(widget.jobCategory);

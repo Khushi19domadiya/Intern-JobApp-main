@@ -36,7 +36,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
-  jobController controller = Get.put(jobController());
+  var controller = Get.put(JobController());
   String? userId;
   String? userRole;
 

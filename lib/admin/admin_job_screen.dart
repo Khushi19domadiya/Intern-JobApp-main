@@ -41,10 +41,47 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
   }
 
   @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     floatingActionButton: FloatingActionButton(
+  //       backgroundColor: Theme.of(context).primaryColor,
+  //       onPressed: () {
+  //         _showFilterPopup(context);
+  //       },
+  //     ),
+  //     body: AnimatedBuilder(
+  //       animation: _animation,
+  //       builder: (context, child) {
+  //         return Opacity(
+  //           opacity: _animation.value,
+  //           child: ListView.builder(
+  //             itemCount: allJobList.length,
+  //             itemBuilder: (context, index) {
+  //               return ListTile(
+  //                 title: Text(allJobList[index].title ?? ""),
+  //                 onTap: () {
+  //                   // Navigate to job detail screen when the user taps on a job
+  //                   Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                       builder: (context) => AdminJobDetailScreen(job: allJobList[index]),
+  //                     ),
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.yellow,
+        child: Icon(Icons.filter_list, color: Colors.white,), // Adding filter icon here
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           _showFilterPopup(context);
         },
@@ -76,6 +113,8 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
       ),
     );
   }
+
+
 
   TextEditingController selectFilterDate = TextEditingController();
   DateTime? selectedDate;
