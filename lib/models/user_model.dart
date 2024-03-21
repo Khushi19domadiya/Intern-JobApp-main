@@ -144,6 +144,7 @@ class PostJobModel {
   final String address;
   final String experience;
   final String about;
+  final int? isDelete;
   // final String postJobDate;
   final String deadline;
   final String? jobType;
@@ -158,6 +159,7 @@ class PostJobModel {
     required this.userId,
     required this.createAt,
     required this.title,
+    required this.isDelete,
     required this.lowestsalary,
     required this.highestsalary,
     required this.address,
@@ -183,6 +185,7 @@ class PostJobModel {
       'address': address,
       'experience': experience,
       'about': about,
+      'isDelete': isDelete,
       // 'postJobDate': postJobDate,
       'deadline': deadline,
       'jobType': jobType,
@@ -202,6 +205,7 @@ class PostJobModel {
         address: data["address"],
         experience: data["experience"],
         about: data["about"],
+        isDelete: data["isDelete"],
         // postJobDate: data["postJobDate"],
         deadline: data["deadline"],
         jobType: data["jobType"],

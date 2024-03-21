@@ -68,7 +68,7 @@ class SavedItemWidget extends StatelessWidget {
                     ),
                     // SizedBox(height: 12.v),
                     Text(
-                      "Salary: (${model.highestsalary} - ${model.lowestsalary})",
+                      "Salary: (${model.lowestsalary} - ${model.highestsalary})",
                       style: theme.textTheme.labelLarge,
                     ),
                     // SizedBox(height: 12.v),

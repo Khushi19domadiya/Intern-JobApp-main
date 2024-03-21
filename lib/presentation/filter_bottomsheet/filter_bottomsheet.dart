@@ -39,7 +39,8 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
       child: Container(
         width: double.maxFinite,
         padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 25.v),
-        decoration: AppDecoration.background.copyWith(borderRadius: BorderRadiusStyle.customBorderTL24),
+        decoration: AppDecoration.background
+            .copyWith(borderRadius: BorderRadiusStyle.customBorderTL24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -58,7 +59,9 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
                 // widget.onCategories(selectedCategories);
                 // Navigator.pop(context, {'minSalary': widget.minSalary, 'maxSalary': widget.maxSalary});
 
-                await jobController.getFilteredJobs().whenComplete(() => Get.back());
+                await jobController
+                    .getFilteredJobs()
+                    .whenComplete(() => Get.back());
               },
             ),
             SizedBox(height: 15.v),
@@ -91,10 +94,16 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             jobController.tempSearchJob = jobController.jobList;
             jobController.jobList.refresh();
             jobController.tempSearchJob.refresh();
+            jobController.minSalary.value =  5000.0;
+            jobController.maxSalary.value = 100000.0;
+            jobController.update();
+            Get.back();
+
           },
           child: Padding(
             padding: EdgeInsets.only(top: 3.v, bottom: 2.v),
-            child: Text("Reset Filters", style: CustomTextStyles.titleSmallDeeporangeA200),
+            child: Text("Reset Filters",
+                style: CustomTextStyles.titleSmallDeeporangeA200),
           ),
         ),
       ],
@@ -115,45 +124,42 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             children: [
               FiftyfiveItemWidget(
                 categories: "Backend",
-                isSelected: jobController.selectedCategory == "Backend", onTap: () { if (jobController.selectedCategory == "Backend") {
-                jobController.selectedCategory = null;
-              } else {
-                jobController.selectedCategory = "Backend";
-              }
-              setState(() {
-
-              });
-              log("-----jobController.selectedCategory------${jobController.selectedCategory }"); },
+                isSelected: jobController.selectedCategory == "Backend",
+                onTap: () {
+                  if (jobController.selectedCategory == "Backend") {
+                    jobController.selectedCategory = null;
+                  } else {
+                    jobController.selectedCategory = "Backend";
+                  }
+                  setState(() {});
+                  log("-----jobController.selectedCategory------${jobController.selectedCategory}");
+                },
               ),
               FiftyfiveItemWidget(
                 categories: "Frontend",
-                isSelected: jobController.selectedCategory == "Frontend", onTap: () {
-                if (jobController.selectedCategory == "Frontend") {
-                  jobController.selectedCategory = null;
-                } else {
-                  jobController.selectedCategory = "Frontend";
-                }
-                setState(() {
-
-                });
-                log("-----jobController.selectedCategory------${jobController.selectedCategory }");
-              },
+                isSelected: jobController.selectedCategory == "Frontend",
+                onTap: () {
+                  if (jobController.selectedCategory == "Frontend") {
+                    jobController.selectedCategory = null;
+                  } else {
+                    jobController.selectedCategory = "Frontend";
+                  }
+                  setState(() {});
+                  log("-----jobController.selectedCategory------${jobController.selectedCategory}");
+                },
               ),
               FiftyfiveItemWidget(
                 categories: "Database",
                 isSelected: jobController.selectedCategory == "Database",
-                 onTap: () {
-                if (jobController.selectedCategory == "Database") {
-                  jobController.selectedCategory = null;
-                } else {
-                  jobController.selectedCategory = "Database";
-                }
-                setState(() {
-
-                });
-                log("-----jobController.selectedCategory------${jobController.selectedCategory }");
-
-              },
+                onTap: () {
+                  if (jobController.selectedCategory == "Database") {
+                    jobController.selectedCategory = null;
+                  } else {
+                    jobController.selectedCategory = "Database";
+                  }
+                  setState(() {});
+                  log("-----jobController.selectedCategory------${jobController.selectedCategory}");
+                },
               ),
             ],
           ),
@@ -165,9 +171,13 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   Widget _buildSalariesColumn(BuildContext context) {
     return Column(
       children: [
-        _buildPrice(context, priceText1: "Min Salary", priceText2: "${jobController.minSalary.toInt()}.000/Month"),
+        _buildPrice(context,
+            priceText1: "Min Salary",
+            priceText2: "${jobController.minSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
-        _buildPrice(context, priceText1: "Max Salary", priceText2: "${jobController.maxSalary.toInt()}.000/Month"),
+        _buildPrice(context,
+            priceText1: "Max Salary",
+            priceText2: "${jobController.maxSalary.toInt()}.000/Month"),
         SizedBox(height: 16.v),
         SliderTheme(
           data: SliderThemeData(
@@ -178,21 +188,26 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             thumbShape: RoundSliderThumbShape(),
           ),
           child: RangeSlider(
-            values: RangeValues(jobController.minSalary.value, jobController.maxSalary.value),
+            values: RangeValues(
+                jobController.minSalary.value, jobController.maxSalary.value),
             min: 5000.0,
             max: 100000.0,
             onChanged: (values) {
               setState(() {
                 // jobController.minSalary = (values.start / 1000).round() * 1000;
                 // jobController.maxSalary = (values.end / 1000).round() * 1000;
-                jobController.minSalary.value = (values.start / 1000).roundToDouble() * 1000;
-                jobController.maxSalary.value = (values.end / 1000).roundToDouble() * 1000;
+                jobController.minSalary.value =
+                    (values.start / 1000).roundToDouble() * 1000;
+                jobController.maxSalary.value =
+                    (values.end / 1000).roundToDouble() * 1000;
               });
             },
           ),
         ),
         SizedBox(height: 2.v),
-        _buildPrice(context, priceText1: "${jobController.minSalary.toInt()}", priceText2: "${jobController.maxSalary.toInt()}.000"),
+        _buildPrice(context,
+            priceText1: "${jobController.minSalary.toInt()}",
+            priceText2: "${jobController.maxSalary.toInt()}.000"),
       ],
     );
   }
@@ -211,17 +226,27 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
             children: [
               JobsItemWidget(
                 jobCategory: "Part Time",
-                onJobCategorySelected: (value) {
-                  jobController.selectedJobType = value;
+                onTap: () {
+                  if (jobController.selectedJobType == "Part Time") {
+                    jobController.selectedJobType = null;
+                  } else {
+                    jobController.selectedJobType = "Part Time";
+                  }
                   setState(() {});
+                  log("-----jobController.selectedJobType------${jobController.selectedJobType}");
                 },
                 isSelected: jobController.selectedJobType == "Part Time",
               ),
               JobsItemWidget(
                 jobCategory: "Full Time",
-                onJobCategorySelected: (value) {
-                  jobController.selectedJobType = value;
+                onTap: () {
+                  if (jobController.selectedJobType == "Full Time") {
+                    jobController.selectedJobType = null;
+                  } else {
+                    jobController.selectedJobType = "Full Time";
+                  }
                   setState(() {});
+                  log("-----jobController.selectedJobType------${jobController.selectedJobType}");
                 },
                 isSelected: jobController.selectedJobType == "Full Time",
               ),
@@ -242,11 +267,13 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
       children: [
         Text(
           priceText1,
-          style: CustomTextStyles.labelLargeSemiBold.copyWith(color: appTheme.blueGray400),
+          style: CustomTextStyles.labelLargeSemiBold
+              .copyWith(color: appTheme.blueGray400),
         ),
         Text(
           priceText2,
-          style: CustomTextStyles.labelLargeSemiBold.copyWith(color: appTheme.blueGray400),
+          style: CustomTextStyles.labelLargeSemiBold
+              .copyWith(color: appTheme.blueGray400),
         ),
       ],
     );

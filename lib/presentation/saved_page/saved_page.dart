@@ -127,35 +127,35 @@ class _SavedPageState extends State<SavedPage> {
                     SizedBox(height: 20),
 
                     Obx(()=>
-                      ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) {
-                          return SizedBox(height: 12.v);
-                        },
-                        itemCount: jobController.jobList.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) {
-                          PostJobModel model = jobController.jobList[index];
-                          return SavedItemWidget(
-                            onTapBag: () {
-                              if (jobController.userRole == "e") {
-                                Get.to(() => ApplyerListScreen(
-                                  jobId: model.id,
-                                ));
-                              } else {
-                                // Get.to(() => ApplyJobScreen(
-                                //   jobId: model.id, jobTitle:model.title,
-                                // ));
-                                Get.to(() => JobDetailsPage(
-                                  postJobModel: model,
-                                ));
-                              }
-                            },
-                            model: model,
-                          );
-                        },
-                      )),
+                        ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) {
+                            return SizedBox(height: 12.v);
+                          },
+                          itemCount: jobController.jobList.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            PostJobModel model = jobController.jobList[index];
+                            return SavedItemWidget(
+                              onTapBag: () {
+                                if (jobController.userRole == "e") {
+                                  Get.to(() => ApplyerListScreen(
+                                    jobId: model.id,
+                                  ));
+                                } else {
+                                  // Get.to(() => ApplyJobScreen(
+                                  //   jobId: model.id, jobTitle:model.title,
+                                  // ));
+                                  Get.to(() => JobDetailsPage(
+                                    postJobModel: model,
+                                  ));
+                                }
+                              },
+                              model: model,
+                            );
+                          },
+                        )),
                   ],
                 ),
               ),
@@ -352,7 +352,7 @@ class _SavedPageState extends State<SavedPage> {
 
 
 
-  // void showFilterBottomSheet(BuildContext context) {
+  // void showFilterBottomSheet(BuildContext context) {+
   //   showModalBottomSheet(
   //     context: context,
   //     builder: (BuildContext context) {

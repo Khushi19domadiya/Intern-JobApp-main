@@ -22,14 +22,15 @@ import '../../util/colors.dart';
 import '../../util/common_methos.dart';
 
 
-class PostJob extends StatefulWidget {
-  const PostJob({Key? key}) : super(key: key);
+class EditPage extends StatefulWidget {
+  final String jobId;
+  const EditPage({Key? key,required this.jobId}) : super(key: key);
 
   @override
-  _PostJobState createState() => _PostJobState();
+  _EditPage createState() => _EditPage();
 }
 
-class _PostJobState extends State<PostJob> {
+class _EditPage extends State<EditPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController lsalaryController = TextEditingController();
   TextEditingController hsalaryController = TextEditingController();
@@ -44,7 +45,43 @@ class _PostJobState extends State<PostJob> {
   DateTime? selectedDate;
   String? _selectedOption;
 
-  final userRepo = Get.put(UserRepository());
+  // final userRepo = Get.put(UserRepository());
+  final CollectionReference postJobCollection = FirebaseFirestore.instance.collection("postJob");
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPostJobData();
+  }
+  void fetchPostJobData() async {
+    try {
+      DocumentSnapshot documentSnapshot =
+      await postJobCollection.doc(widget.jobId).get();
+
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+
+        setState(() {
+          titleController.text = data['title'] ?? '';
+          lsalaryController.text = data['lowestsalary'] ?? '';
+          hsalaryController.text = data['highestsalary'] ?? '';
+          addressController.text = data['address'] ?? '';
+          experienceController.text = data['experience'] ?? '';
+          aboutController.text = data['about'] ?? '';
+          datePickerController.text = data['deadline'] ?? '';
+          _selectedRadio = data['jobType'] ?? '';
+          _selectGender = data['gender'] ?? '';
+          _selectedItems = List<String>.from(data['selected_skills'] ?? []);
+          _selectedOption = data['selected_option'] ?? '';
+        });
+      } else {
+        print('Document does not exist');
+      }
+    } catch (e) {
+      print('Error fetching document: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +131,7 @@ class _PostJobState extends State<PostJob> {
             ),
           ),
         ),
-        bottomNavigationBar: _buildContinueButton(context, newDocumentId),
+        bottomNavigationBar: _buildContinueButton(context),
       ),
     );
   }
@@ -391,24 +428,24 @@ class _PostJobState extends State<PostJob> {
         children: [
           Text("Select a category", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.0),
-          Container(
-            width: double.infinity, // Set the width to fill the available space
-            child: DropdownButton<String>(
-              value: _selectedOption,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedOption = newValue;
-                });
-              },
-              items: <String>['Frontend', 'Backend', 'Database'] // Replace with your options
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
+          // Container(
+          //   width: double.infinity, // Set the width to fill the available space
+          //   child: DropdownButton<String>(
+          //     value: _selectedOption,
+          //     onChanged: (String? newValue) {
+          //       setState(() {
+          //         _selectedOption = newValue;
+          //       });
+          //     },
+          //     items: <String>['Frontend', 'Backend', 'Database'] // Replace with your options
+          //         .map<DropdownMenuItem<String>>((String value) {
+          //       return DropdownMenuItem<String>(
+          //         value: value,
+          //         child: Text(value),
+          //       );
+          //     }).toList(),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -587,9 +624,9 @@ class _PostJobState extends State<PostJob> {
     );
   }
 
-  Widget _buildContinueButton(BuildContext context, String newDocumentId) {
+  Widget _buildContinueButton(BuildContext context) {
     return CustomElevatedButton(
-      text: "POST",
+      text: "Edit Post Job",
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 40.v),
       onPressed: () async {
         // Validate the job type field
@@ -614,7 +651,7 @@ class _PostJobState extends State<PostJob> {
         else if (_formKey.currentState?.validate() ?? false) {
           // All fields are valid
           saveJobPost(
-            id: newDocumentId, // Pass the document ID
+            id: widget.jobId, // Pass the document ID
             title: titleController.text,
             lowestsalary: lsalaryController.text,
             highestsalary: hsalaryController.text,
@@ -649,78 +686,110 @@ class _PostJobState extends State<PostJob> {
       // Reference to the "postJob" collection
       CollectionReference jobCollection = FirebaseFirestore.instance.collection("postJob");
 
-      User? currentUser = FirebaseAuth.instance.currentUser;
+      // Check if the document exists before attempting to update it
+      DocumentSnapshot documentSnapshot = await jobCollection.doc(id).get();
+      // User? currentUser = FirebaseAuth.instance.currentUser;
 
       // Get the current date and time
-      DateTime currentTime = DateTime.now();
+      // DateTime currentTime = DateTime.now();
 
       // Format the date and time as a string in the desired format
-      String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').format(currentTime);
+      // String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').format(currentTime);
 
 
-      PostJobModel job = PostJobModel(
-        id: id, // Assign the document ID to the model
-        title: title,
-        createAt: DateTime.now().toString(),
-        lowestsalary: lowestsalary,
-        highestsalary: highestsalary,
-        address: address,
-        isDelete: 0,
-        experience: experience,
-        about: about,
-        // postJobDate: formattedDateTime,
-        deadline: deadline,
-        jobType: _selectedRadio,
-        gender: _selectGender,
-        selectedSkills: selectedSkills,
-        selectedOption: selectedOption, // Assign the selected option to the model
-        userId: currentUser!.uid,
+      // PostJobModel job = PostJobModel(
+      // id: id, // Assign the document ID to the model
+      // title: title,
+      // createAt: DateTime.now().toString(),
+      // lowestsalary: lowestsalary,
+      // highestsalary: highestsalary,
+      // address: address,
+      // experience: experience,
+      // about: about,
+      // // postJobDate: formattedDateTime,
+      // deadline: deadline,
+      // jobType: _selectedRadio,
+      // gender: _selectGender,
+      // selectedSkills: selectedSkills,
+      // selectedOption: selectedOption, // Assign the selected option to the model
+      // userId: currentUser!.uid,
 
-      );
-      await jobCollection.doc(id).set(job.toJson());
-      allUserList.clear();
-      await fetchAllUsers();
+      // );
+      if (documentSnapshot.exists) {
+        await jobCollection.doc(id).update({
+          'title': title,
+          'lowestsalary': lowestsalary,
+          'highestsalary': highestsalary,
+          'address': address,
+          'experience': experience,
+          'about': about,
+          'deadline': deadline,
+          'jobType': _selectedRadio, // Update job type
+          'gender': _selectGender, // Update gender
+          // 'selected_skills': selectedSkills, // Update selected skills
+          // 'selected_option': selectedOption, // Update selected option
+        });
+        // Show success message
+        await CommonMethod()
+            .getXSnackBar("Success", 'Job updated successfully', success)
+            .whenComplete(() => Get.to(() => HomeContainerScreen()));
+      }else {
+        // Document does not exist
+        print("Document with ID $id not found.");
+        // Handle this case accordingly, e.g., show an error message
+      }
+    }catch (e) {
+      // Print the error for debugging
+      print("Error updating job: $e");
 
-      allUserList.forEach((element) async {
-        if(element.role == "j"){
-          Dio dio = Dio();
-          var url = 'https://fcm.googleapis.com/fcm/send';
-//queryParameters will the parameter required by your API.
-//In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
-          var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
-          var responce = await dio.post(url,
-            data:  {
-              "notification": {
-                "title": title,
-                "body": "In Job App their is one job was posted recently  it is ${title}, For better experience click this notification",
-                "sound": "default"
-              },
-              "priority": "High",
-              "to": element.token,
-
-            },
-            options: Options(
-                headers: headers
-            ),);
-          if(responce.statusCode == 200){
-            print("-----${responce.data.toString}");
-          }
-        }
-
-      });
-      // Use the document ID as the ID for the document
-
-
-      await CommonMethod()
-          .getXSnackBar("Success", 'Job posted successfully', success)
-          .whenComplete(() => Get.to(() => HomeContainerScreen()));
-    } catch (e) {
-      await CommonMethod().getXSnackBar(
-        "Error",
-        'Job not posted',
-        red,
-      );
+      // Show error message
+      await CommonMethod().getXSnackBar("Error", 'Job not updated', red);
     }
+
+    // await jobCollection.doc(id).set(job.toJson());
+    // allUserList.clear();
+    // await fetchAllUsers();
+
+//       allUserList.forEach((element) async {
+//         if(element.role == "j"){
+//           Dio dio = Dio();
+//           var url = 'https://fcm.googleapis.com/fcm/send';
+// //queryParameters will the parameter required by your API.
+// //In my case I had to send the headers also, which we can send using //Option parameter in request. Here are my headers Map:
+//           var headers = {'Content-type': 'application/json; charset=utf-8',"Authorization" : "key=AAAA1QAzqrM:APA91bEEnfurICv3y2DkrX1qZRk0gUUHjkv-VH8UVpb2MBNzpMfdx50Xo3_LZCrTGaA6j89mFZfSB7NOyntJAUME-wxHSO5oqFb0SvuBlMw5b56YE_Yv3858xmrp3Ub5eSXcncRV4b_p"};
+//           var responce = await dio.post(url,
+//             data:  {
+//               "notification": {
+//                 "title": title,
+//                 "body": "In Job App their is one job was posted recently  it is ${title}, For better experience click this notification",
+//                 "sound": "default"
+//               },
+//               "priority": "High",
+//               "to": element.token,
+//
+//             },
+//             options: Options(
+//                 headers: headers
+//             ),);
+//           if(responce.statusCode == 200){
+//             print("-----${responce.data.toString}");
+//           }
+//         }
+//
+//       });
+    // Use the document ID as the ID for the document
+
+
+    //   await CommonMethod()
+    //       .getXSnackBar("Success", 'Job posted successfully', success)
+    //       .whenComplete(() => Get.to(() => HomeContainerScreen()));
+    // } catch (e) {
+    //   await CommonMethod().getXSnackBar(
+    //     "Error",
+    //     'Job not posted',
+    //     red,
+    //   );
+    // }
   }
   List<UserModel> allUserList = [];
   fetchAllUsers() async {
@@ -748,7 +817,7 @@ class _PostJobState extends State<PostJob> {
         },
       ),
       centerTitle: true,
-      title: AppbarTitle(text: "Post Job"),
+      title: AppbarTitle(text: " Edit Posted Job"),
       // actions: [
       //   AppbarTrailingImage(
       //     imagePath: ImageConstant.imgComponent3,

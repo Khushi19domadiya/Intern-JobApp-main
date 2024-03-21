@@ -26,6 +26,7 @@ import 'package:saumil_s_application/presentation/notifications_my_proposals_tab
 import '../home_container_screen/home_container_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
 import '../job_details_page/job_details_page.dart';
+import 'jobdetail_page_e.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -97,8 +98,30 @@ class _HomePageState extends State<HomePage> {
 
     // Filter out records with a deadline that has already passed or equals the current date
     var validData = data.docs.where((doc) {
-      var deadline = doc['deadline'] as Timestamp;
-      return deadline.toDate().isAfter(DateTime.now());
+      // var deadline = doc['deadline'] as Timestamp;
+
+
+      dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+
+      DateTime deadlineDateTime;
+
+      if (deadline is Timestamp) {
+        // If the deadline is already a Timestamp, convert it to DateTime
+        deadlineDateTime = deadline.toDate();
+      } else if (deadline is String) {
+        // If the deadline is a String, parse it to DateTime
+        deadlineDateTime = DateTime.parse(deadline);
+      } else {
+        // Handle other types or null values as needed
+        // For example, you can set a default value or throw an error
+        // deadlineDateTime = DateTime.now();
+        // Or handle the error accordingly
+        throw ArgumentError('Unexpected deadline format');
+      }
+
+// Now you can compare the deadline DateTime with the current DateTime
+      return deadlineDateTime.isAfter(DateTime.now());
+
     }).toList();
 
     setState(() {
@@ -252,95 +275,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildEightyEight(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).get(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
+    return Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.h),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Something went wrong');
+            }
 
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-        if (snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No jobs available'));
-        }
+            if (snapshot.data!.docs.isEmpty) {
+              return Center(child: Text('No jobs available'));
+            }
 
-        List<DocumentSnapshot> filteredJobs = snapshot.data!.docs;
-
-        if (userRole == 'e') {
-          // Filter jobs if user role is 'e' (employer)
-          filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
-        }
-
-        // Filter out jobs with deadlines that have already passed
-        final currentDate = DateTime.now();
-        filteredJobs = filteredJobs.where((job) {
-          final deadlineStr = job['deadline'] as String;
-          final deadlineDate = DateTime.parse(deadlineStr); // Convert string to DateTime
-          return deadlineDate.isAfter(currentDate);
-        }).toList();
-
-        if (filteredJobs.isEmpty) {
-          return Center(child: Text('No active jobs available'));
-        }
-
-        return ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (context, index) {
-            return SizedBox(height: 16.v);
+            return ListView.separated(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              separatorBuilder: (context, index) {
+                return SizedBox(height: 16.v);
+              },
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final DocumentSnapshot document = snapshot.data!.docs[index];
+                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                return EightyeightItemWidget(jobData: data);
+              },
+            );
           },
-          itemCount: filteredJobs.length,
-          itemBuilder: (context, index) {
-            final DocumentSnapshot document = filteredJobs[index];
-            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-            return EightyeightItemWidget(jobData: data);
-          },
-        );
-      },
+        ),
+      ),
     );
   }
-
-  // Widget _buildEightyEight(BuildContext context) {
-  //   return Align(
-  //     alignment: Alignment.center,
-  //     child: Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 24.h),
-  //       child: StreamBuilder<QuerySnapshot>(
-  //         stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
-  //         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-  //           if (snapshot.hasError) {
-  //             return Text('Something went wrong');
-  //           }
-  //
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return Center(child: CircularProgressIndicator());
-  //           }
-  //
-  //           if (snapshot.data!.docs.isEmpty) {
-  //             return Center(child: Text('No jobs available'));
-  //           }
-  //
-  //           return ListView.separated(
-  //             physics: NeverScrollableScrollPhysics(),
-  //             shrinkWrap: true,
-  //             separatorBuilder: (context, index) {
-  //               return SizedBox(height: 16.v);
-  //             },
-  //             itemCount: snapshot.data!.docs.length,
-  //             itemBuilder: (context, index) {
-  //               final DocumentSnapshot document = snapshot.data!.docs[index];
-  //               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-  //               return EightyeightItemWidget(jobData: data);
-  //             },
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
 
 
 
@@ -392,6 +363,8 @@ class _HomePageState extends State<HomePage> {
   //     ),
   //   );
   // }
+
+
 
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -594,9 +567,8 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     onTap: () {
                       if (userRole == "e") {
-
-
-                        Get.to(() => ApplyerListScreen(jobId: model.id));
+                        // Get.to(() => ApplyerListScreen(jobId: model.id));
+                        Get.to(() => JobDetailsPageE(postJobModel: model,));
                       } else {
                         // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
                         Get.to(() => JobDetailsPage(postJobModel: model,));

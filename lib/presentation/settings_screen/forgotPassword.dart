@@ -101,7 +101,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             return; // Return to prevent further execution
           }
           // Passwords match, proceed with password reset logic
-          _resetPassword(_newPasswordController.text);
+          _resetPassword(_newPasswordController.text,_confirmPasswordController.text);
         }
       },
     );
@@ -109,7 +109,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
 
 
-  void _resetPassword(String newPassword) async {
+  void _resetPassword(String newPassword, String password) async {
     try {
       // Get the user's ID if they are logged in
       String? userId;
@@ -119,6 +119,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
       // Update the password in Firestore
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
+        'password': password,
         'npassword': newPassword,
         // Assuming the field in Firestore is 'password'
       });

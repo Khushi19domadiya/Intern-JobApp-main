@@ -13,7 +13,6 @@ import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
-import '../../controller/jobController.dart';
 import '../experience_setting_screen/AddSkillsScreen.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -33,7 +32,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String? userId;
   String? userRole;
-  late jobController controller;
+  // late jobController controller;
 
   @override
   void initState() {
@@ -43,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (user != null) {
       userId = user.uid;
     }
-    controller = jobController(); // Initialize the controller
+    // controller = jobController(); // Initialize the controller
     getClientStream();
     fetchUserRole();
   }
@@ -55,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       userRole = userDoc['role'];
     });
-    pOPJobs.value = await controller.fetchUserPostedJobs(userId);
+    // pOPJobs.value = await controller.fetchUserPostedJobs(userId);
     // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
   }
 
@@ -74,6 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
       // Update the state variable
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,50 +105,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return SafeArea(
-  //     child: Scaffold(
-  //       appBar: _buildAppBar(context),
-  //       body: SizedBox(
-  //         width: SizeUtils.width,
-  //         child: SingleChildScrollView(
-  //           padding: EdgeInsets.only(top: 30.v),
-  //           child: Padding(
-  //             padding: EdgeInsets.only(bottom: 5.v),
-  //             child: Column(
-  //               children: [
-  //                 _buildBackground(context),
-  //                 SizedBox(height: 16.v),
-  //                 // Container(
-  //                 //   width: 273.h,
-  //                 //   margin: EdgeInsets.only(left: 51.h, right: 50.h),
-  //                 //   child: Text(
-  //                 //     "UI/UX Designer, Web Design, Mobile App Design",
-  //                 //     maxLines: 2,
-  //                 //     overflow: TextOverflow.ellipsis,
-  //                 //     textAlign: TextAlign.center,
-  //                 //     style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
-  //                 //   ),
-  //                 // ),
-  //                 // SizedBox(height: 16.v),
-  //                 // _buildJobApplied(context),
-  //                 SizedBox(height: 24.v),
-  //                 Divider(color: appTheme.gray300),
-  //                 SizedBox(height: 22.v),
-  //                 _buildAboutMe(context),
-  //                 SizedBox(height: 24.v),
-  //                 _buildSkillsList(context),
-  //
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(

@@ -35,6 +35,9 @@ class JobController extends GetxController{
     }
   }
   Future getFilteredJobs() async {
+jobList.value = await getJobsFuture();
+    tempSearchJob = jobList;
+    isLoading.refresh();
     List<PostJobModel> filteredJobs = [];
     log("----selectedJobType---${selectedJobType}");
     log("----selectedCategory---${selectedCategory}");
@@ -42,13 +45,13 @@ class JobController extends GetxController{
     filteredJobs = tempSearchJob.where((job) {
       bool matchesJobCategory = true;
       bool matchesSelectedCategories = true;
-      bool matchesSalaryRange = true;
+      bool matchesSalaryRange = false;
       bool matchesType = true;
 
       // Filter by job category
       if (selectedJobType != null && selectedJobType != '') {
-        // matchesJobCategory = (job.jobType == selectedJobType);
-        matchesJobCategory = (job.selectedOption == selectedCategory);
+        matchesType = (job.jobType == selectedJobType);
+        // matchesJobCategory = (job.selectedOption == selectedCategory);
       }
 
       // Filter by selected categories
@@ -60,19 +63,38 @@ class JobController extends GetxController{
         matchesSelectedCategories = selectedCategoriesList.contains(job.selectedOption);
       }
 
-      // Convert minSalary and maxSalary from string to double for comparison
-      double? minSalary = double.tryParse(job.lowestsalary);
-      double? maxSalary = double.tryParse(job.highestsalary);
+      double? minSalaryDynamic = double.tryParse(job.lowestsalary);
+      double? maxSalaryDynamic = double.tryParse(job.highestsalary);
 
-      // Check if conversion was successful before comparison
-      if (minSalary != null && maxSalary != null && minSalary != null && maxSalary != null) {
-        // Filter by salary range
-        matchesSalaryRange = minSalary >= minSalary! && maxSalary <= maxSalary!;
+// Log the parsed values for debugging
+      log("minSalaryDynamic: $minSalaryDynamic");
+      log("maxSalaryDynamic: $maxSalaryDynamic");
+
+// Check if conversion was successful before comparison
+      if (minSalaryDynamic != null && maxSalaryDynamic != null) {
+        // Ensure that minSalary is not greater than maxSalary
+        if (minSalaryDynamic <= maxSalaryDynamic) {
+          // Check if the job's salary falls within the specified range
+          if (minSalaryDynamic >= minSalary.value && maxSalaryDynamic <= maxSalary.value) {
+            matchesSalaryRange = true;
+            log("-----matchesSalaryRange-----${matchesSalaryRange}");
+          }
+        } else {
+          // Log an error if the salary range is invalid
+          log("Invalid salary range: minSalaryDynamic > maxSalaryDynamic");
+        }
+      } else {
+        // Log an error if parsing failed
+        log("Failed to parse salary values");
       }
 
-      // Filter by type
-      if (selectedJobType != null && selectedJobType != '') {
-        matchesType = (job.jobType == selectedJobType);
+      // // Filter by type
+      // if (selectedJobType != null && selectedJobType != '') {
+      //   matchesType = (job.jobType == selectedJobType);
+      // }
+
+      if (selectedCategory != null && selectedCategory != '') {
+        matchesJobCategory = (job.selectedOption == selectedCategory);
       }
 
       // Include job if it matches job category, selected categories, salary range, and type
@@ -204,6 +226,16 @@ class JobController extends GetxController{
           .collection('postJob')
           .where('userId', isEqualTo: userId)
           .get(); // Fetch all user posted jobs
+
+      var validData = querySnapshot.docs.where((doc) {
+        if (doc != null && doc.data() != null) {
+          // Check if the document data contains the "isDeleted" field
+          if (doc.data()!.containsKey('isDelete')) {
+            // Check if the "isDeleted" field is not null and equals 1
+            if (doc['isDelete'] != null && doc['isDelete'] == 1) {
+              return false; // The document is deleted
+            }
+      }
 
       // Filter out records with a valid deadline that is after the current time
       var validData = querySnapshot.docs.where((doc) {
