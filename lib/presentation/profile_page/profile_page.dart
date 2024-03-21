@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/presentation/profile_page/widgets/fortyseven_item_widget.dart';
@@ -14,7 +15,7 @@ import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
 import '../experience_setting_screen/AddSkillsScreen.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   ProfilePage({
     Key? key,
     this.onTapBag,
@@ -23,6 +24,57 @@ class ProfilePage extends StatelessWidget {
 
   final VoidCallback? onTapBag;
   final UserModel? model;
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String? userId;
+  String? userRole;
+  // late jobController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the current user's ID from Firebase Authentication
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userId = user.uid;
+    }
+    // controller = jobController(); // Initialize the controller
+    getClientStream();
+    fetchUserRole();
+  }
+
+  RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
+
+  fetchUserRole() async {
+    var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    setState(() {
+      userRole = userDoc['role'];
+    });
+    // pOPJobs.value = await controller.fetchUserPostedJobs(userId);
+    // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
+  }
+
+  getClientStream() async {
+    var currentTime = Timestamp.now();
+    var data = await FirebaseFirestore.instance.collection('postJob').orderBy('title').get();
+
+    // Filter out records with a deadline that has already passed or equals the current date
+    var validData = data.docs.where((doc) {
+      var deadline = doc['deadline'] as Timestamp;
+      return deadline.toDate().isAfter(DateTime.now());
+    }).toList();
+
+    // Update the state with validData
+    setState(() {
+      // Update the state variable
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,26 +91,12 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   _buildBackground(context),
                   SizedBox(height: 16.v),
-                  // Container(
-                  //   width: 273.h,
-                  //   margin: EdgeInsets.only(left: 51.h, right: 50.h),
-                  //   child: Text(
-                  //     "UI/UX Designer, Web Design, Mobile App Design",
-                  //     maxLines: 2,
-                  //     overflow: TextOverflow.ellipsis,
-                  //     textAlign: TextAlign.center,
-                  //     style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 16.v),
-                  // _buildJobApplied(context),
-                  SizedBox(height: 24.v),
                   Divider(color: appTheme.gray300),
                   SizedBox(height: 22.v),
                   _buildAboutMe(context),
                   SizedBox(height: 24.v),
-                  _buildSkillsList(context),
-
+                  // Conditionally show the skills list based on user role
+                  if (userRole != 'e') _buildSkillsList(context),
                 ],
               ),
             ),
