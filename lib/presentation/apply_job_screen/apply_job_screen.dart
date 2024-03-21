@@ -64,7 +64,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'email': emailController.text,
           'website_portfolio': frameOneController.text,
           'cv_url': downloadURL,
-          'timestamp': FieldValue.serverTimestamp(),
+          'timestamp': DateTime.now().toString(),
           'userId': user?.uid,
           'jobId':widget.jobId
         });
@@ -168,7 +168,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
-                      SizedBox(height: 270.0),
+                      SizedBox(height: 110.0),
                       _buildContinueButton(),
                     ],
                   ),

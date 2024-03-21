@@ -25,6 +25,7 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
     });
     setState(() {
       allJobList = jobs;
+      tempData = allJobList;
     });
   }
 
@@ -41,50 +42,14 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
   }
 
   @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     floatingActionButton: FloatingActionButton(
-  //       backgroundColor: Theme.of(context).primaryColor,
-  //       onPressed: () {
-  //         _showFilterPopup(context);
-  //       },
-  //     ),
-  //     body: AnimatedBuilder(
-  //       animation: _animation,
-  //       builder: (context, child) {
-  //         return Opacity(
-  //           opacity: _animation.value,
-  //           child: ListView.builder(
-  //             itemCount: allJobList.length,
-  //             itemBuilder: (context, index) {
-  //               return ListTile(
-  //                 title: Text(allJobList[index].title ?? ""),
-  //                 onTap: () {
-  //                   // Navigate to job detail screen when the user taps on a job
-  //                   Navigator.push(
-  //                     context,
-  //                     MaterialPageRoute(
-  //                       builder: (context) => AdminJobDetailScreen(job: allJobList[index]),
-  //                     ),
-  //                   );
-  //                 },
-  //               );
-  //             },
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.filter_list, color: Colors.white,), // Adding filter icon here
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           _showFilterPopup(context);
         },
+        child: Icon(Icons.filter_list, color: Colors.white), // Filter icon
       ),
       body: AnimatedBuilder(
         animation: _animation,
@@ -97,7 +62,6 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                 return ListTile(
                   title: Text(allJobList[index].title ?? ""),
                   onTap: () {
-                    // Navigate to job detail screen when the user taps on a job
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -114,12 +78,9 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
     );
   }
 
-
-
   TextEditingController selectFilterDate = TextEditingController();
   DateTime? selectedDate;
   List<PostJobModel> tempData = [];
-
 
   _showFilterPopup(BuildContext context) {
     showDialog(
@@ -140,32 +101,34 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                   child: TextFormField(
                     controller: selectFilterDate,
                     decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        hintText: "Select Date",
-                        suffixIcon: IconButton(
-                          onPressed: () async {
-                            final DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now(), // Set lastDate to today
-                            );
-                            if (picked != null && picked != selectedDate) {
-                              setState(() {
-                                selectedDate = picked;
-                                selectFilterDate.text =
-                                (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
-                              });
-                            }
-                          },
-                          icon: Icon(Icons.date_range),
-                        )),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      hintText: "Select Date",
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(), // Set lastDate to today
+                          );
+                          if (picked != null && picked != selectedDate) {
+                            setState(() {
+                              selectedDate = picked;
+                              selectFilterDate.text = (selectedDate != null
+                                  ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now())
+                                  : "");
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.date_range),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -179,7 +142,6 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                         onPressed: () {
                           tempData.forEach((element) {
                             print(element.createAt);
-
                           });
                           allJobList = tempData
                               .where((element) =>
@@ -196,7 +158,7 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                         ),
                         child: Text(
                           'Apply',
-                          style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),
@@ -213,7 +175,7 @@ class _AdminJobScreenState extends State<AdminJobScreen> with SingleTickerProvid
                         ),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),
