@@ -379,7 +379,10 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final DocumentSnapshot document = snapshot.data!.docs[index];
                 Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                return EightyeightItemWidget(jobData: data);
+                if(data["isDelete"] != 1){
+                  return EightyeightItemWidget(jobData: data);
+                }
+               return SizedBox();
               },
             );
           },
@@ -637,24 +640,27 @@ class _HomePageState extends State<HomePage> {
 
             return Row(
               children: jobData.map((model) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (userRole == "e") {
-                        // Get.to(() => ApplyerListScreen(jobId: model.id));
-                        Get.to(() => JobDetailsPageE(postJobModel: model,));
-                      } else {
-                        // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
-                        Get.to(() => JobDetailsPage(postJobModel: model,));
-                      }
-                    },
-                    child: FrameItemWidget(
-                      model: model,
-                      searchQuery: searchController.text,
+                if(model.isDelete != 1){
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                        if (userRole == "e") {
+                          // Get.to(() => ApplyerListScreen(jobId: model.id));
+                          Get.to(() => JobDetailsPageE(postJobModel: model,));
+                        } else {
+                          // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
+                          Get.to(() => JobDetailsPage(postJobModel: model,));
+                        }
+                      },
+                      child: FrameItemWidget(
+                        model: model,
+                        searchQuery: searchController.text,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
+               return SizedBox();
               }).toList(),
             );
           }

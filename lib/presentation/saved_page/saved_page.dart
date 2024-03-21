@@ -137,23 +137,26 @@ class _SavedPageState extends State<SavedPage> {
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
                             PostJobModel model = jobController.jobList[index];
-                            return SavedItemWidget(
-                              onTapBag: () {
-                                if (jobController.userRole == "e") {
-                                  Get.to(() => ApplyerListScreen(
-                                    jobId: model.id,
-                                  ));
-                                } else {
-                                  // Get.to(() => ApplyJobScreen(
-                                  //   jobId: model.id, jobTitle:model.title,
-                                  // ));
-                                  Get.to(() => JobDetailsPage(
-                                    postJobModel: model,
-                                  ));
-                                }
-                              },
-                              model: model,
-                            );
+                            if(model.isDelete != 1){
+                              return SavedItemWidget(
+                                onTapBag: () {
+                                  if (jobController.userRole == "e") {
+                                    Get.to(() => ApplyerListScreen(
+                                      jobId: model.id,
+                                    ));
+                                  } else {
+                                    // Get.to(() => ApplyJobScreen(
+                                    //   jobId: model.id, jobTitle:model.title,
+                                    // ));
+                                    Get.to(() => JobDetailsPage(
+                                      postJobModel: model,
+                                    ));
+                                  }
+                                },
+                                model: model,
+                              );
+                            }
+                         return SizedBox();
                           },
                         )),
                   ],
