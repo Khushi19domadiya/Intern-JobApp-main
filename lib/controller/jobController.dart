@@ -130,6 +130,46 @@ jobList.value = await getJobsFuture();
       return [];
     }
   }
+
+  Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+    try {
+      var currentTime = DateTime.now();
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('postJob')
+          .where('userId', isEqualTo: userId)
+          .get(); // Fetch all user posted jobs
+
+      // Filter out records with a valid deadline that is after the current time
+      var validData = querySnapshot.docs.where((doc) {
+        var data = doc.data();
+        if (data != null) {
+          // Check if the document data contains the "isDeleted" field
+          if (data.containsKey('isDeleted')) {
+            // Check if the "isDeleted" field is not null and equals 1
+            if (data['isDeleted'] != null && data['isDeleted'] == 1) {
+              return false; // The document is deleted
+            }
+          }
+        }
+
+        // Check if the "deadline" field is a string and parse it to DateTime
+        var deadline = data['deadline'];
+        if (deadline is String) {
+          var deadlineDateTime = DateTime.parse(deadline);
+          return deadlineDateTime.isAfter(currentTime);
+        } else {
+          return false;
+        }
+      }).toList();
+
+      return validData
+          .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching user posted jobs: $e');
+      return [];
+    }
+  }
   // if(role == 'e'){
   //   List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
   //   return myJobs;
@@ -219,90 +259,92 @@ jobList.value = await getJobsFuture();
   // }
 
 
-  Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
-    try {
-      var currentTime = DateTime.now();
-      var querySnapshot = await FirebaseFirestore.instance
-          .collection('postJob')
-          .where('userId', isEqualTo: userId)
-          .get(); // Fetch all user posted jobs
-
-      var validData = querySnapshot.docs.where((doc) {
-        if (doc != null && doc.data() != null) {
-          // Check if the document data contains the "isDeleted" field
-          if (doc.data()!.containsKey('isDelete')) {
-            // Check if the "isDeleted" field is not null and equals 1
-            if (doc['isDelete'] != null && doc['isDelete'] == 1) {
-              return false; // The document is deleted
-            }
-      }
-
-      // Filter out records with a valid deadline that is after the current time
-      var validData = querySnapshot.docs.where((doc) {
-        var deadline = doc['deadline'];
-        if (deadline is String) {
-          var deadlineDateTime = DateTime.parse(deadline); // Parse the string to DateTime
-          return deadlineDateTime.isAfter(currentTime);
-        } else {
-          return false;
-        }
-      }).toList();
-
-      return validData
-          .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      print('Error fetching user posted jobs: $e');
-      return [];
-    }
-  }
-
-
-
-  Future<List<PostJobModel>> fetchSelectionFilterJobs(String? userId,String selection) async {
-    try {
-      var currentTime = DateTime.now();
-      var querySnapshot = await FirebaseFirestore.instance
-          .collection('postJob')
-          .where('userId', isEqualTo: userId)
-          .get(); // Fetch all user posted jobs
-
-      // Filter out records with a valid deadline that is after the current time
-      var validData = querySnapshot.docs.where((doc) {
-        var deadline = doc['deadline'];
-        if (deadline is String) {
-          var deadlineDateTime = DateTime.parse(deadline); // Parse the string to DateTime
-          return deadlineDateTime.isAfter(currentTime);
-        } else {
-          return false;
-        }
-      }).toList();
-
-      return validData
-          .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      print('Error fetching user posted jobs: $e');
-      return [];
-    }
-  }
-
-
-
-
-
-// Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
-//   try {
-//     var querySnapshot = await FirebaseFirestore.instance
-//         .collection('postJob')
-//         .where('userId', isEqualTo: userId)
-//         .get();
-//     return querySnapshot.docs
-//         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-//         .toList();
-//   } catch (e) {
-//     print('Error fetching user posted jobs: $e');
-//     return [];
+//   Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+//     try {
+//       var currentTime = DateTime.now();
+//       var querySnapshot = await FirebaseFirestore.instance
+//           .collection('postJob')
+//           .where('userId', isEqualTo: userId)
+//           .get(); // Fetch all user posted jobs
+//
+//       var validData = querySnapshot.docs.where((doc) {
+//         if (doc != null && doc.data() != null) {
+//           // Check if the document data contains the "isDeleted" field
+//           if (doc.data()!.containsKey('isDelete')) {
+//             // Check if the "isDeleted" field is not null and equals 1
+//             if (doc['isDelete'] != null && doc['isDelete'] == 1) {
+//               return false; // The document is deleted
+//             }
+//       // Filter out records with a valid deadline that is after the current time
+//       var validData = querySnapshot.docs.where((doc) {
+//         var deadline = doc['deadline'];
+//         if (deadline is String) {
+//           var deadlineDateTime = DateTime.parse(deadline); // Parse the string to DateTime
+//           return deadlineDateTime.isAfter(currentTime);
+//         } else {
+//           return false;
+//         }
+//       }).toList();
+//
+//       return validData
+//           .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+//           .toList();
+//     } catch (e) {
+//       print('Error fetching user posted jobs: $e');
+//       return [];
+//     }
 //   }
+//
+//
+//
+//   Future<List<PostJobModel>> fetchSelectionFilterJobs(String? userId,String selection) async {
+//     try {
+//       var currentTime = DateTime.now();
+//       var querySnapshot = await FirebaseFirestore.instance
+//           .collection('postJob')
+//           .where('userId', isEqualTo: userId)
+//           .get(); // Fetch all user posted jobs
+//
+//       // Filter out records with a valid deadline that is after the current time
+//       var validData = querySnapshot.docs.where((doc) {
+//         var deadline = doc['deadline'];
+//         if (deadline is String) {
+//           var deadlineDateTime = DateTime.parse(deadline); // Parse the string to DateTime
+//           return deadlineDateTime.isAfter(currentTime);
+//         } else {
+//           return false;
+//         }
+//       }).toList();
+//
+//       return validData
+//           .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+//           .toList();
+//     } catch (e) {
+//       print('Error fetching user posted jobs: $e');
+//       return [];
+//     }
+//   }
+//
+//
+//
+//
+//
+// // Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+// //   try {
+// //     var querySnapshot = await FirebaseFirestore.instance
+// //         .collection('postJob')
+// //         .where('userId', isEqualTo: userId)
+// //         .get();
+// //     return querySnapshot.docs
+// //         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+// //         .toList();
+// //   } catch (e) {
+// //     print('Error fetching user posted jobs: $e');
+// //     return [];
+// //   }
+// // }
 // }
+//           }
+//
+//   }
 }

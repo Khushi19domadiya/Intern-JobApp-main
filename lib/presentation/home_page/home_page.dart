@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:saumil_s_application/presentation/notifications_general_page/notifications_general_page.dart';
 import 'package:saumil_s_application/presentation/post_job/post_job.dart';
-import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/widgets/custom_elevated_button.dart';
 import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
@@ -23,6 +22,7 @@ import 'package:saumil_s_application/widgets/custom_search_view.dart';
 import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
 import 'package:saumil_s_application/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
 
+import '../../controller/jobController.dart';
 import '../home_container_screen/home_container_screen.dart';
 import '../job_details_page/applyer_list_screen.dart';
 import '../job_details_page/job_details_page.dart';
@@ -89,47 +89,122 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+//   getClientStream() async {
+//     var currentTime = Timestamp.now();
+//     var data = await FirebaseFirestore.instance
+//         .collection('postJob')
+//         .orderBy('title')
+//         .get();
+//
+//     // Filter out records with a deadline that has already passed or equals the current date
+//     var validData = data.docs.where((doc) {
+//       // var deadline = doc['deadline'] as Timestamp;
+//
+//
+//       dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+//
+//       Timestamp deadlineTimestamp;
+//
+//       if (deadline is Timestamp) {
+//         // If the deadline is already a Timestamp, assign it directly
+//         deadlineTimestamp = deadline;
+//       } else if (deadline is String) {
+//         // If the deadline is a String, convert it to a Timestamp
+//         DateTime dateTime = DateTime.parse(deadline);
+//         deadlineTimestamp = Timestamp.fromDate(dateTime);
+//       } else {
+//         // Handle other types or null values as needed
+//         // For example, you can set a default value or throw an error
+//         // deadlineTimestamp = Timestamp.now();
+//         // Or handle the error accordingly
+//         throw ArgumentError('Unexpected deadline format');
+//       }
+//
+//
+// // Now you can compare the deadline DateTime with the current DateTime
+// //       return deadlineDateTime.isAfter(DateTime.now());
+//
+//     }).toList();
+//
+//     setState(() {
+//       allResults = validData;
+//     });
+//   }
+
+
+
+  // getClientStream() async {
+  //   var currentTime = DateTime.now();
+  //   var data = await FirebaseFirestore.instance
+  //       .collection('postJob')
+  //       .orderBy('title')
+  //       .get();
+  //
+  //   // Filter out records with a deadline that has already passed or equals the current date
+  //   var validData = data.docs.where((doc) {
+  //     dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+  //
+  //     Timestamp deadlineTimestamp;
+  //
+  //     if (deadline is Timestamp) {
+  //       // If the deadline is already a Timestamp, assign it directly
+  //       deadlineTimestamp = deadline;
+  //     } else if (deadline is String) {
+  //       // If the deadline is a String, convert it to a Timestamp
+  //       DateTime dateTime = DateTime.parse(deadline);
+  //       deadlineTimestamp = Timestamp.fromDate(dateTime);
+  //     } else {
+  //       // Handle other types or null values as needed
+  //       // For example, you can set a default value or throw an error
+  //       // deadlineTimestamp = Timestamp.now();
+  //       // Or handle the error accordingly
+  //       throw ArgumentError('Unexpected deadline format');
+  //     }
+  //
+  //     // Now you can compare the deadline Timestamp with the current DateTime
+  //     return deadlineTimestamp.toDate().isAfter(currentTime);
+  //   }).toList();
+  //
+  //   setState(() {
+  //     allResults = validData;
+  //   });
+  // }
+
+
   getClientStream() async {
-    var currentTime = Timestamp.now();
+    var currentTime = DateTime.now();
     var data = await FirebaseFirestore.instance
         .collection('postJob')
         .orderBy('title')
+        .where('isDelete', isEqualTo: 0)  // Filter jobs where isDelete is 0
         .get();
 
-    // Filter out records with a deadline that has already passed or equals the current date
     var validData = data.docs.where((doc) {
-      // var deadline = doc['deadline'] as Timestamp;
+      dynamic deadline = doc['deadline'];
+      int isDelete = doc['isDelete']; // Add this line to get the value of isDelete
 
-
-      dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+      // Check if isDelete is 0
+      if (isDelete == 0) {
+        return false; // Exclude the job if isDelete is 0
+      }
 
       DateTime deadlineDateTime;
 
       if (deadline is Timestamp) {
-        // If the deadline is already a Timestamp, convert it to DateTime
         deadlineDateTime = deadline.toDate();
       } else if (deadline is String) {
-        // If the deadline is a String, parse it to DateTime
         deadlineDateTime = DateTime.parse(deadline);
       } else {
-        // Handle other types or null values as needed
-        // For example, you can set a default value or throw an error
-        // deadlineDateTime = DateTime.now();
-        // Or handle the error accordingly
         throw ArgumentError('Unexpected deadline format');
       }
 
-// Now you can compare the deadline DateTime with the current DateTime
       return deadlineDateTime.isAfter(DateTime.now());
-
     }).toList();
 
     setState(() {
       allResults = validData;
     });
   }
-
-
   // getClientStream() async {
   //   var currentTime = Timestamp.now();
   //   var data = await FirebaseFirestore.instance
