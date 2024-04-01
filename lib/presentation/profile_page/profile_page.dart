@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/models/user_model.dart';
+import 'package:saumil_s_application/presentation/personal_info_screen/personal_info_screen.dart';
 import 'package:saumil_s_application/presentation/profile_page/widgets/fortyseven_item_widget.dart';
 import 'package:saumil_s_application/presentation/profile_page/widgets/profile_item_widget.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
@@ -331,6 +332,9 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildSkills(
                 context,
                 skillsText: "About Me",
+                onTapEditSquare: () {
+                  onTapEditAbout(context);
+                },
               ),
 
               SizedBox(height: 14.v),
@@ -588,5 +592,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void onTapImage1(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.settingsScreen);
+  }
+
+  void onTapEditAbout(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>
+          PersonalInfoScreen()),
+    );
   }
 }

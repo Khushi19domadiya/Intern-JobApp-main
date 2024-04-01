@@ -84,6 +84,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         if (user.profileUrl != null) {
           _userProfileUrl = user.profileUrl.toString();
         }
+        if (user.about != null) {
+          aboutController.text = user.about.toString();
+        }
       }
       setState(() {});
     }

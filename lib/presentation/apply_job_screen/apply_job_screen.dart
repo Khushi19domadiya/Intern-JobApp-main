@@ -168,7 +168,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
-                      SizedBox(height: 270.0),
+                      SizedBox(height: 120.0),
                       _buildContinueButton(),
                     ],
                   ),

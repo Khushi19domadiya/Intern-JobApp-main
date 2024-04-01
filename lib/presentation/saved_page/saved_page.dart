@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,16 +17,13 @@ import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/custom_app_bar.dart';
 import 'package:saumil_s_application/widgets/custom_search_view.dart';
-
 import '../../widgets/app_bar/appbar_title.dart';
 import '../job_details_page/job_details_page.dart';
-
 class SavedPage extends StatefulWidget {
   // String? selectedJobCategory;
   // String? selectedCategories;
   // double? minSalary;
   // double? maxSalary;
-
   // SavedPage({
   //   Key? key,
   //   this.selectedJobCategory,
@@ -35,26 +31,19 @@ class SavedPage extends StatefulWidget {
   //   this.minSalary,
   //   this.maxSalary,
   // }) : super(key: key);
-
   @override
   State<SavedPage> createState() => _SavedPageState();
 }
-
 class _SavedPageState extends State<SavedPage> {
-
   final TextEditingController _searchController = TextEditingController();
   var  jobController = Get.put(JobController());
-
-
   getData() async {}
-
   @override
   void initState() {
     super.initState();
     getData();
     fetchUserRole();
   }
-
   void fetchUserRole() async {
     final userDoc = await FirebaseFirestore.instance.collection('Users').doc(jobController.user!.uid).get();
     setState(() {
@@ -64,7 +53,6 @@ class _SavedPageState extends State<SavedPage> {
     jobController.tempSearchJob = jobController.jobList;
     jobController.isLoading.refresh();
   }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -108,7 +96,6 @@ class _SavedPageState extends State<SavedPage> {
                           }
                           jobController.refresh();
                         },
-
                         decoration: InputDecoration(
                           hintText: "Search...",
                           suffixIcon: IconButton(
@@ -126,7 +113,6 @@ class _SavedPageState extends State<SavedPage> {
                       ),
                     ),
                     SizedBox(height: 20),
-
                     Obx(()=>
                         ListView.separated(
                           physics: NeverScrollableScrollPhysics(),
@@ -157,7 +143,7 @@ class _SavedPageState extends State<SavedPage> {
                                 model: model,
                               );
                             }
-                         return SizedBox();
+                            return SizedBox();
                           },
                         )),
                   ],
@@ -169,15 +155,14 @@ class _SavedPageState extends State<SavedPage> {
       ),
     );
   }
-
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 48.h,
       leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgComponent1,
+        // imagePath: ImageConstant.imgComponent1,
         margin: EdgeInsets.only(left: 24.h, top: 13.v, bottom: 13.v),
         onTap: () {
-          onTapImage(context);
+          // onTapImage(context);
         },
       ),
       centerTitle: true,
@@ -193,7 +178,6 @@ class _SavedPageState extends State<SavedPage> {
       ],
     );
   }
-
   // void showFilterBottomSheet(BuildContext context) {
   //   showModalBottomSheet(
   //     context: context,
@@ -224,11 +208,7 @@ class _SavedPageState extends State<SavedPage> {
   //     }
   //   });
   // }
-
-
-
   void showFilterBottomSheet(BuildContext context) {
-
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -263,7 +243,6 @@ class _SavedPageState extends State<SavedPage> {
       }
     });
   }
-
   // List<PostJobModel> _getFilteredJobs() {
   //   List<PostJobModel> filteredJobs = [];
   //
@@ -304,8 +283,6 @@ class _SavedPageState extends State<SavedPage> {
   //
   //   return filteredJobs;
   // }
-
-
 //   List<PostJobModel> _getFilteredJobs() {
 //     List<PostJobModel> filteredJobs = [];
 // log("----widget.selectedJobCategory---${selectedJobCategory}");
@@ -353,9 +330,6 @@ class _SavedPageState extends State<SavedPage> {
 //     return filteredJobs;
 //   }
 //
-
-
-
   // void showFilterBottomSheet(BuildContext context) {+
   //   showModalBottomSheet(
   //     context: context,
@@ -384,10 +358,7 @@ class _SavedPageState extends State<SavedPage> {
   //     }
   //   });
   // }
-
   void onTapImage(BuildContext context) {
     Navigator.pop(context);
   }
-
-
 }
