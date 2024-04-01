@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:saumil_s_application/presentation/experience_setting_screen/experience_setting_screen.dart';
-import 'package:saumil_s_application/presentation/profile_page/profile_page.dart'; // Import Firebase Authentication
+import 'package:saumil_s_application/presentation/profile_page/profile_page.dart';
 
 class AddSkillsScreen extends StatefulWidget {
   @override
@@ -11,6 +10,35 @@ class AddSkillsScreen extends StatefulWidget {
 
 class _AddSkillsScreenState extends State<AddSkillsScreen> {
   List<String> _selectedSkills = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserSkills();
+  }
+
+  Future<void> _fetchUserSkills() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
+        if (userDoc.exists) {
+          List<dynamic> userSkills = userDoc['skills'] ?? [];
+          setState(() {
+            _selectedSkills = List<String>.from(userSkills);
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to fetch user skills: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +46,9 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
       appBar: AppBar(
         title: Text('Select Skills'),
       ),
-      body: Column(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
         children: [
           Expanded(
             child: ListView.builder(
@@ -34,6 +64,7 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
                         _selectedSkills.add(skill);
                       } else {
                         _selectedSkills.remove(skill);
+                        _removeSkillsFromCurrentUser([skill]);
                       }
                     });
                   },
@@ -46,10 +77,9 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
             width: 300,
             child: ElevatedButton(
               onPressed: () {
-                _addSkillsToCurrentUser(_selectedSkills); // Call function to add skills to Firestore
+                _addSkillsToCurrentUser(_selectedSkills);
               },
               style: ElevatedButton.styleFrom(
-                // primary: Theme.of(context).primaryColor,
                 backgroundColor: Theme.of(context).primaryColor,
                 fixedSize: Size.fromHeight(50),
               ),
@@ -68,38 +98,30 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
     );
   }
 
-  // Function to add skills to Firestore under the current user's document
   Future<void> _addSkillsToCurrentUser(List<String> skills) async {
     try {
-      // Get reference to the current user
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        // Get reference to the Firestore collection
-        CollectionReference usersCollection = FirebaseFirestore.instance.collection('Users');
-
-        // Reference to the current user's document
+        CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('Users');
         DocumentReference userDocRef = usersCollection.doc(user.uid);
 
-        // Add the selected skills to the current user's document
         await userDocRef.update({
-          'skills': FieldValue.arrayUnion(skills), // Add skills to an array field
+          'skills': FieldValue.arrayUnion(skills),
         });
 
-        // Show a success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Skills added successfully'),
           ),
         );
 
-        // Redirect to the experience screen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()), // Replace ExperienceScreen with your actual screen
+          MaterialPageRoute(builder: (context) => ProfilePage()),
         );
       } else {
-        // Show a message if user is not logged in
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('User not logged in'),
@@ -108,13 +130,30 @@ class _AddSkillsScreenState extends State<AddSkillsScreen> {
         );
       }
     } catch (e) {
-      // Show an error message if something goes wrong
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to add skills: $e'),
           duration: Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  Future<void> _removeSkillsFromCurrentUser(List<String> skills) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('Users');
+        DocumentReference userDocRef = usersCollection.doc(user.uid);
+
+        await userDocRef.update({
+          'skills': FieldValue.arrayRemove(skills),
+        });
+      }
+    } catch (e) {
+      print('Failed to remove skills: $e');
     }
   }
 
