@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:saumil_s_application/core/utils/image_constant.dart';
 import 'package:saumil_s_application/core/utils/size_utils.dart';
 import 'package:saumil_s_application/presentation/saved_page/widgets/saved_item_widget.dart';
@@ -11,7 +12,7 @@ import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_scr
 import 'package:saumil_s_application/presentation/job_details_page/applyer_list_screen.dart';
 import 'package:saumil_s_application/presentation/filter_bottomsheet/widgets/fiftyfive_item_widget.dart';
 import 'package:saumil_s_application/presentation/filter_bottomsheet/filter_bottomsheet.dart';
-import 'package:saumil_s_application/controller/jobController.dart';
+// import 'package:saumil_s_application/controller/jobController.dart';
 import 'package:saumil_s_application/models/user_model.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';

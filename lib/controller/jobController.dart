@@ -35,7 +35,7 @@ class JobController extends GetxController{
     }
   }
   Future getFilteredJobs() async {
-jobList.value = await getJobsFuture();
+    jobList.value = await getJobsFuture();
     tempSearchJob = jobList;
     isLoading.refresh();
     List<PostJobModel> filteredJobs = [];
@@ -170,93 +170,93 @@ jobList.value = await getJobsFuture();
       return [];
     }
   }
-  // if(role == 'e'){
-  //   List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
-  //   return myJobs;
-  //
-  // }else{
-  //   return jobData;
-  //
-  // }
+// if(role == 'e'){
+//   List<PostJobModel> myJobs = jobData.where((job) => job.userId == user!.uid).toList();
+//   return myJobs;
+//
+// }else{
+//   return jobData;
+//
+// }
 
 
 
-  // print("done");
-  // jobDataList.value = jobData;
-  // print("done ....");
-  // update();
-  // log("----fetchJobDataFromFirestore----");
-  // log("----jobData----" + jobData.length.toString());
+// print("done");
+// jobDataList.value = jobData;
+// print("done ....");
+// update();
+// log("----fetchJobDataFromFirestore----");
+// log("----jobData----" + jobData.length.toString());
 
 
 
 
-  // getClientStream() async {
-  //   var currentTime = Timestamp.now();
-  //   var data = await FirebaseFirestore.instance
-  //       .collection('postJob')
-  //       .orderBy('title')
-  //       .get();
-  //
-  //   // Filter out records with a deadline that has already passed or equals the current date
-  //   var validData = data.docs.where((doc) {
-  //     var deadline = doc['deadline'] as Timestamp;
-  //     return deadline.toDate().isAfter(DateTime.now());
-  //   }).toList();
-  //
-  //   setState(() {
-  //     allResults = validData;
-  //   });
-  // }
+// getClientStream() async {
+//   var currentTime = Timestamp.now();
+//   var data = await FirebaseFirestore.instance
+//       .collection('postJob')
+//       .orderBy('title')
+//       .get();
+//
+//   // Filter out records with a deadline that has already passed or equals the current date
+//   var validData = data.docs.where((doc) {
+//     var deadline = doc['deadline'] as Timestamp;
+//     return deadline.toDate().isAfter(DateTime.now());
+//   }).toList();
+//
+//   setState(() {
+//     allResults = validData;
+//   });
+// }
 
 
-  // Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
-  //   try {
-  //     var currentTime = Timestamp.now();
-  //     var querySnapshot = await FirebaseFirestore.instance
-  //         .collection('postJob')
-  //         .where('userId', isEqualTo: userId)
-  //         .where('deadline', isGreaterThan: currentTime) // Add deadline filtering
-  //         .get();
-  //     return querySnapshot.docs
-  //         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-  //         .toList();
-  //   } catch (e) {
-  //     print('Error fetching user posted jobs: $e');
-  //     return [];
-  //   }
-  // }
+// Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+//   try {
+//     var currentTime = Timestamp.now();
+//     var querySnapshot = await FirebaseFirestore.instance
+//         .collection('postJob')
+//         .where('userId', isEqualTo: userId)
+//         .where('deadline', isGreaterThan: currentTime) // Add deadline filtering
+//         .get();
+//     return querySnapshot.docs
+//         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+//         .toList();
+//   } catch (e) {
+//     print('Error fetching user posted jobs: $e');
+//     return [];
+//   }
+// }
 
-  // Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
-  //   try {
-  //     var currentTime = Timestamp.now();
-  //     var querySnapshot = await FirebaseFirestore.instance
-  //         .collection('postJob')
-  //         .where('userId', isEqualTo: userId)
-  //         .get(); // Fetch all user posted jobs
-  //
-  //     // Filter out records with a valid deadline that is after the current time
-  //     var validData = querySnapshot.docs.where((doc) {
-  //       log("------doc['deadline']-------${doc['deadline']}");
-  //       var deadline = doc['deadline'];
-  //       if (deadline is Timestamp) {
-  //         log("-----true-----");
-  //         return (deadline as Timestamp).toDate().isAfter(DateTime.now());
-  //       } else {
-  //         log("-----false-----");
-  //
-  //         return false;
-  //       }
-  //     }).toList();
-  //
-  //     return validData
-  //         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
-  //         .toList();
-  //   } catch (e) {
-  //     print('Error fetching user posted jobs: $e');
-  //     return [];
-  //   }
-  // }
+// Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
+//   try {
+//     var currentTime = Timestamp.now();
+//     var querySnapshot = await FirebaseFirestore.instance
+//         .collection('postJob')
+//         .where('userId', isEqualTo: userId)
+//         .get(); // Fetch all user posted jobs
+//
+//     // Filter out records with a valid deadline that is after the current time
+//     var validData = querySnapshot.docs.where((doc) {
+//       log("------doc['deadline']-------${doc['deadline']}");
+//       var deadline = doc['deadline'];
+//       if (deadline is Timestamp) {
+//         log("-----true-----");
+//         return (deadline as Timestamp).toDate().isAfter(DateTime.now());
+//       } else {
+//         log("-----false-----");
+//
+//         return false;
+//       }
+//     }).toList();
+//
+//     return validData
+//         .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+//         .toList();
+//   } catch (e) {
+//     print('Error fetching user posted jobs: $e');
+//     return [];
+//   }
+// }
 
 
 //   Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {

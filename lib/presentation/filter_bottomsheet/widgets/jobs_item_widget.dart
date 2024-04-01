@@ -8,7 +8,7 @@ class JobsItemWidget extends StatefulWidget {
   bool isSelected = false;
   // final Function(String) onJobCategorySelected; // Add callback function
 
-   JobsItemWidget({Key? key, required this.jobCategory/*, required this.onJobCategorySelected*/,required this.isSelected,required this.onTap}) : super(key: key);
+  JobsItemWidget({Key? key, required this.jobCategory/*, required this.onJobCategorySelected*/,required this.isSelected,required this.onTap}) : super(key: key);
 
   @override
   _JobsItemWidgetState createState() => _JobsItemWidgetState();

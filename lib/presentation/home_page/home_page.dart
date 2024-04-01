@@ -382,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                 if(data["isDelete"] != 1){
                   return EightyeightItemWidget(jobData: data);
                 }
-               return SizedBox();
+                return SizedBox();
               },
             );
           },
@@ -660,7 +660,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 }
-               return SizedBox();
+                return SizedBox();
               }).toList(),
             );
           }

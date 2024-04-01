@@ -258,10 +258,10 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   }
 
   Widget _buildPrice(
-    BuildContext context, {
-    required String priceText1,
-    required String priceText2,
-  }) {
+      BuildContext context, {
+        required String priceText1,
+        required String priceText2,
+      }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -282,21 +282,21 @@ class _FilterBottomsheetState extends State<FilterBottomsheet> {
   void onTapImgClose(BuildContext context) {
     Navigator.pop(context);
   }
-  //
-  // void _handleJobCategorySelected(String? category) {
-  //   log("-----_handleJobCategorySelected----${category}");
-  //   // widget.onJobCategorySelected(category);
-  //
-  //   setState(() {
-  //     jobController.selectedJobCategory = category;
-  //   });
-  // }
-  //
-  // void _handleCategorySelected(String? categories) {
-  //   // widget.onJobCategorySelected(categories);
-  //
-  //   setState(() {
-  //     jobController.selectedCategories = categories;
-  //   });
-  // }
+//
+// void _handleJobCategorySelected(String? category) {
+//   log("-----_handleJobCategorySelected----${category}");
+//   // widget.onJobCategorySelected(category);
+//
+//   setState(() {
+//     jobController.selectedJobCategory = category;
+//   });
+// }
+//
+// void _handleCategorySelected(String? categories) {
+//   // widget.onJobCategorySelected(categories);
+//
+//   setState(() {
+//     jobController.selectedCategories = categories;
+//   });
+// }
 }

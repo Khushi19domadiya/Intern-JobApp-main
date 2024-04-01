@@ -13,8 +13,8 @@ class SavedItemWidget extends StatelessWidget {
     this.onTapBag,
     required this.model,
   }) : super(
-          key: key
-        );
+      key: key
+  );
 
   VoidCallback? onTapBag;
 

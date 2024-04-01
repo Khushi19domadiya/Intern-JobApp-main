@@ -116,7 +116,8 @@ class LoginScreen extends StatelessWidget {
                                   // For other users, perform the login operation
                                   controller.signInWithEmailAndPassword(context);
                                 }
-                              },),
+                                },
+                              ),
 
                               SizedBox(height: 26.v),
                               Padding(
