@@ -392,7 +392,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       imageUrl = await StoreData().uploadImage(_image!);
     }
 
-    // if (currentUser != null) {
+    // if (currentU ser != null) {
       await StoreData().addOrUpdateUserData(UserModel(
           id: currentUser!.uid,
           email: email,

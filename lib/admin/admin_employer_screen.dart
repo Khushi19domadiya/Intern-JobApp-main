@@ -7,6 +7,7 @@ import 'package:saumil_s_application/models/user_model.dart';
 class AdminEmployerScreen extends StatefulWidget {
   const AdminEmployerScreen({super.key});
 
+
   @override
   State<AdminEmployerScreen> createState() => _AdminEmployerScreenState();
 }
