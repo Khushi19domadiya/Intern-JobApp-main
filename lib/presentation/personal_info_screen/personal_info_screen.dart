@@ -84,8 +84,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         if (user.profileUrl != null) {
           _userProfileUrl = user.profileUrl.toString();
         }
-        if (user.about != null) {
-          aboutController.text = user.about.toString();
+        if (user.profile != null) {
+          aboutController.text = user.profile.toString();
         }
       }
       setState(() {});
@@ -385,7 +385,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     String phonenumber = phoneController.text;
     String address = addressController.text;
     String? imageUrl;
-    String? about= aboutController.text;
+    String? profile= aboutController.text;
 
     CommonMethod().getXSnackBar("Wait", "Upload Process", lightPurpelColor);
     if (_image != null) {
@@ -401,7 +401,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           phonenumber: phonenumber,
           address: address,
           profileUrl: imageUrl.toString(),
-          about: about,));
+          profile: profile,));
     // }
 
     await CommonMethod()

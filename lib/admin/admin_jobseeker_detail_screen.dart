@@ -29,7 +29,7 @@ class AdminJobseekerDetailScreen extends StatelessWidget {
             SizedBox(height: 15),
             Text('Phone Number: ${user.phonenumber}'),
             SizedBox(height: 15),
-            Text('About: ${user.about}'),
+            Text('About: ${user.profile}'),
             SizedBox(height: 15),
             Text('Address: ${user.address}'),
             SizedBox(height: 15),

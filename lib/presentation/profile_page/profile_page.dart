@@ -342,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 272.h,
                 margin: EdgeInsets.only(right: 22.h),
                 child: Text(
-                  userData.about ?? "", // Use the 'aboutMe' field from 'userData'
+                  userData.profile ?? "", // Use the 'aboutMe' field from 'userData'
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                   style: CustomTextStyles.titleSmallBluegray400.copyWith(height: 1.57),

@@ -15,7 +15,7 @@ class UserModel {
   String? registrationDateTime;
   String? token;
   String? status;
-  String? about;
+  String? profile;
 
   UserModel({
     required this.id,
@@ -32,7 +32,7 @@ class UserModel {
     this.profileUrl,
     this.status,
     this.role,
-    this.about,
+    this.profile,
   });
 
   UserModel.fromMap(data) {
@@ -50,7 +50,7 @@ class UserModel {
     status = data['status'];
     skills = data['skills'] == null ? null : data['skills'].cast<String>();
     role  = data['role'];
-    about  = data['profile'];
+    profile  = data['profile'];
 
     // return UserModel(
     //   id: data['id'],
@@ -82,8 +82,7 @@ class UserModel {
       if (role != null) "role": role,
       if (skills != null) "skills": skills,
       if (skills != null) "status": status,
-
-      if (about != null) "profile": about,
+      if (profile != null) "profile": profile,
     };
   }
 
