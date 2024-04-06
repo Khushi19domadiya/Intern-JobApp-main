@@ -37,22 +37,29 @@ class SavedPage extends StatefulWidget {
 class _SavedPageState extends State<SavedPage> {
   final TextEditingController _searchController = TextEditingController();
   var  jobController = Get.put(JobController());
-  getData() async {}
+
   @override
   void initState() {
     super.initState();
-    getData();
+
     fetchUserRole();
+
   }
+
   void fetchUserRole() async {
     final userDoc = await FirebaseFirestore.instance.collection('Users').doc(jobController.user!.uid).get();
     setState(() {
       jobController.userRole = userDoc['role'];
     });
-    jobController.jobList.value = await jobController.getJobsFuture();
-    jobController.tempSearchJob = jobController.jobList;
+    getData();
+  }
+
+  getData() async {
+    jobController.tempSearchJob.value = await jobController.getJobsFuture();
+    jobController.jobList.value = jobController.tempSearchJob;
     jobController.isLoading.refresh();
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -71,10 +78,13 @@ class _SavedPageState extends State<SavedPage> {
                       child: TextField(
                         controller: _searchController,
                         onChanged: (String text) {
+                          print("tmplist search con: ${jobController.tempSearchJob.length}");
                           if (text.isNotEmpty) {
+                            List<PostJobModel> filteredList = [];
                             if (jobController.userRole == "e") {
                               // Search by skills
-                              jobController.jobList.value = jobController.tempSearchJob
+                              print("tmplist e: ${jobController.tempSearchJob.length}");
+                              filteredList = jobController.tempSearchJob
                                   .where((element) =>
                                   element.selectedSkills
                                       .toString()
@@ -83,7 +93,8 @@ class _SavedPageState extends State<SavedPage> {
                                   .toList();
                             } else if (jobController.userRole == "j") {
                               // Search by title
-                              jobController.jobList.value = jobController.tempSearchJob
+                              print("tmplist t: ${jobController.tempSearchJob.length}");
+                              filteredList = jobController.tempSearchJob
                                   .where((element) =>
                                   element.title
                                       .toString()
@@ -91,9 +102,14 @@ class _SavedPageState extends State<SavedPage> {
                                       .contains(text.toLowerCase()))
                                   .toList();
                             }
+                            jobController.jobList.value = filteredList;
                           } else {
-                            jobController.jobList = jobController.tempSearchJob;
+                            print("tmplist ls: ${jobController.tempSearchJob.length}");
+                            jobController.jobList.value = jobController.tempSearchJob;
                           }
+                          setState(() {
+
+                          });
                           jobController.refresh();
                         },
                         decoration: InputDecoration(
@@ -104,6 +120,7 @@ class _SavedPageState extends State<SavedPage> {
                               _searchController.clear();
                               // Clear text when the clear icon is clicked
                               setState(() {
+                                print("tmplist search close: ${jobController.tempSearchJob.length}");
                                 jobController.jobList = jobController.tempSearchJob;
                                 jobController.isLoading.refresh();
                               });

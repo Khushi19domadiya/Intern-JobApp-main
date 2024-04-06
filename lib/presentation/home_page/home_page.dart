@@ -56,13 +56,14 @@ class _HomePageState extends State<HomePage> {
     searchController.addListener(_onSearchChanged);
     fetchUserRole();
   }
+
   RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
   fetchUserRole() async {
     var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    setState(()  {
+    setState(() {
       userRole = userDoc['role'];
     });
-    pOPJobs.value =    await controller.fetchUserPostedJobs(userId);
+    pOPJobs.value = await controller.fetchUserPostedJobs(userId);
     // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
   }
 
@@ -87,7 +88,6 @@ class _HomePageState extends State<HomePage> {
       resultList = showResults;
     });
   }
-
 
 //   getClientStream() async {
 //     var currentTime = Timestamp.now();
@@ -131,8 +131,6 @@ class _HomePageState extends State<HomePage> {
 //     });
 //   }
 
-
-
   // getClientStream() async {
   //   var currentTime = DateTime.now();
   //   var data = await FirebaseFirestore.instance
@@ -170,13 +168,12 @@ class _HomePageState extends State<HomePage> {
   //   });
   // }
 
-
   getClientStream() async {
     var currentTime = DateTime.now();
     var data = await FirebaseFirestore.instance
         .collection('postJob')
         .orderBy('title')
-        .where('isDelete', isEqualTo: 0)  // Filter jobs where isDelete is 0
+        .where('isDelete', isEqualTo: 0) // Filter jobs where isDelete is 0
         .get();
 
     var validData = data.docs.where((doc) {
@@ -224,8 +221,6 @@ class _HomePageState extends State<HomePage> {
   //   // super.dispose();
   // }
 
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -247,13 +242,12 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.symmetric(horizontal: 24.h),
                           child: CustomSearchView(
                             // controller: searchController,
-                            onTap: (){
+                            onTap: () {
                               setState(() {
                                 currentIndex.value = 2;
                               });
-
                             },
-                            isRead : true,
+                            isRead: true,
                             autofocus: false,
                             hintText: "Search...",
                             alignment: Alignment.center,
@@ -277,7 +271,8 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 25.h),
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 25.h),
                               ),
                               child: Text(
                                 "Post Job",
@@ -288,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       SizedBox(height: 25.v),
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           controller.fetchJobDataFromFirestore(userRole!);
                         },
                         child: Padding(
@@ -410,7 +405,6 @@ class _HomePageState extends State<HomePage> {
   //   );
   // }
 
-
   // Widget _buildEightyEight(BuildContext context) {
   //   return FutureBuilder<QuerySnapshot>(
   //     future: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).get(),
@@ -468,10 +462,49 @@ class _HomePageState extends State<HomePage> {
   //   );
   // }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> fetchData() async {
+    // Get reference to your Firestore collection
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance.collection('postJob').get();
+    print(querySnapshot.docs.length);
+
+    // Convert date string to DateTime and add documents to a list
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> documents = querySnapshot.docs;
+    documents.forEach((doc) {
+      Map<String, dynamic>? data = doc.data();
+      if (data['createAt'] != null) {
+        data['createAt'] = DateTime.parse(data['createAt']);
+        // print("data['createAt'] ${data['createAt']}");
+      }
+    });
+    print("==========   ${documents.length}");
+
+    // Sort the documents based on the 'createAt' field
+    try {
+      documents.sort((a, b) {
+        // Access 'createAt' field and compare as DateTime
+        DateTime createAtA = DateTime.parse(a.data()['createAt']);
+        DateTime createAtB = DateTime.parse(b.data()['createAt']);
+        print("----");
+        return createAtB.compareTo(createAtA);
+      });
+    } catch (e) {
+      print("exception ${e}");
+    }
+
+    print("111111");
+    documents.forEach((element) {
+      Map<String, dynamic>? data = element.data();
+      print("data['createAt']   ${data['createAt']}");
+    });
+    print("22222");
+
+    return documents;
+  }
+
   Widget _buildEightyEight(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance.collection('postJob').orderBy('createAt', descending: true).get(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    return FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+      future: fetchData(),
+      builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot<Map<String, dynamic>>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
@@ -480,50 +513,62 @@ class _HomePageState extends State<HomePage> {
           return Text('Something went wrong');
         }
 
-        if (snapshot.data!.docs.isEmpty) {
+        if (snapshot.data!.isEmpty) {
           return Center(child: Text('No jobs available'));
         }
 
-        List<DocumentSnapshot> filteredJobs = snapshot.data!.docs;
+        List<DocumentSnapshot> filteredJobs = snapshot.data!;
 
         if (userRole == 'e') {
           // Filter jobs if user role is 'e' (employer)
           filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
+          print("fitr :${filteredJobs.length}");
         }
 
         // Filter out jobs with deadlines that have already passed
-        final currentDate = DateTime.now(); // Get the current datetime
-        filteredJobs = filteredJobs.where((job) {
-          final createdAtString = job['createAt'] as String; // Get createAt string
-          final createdAt = DateTime.parse(createdAtString); // Parse string to DateTime
-          return createdAt.isAfter(currentDate); // Compare with current datetime
-        }).toList();
-
-        if (filteredJobs.isEmpty) {
-          return Center(child: Text('No active jobs available'));
+        try{
+          final currentDate = DateTime.now(); // Get the current datetime
+          filteredJobs = filteredJobs.where((job) {
+            // final createdAtString = job['createAt'] as String; // Get createAt string
+            DateTime createdAt = DateTime.parse(job['deadline']); // Parse string to DateTime
+            return createdAt.isAfter(currentDate); // Compare with current datetime
+          }).toList();
+        }
+        catch(e){
+          print("ksgdkjahskfjklasjhfkljasf ${e}");
         }
 
-        return ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (context, index) {
-            return SizedBox(height: 16.v);
-          },
-          itemCount: filteredJobs.length,
-          itemBuilder: (context, index) {
-            final DocumentSnapshot document = filteredJobs[index];
-            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-            if (data["isDelete"] != 1) {
-              return EightyeightItemWidget(jobData: data);
-            }
-            return SizedBox();
-          },
-        );
+        print("fitr21 :${filteredJobs.length}");
+
+        return (filteredJobs.isEmpty)
+            ? Center(child: Text('No active jobs available'))
+            : ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                separatorBuilder: (context, index) {
+                  print(" n nbbh :${filteredJobs.length}");
+                  return SizedBox(height: 16.v);
+                },
+                itemCount: filteredJobs.length,
+                itemBuilder: (context, index) {
+                  print(index);
+                  final DocumentSnapshot document = filteredJobs[index];
+                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                  try {
+                    print("index $index --document ${data['createAt']}");
+                  } catch (e) {
+                    print("kjhsdkhsdklfh ${e}");
+                  }
+                  if (data["isDelete"] != 1) {
+                    print("ajsbjsbcadb");
+                    return EightyeightItemWidget(jobData: data);
+                  }
+                  return SizedBox();
+                },
+              );
       },
     );
   }
-
-
 
   // Widget _buildEightyEight(BuildContext context) {
   //   return Align(
@@ -574,9 +619,6 @@ class _HomePageState extends State<HomePage> {
   //   );
   // }
 
-
-
-
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 74.h,
@@ -601,10 +643,10 @@ class _HomePageState extends State<HomePage> {
             );
           }
           if (snapshot.hasData) {
-            var userImage ='https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // User image or default image
+            var userImage =
+                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // User image or default image
 
             if (snapshot.data!.exists) {
-
               var data = snapshot.data!.data() as Map<String, dynamic>?;
               if (data != null && data.containsKey('profileUrl')) {
                 userImage = data['profileUrl'];
@@ -668,7 +710,6 @@ class _HomePageState extends State<HomePage> {
             String userName = ''; // User name or default name
 
             if (snapshot.data!.exists) {
-
               var data = snapshot.data!.data() as Map<String, dynamic>?;
               if (data != null && data.containsKey('fname')) {
                 var fname = data['fname'];
@@ -680,7 +721,6 @@ class _HomePageState extends State<HomePage> {
             } else {
               // Handle case where document does not exist
             }
-
 
             // String userName = snapshot.data!['fname'] ?? "User"; // User name or default name
             return Column(
@@ -712,7 +752,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   // Widget _buildFrame(BuildContext context) {
   //   return Align(
@@ -772,17 +811,21 @@ class _HomePageState extends State<HomePage> {
 
             return Row(
               children: jobData.map((model) {
-                if(model.isDelete != 1){
+                if (model.isDelete != 1) {
                   return Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: GestureDetector(
                       onTap: () {
                         if (userRole == "e") {
                           // Get.to(() => ApplyerListScreen(jobId: model.id));
-                          Get.to(() => JobDetailsPageE(postJobModel: model,));
+                          Get.to(() => JobDetailsPageE(
+                                postJobModel: model,
+                              ));
                         } else {
                           // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
-                          Get.to(() => JobDetailsPage(postJobModel: model,));
+                          Get.to(() => JobDetailsPage(
+                                postJobModel: model,
+                              ));
                         }
                       },
                       child: FrameItemWidget(
@@ -792,7 +835,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 }
-               return SizedBox();
+                return SizedBox();
               }).toList(),
             );
           }
@@ -826,7 +869,6 @@ class _HomePageState extends State<HomePage> {
 //     },
 //   );
 // }
-
 
 // Widget _buildTrendingJobs() {
 //   return StreamBuilder<QuerySnapshot>(
