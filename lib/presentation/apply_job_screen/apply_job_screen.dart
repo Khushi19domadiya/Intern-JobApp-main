@@ -123,7 +123,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         }
         // Now update the document with the job ID
         await docRef.update({'id': docRef.id});
-        // await docRefStatus.update({'id': docRefStatus.id});
+        await docRefStatus.update({'id': docRefStatus.id});
 
         print('Job application data stored successfully');
 
@@ -274,20 +274,20 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         CustomTextFormField(
           controller: frameOneController,
           hintText: "Website, Blog, or Portfolio",
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your Website, Blog, or Portfolio name';
-            }
-
-            bool isValidUrl = RegExp(
-              r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
-              r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
-            ).hasMatch(value);
-            if (!isValidUrl) {
-              return 'Please enter a valid website URL';
-            }
-            return null;
-          },
+          // validator: (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'Please enter your Website, Blog, or Portfolio name';
+          //   }
+          //
+          //   bool isValidUrl = RegExp(
+          //     r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
+          //     r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
+          //   ).hasMatch(value);
+          //   if (!isValidUrl) {
+          //     return 'Please enter a valid website URL';
+          //   }
+          //   return null;
+          // },
         ),
       ],
     );
