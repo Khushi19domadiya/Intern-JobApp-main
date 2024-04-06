@@ -73,6 +73,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         DocumentReference docRefStatus = await jobApplicationsWithStatus.add({
           "status" : "P",
           'userId': user?.uid,
+          'curDate': DateTime.now().toString(),
           'jobId':widget.jobId
         });
 
