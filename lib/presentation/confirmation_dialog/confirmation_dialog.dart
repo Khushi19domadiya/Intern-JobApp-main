@@ -68,7 +68,7 @@ class ConfirmationDialog extends StatelessWidget {
               User? currentUser = FirebaseAuth.instance.currentUser;
               if(currentUser != null){
                 log("-----11----selectedRole----11---->>>>> ${selectedRole.toString()}");
-                await StoreData().addOrUpdateUserData(UserModel(id: currentUser.uid, email: currentUser.email.toString(),role: selectedRole,token: storage.read("fcmToken")));
+                await StoreData().addOrUpdateUserData(UserModel(userId: currentUser.uid, email: currentUser.email.toString(),role: selectedRole,token: storage.read("fcmToken")));
                 Navigator.pushNamed(
                     context, AppRoutes.homeContainerScreen);
               }

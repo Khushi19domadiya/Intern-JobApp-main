@@ -66,7 +66,7 @@ class AuthController extends GetxController {
         await userCredential.user!.sendEmailVerification().whenComplete(() async {
           // Save user details and registration datetime
           await saveUserDetails(UserModel(
-              id: user.uid.toString(),
+              userId: user.uid.toString(),
               email: user.email.toString().trim(),
               password: passwordController.text));
           // Show success message
@@ -108,14 +108,14 @@ class AuthController extends GetxController {
     // Check if the user already exists in Firestore
     final userSnapshot = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(userModel.id)
+        .doc(userModel.userId)
         .get();
 
     // If the user doesn't exist, save the user details with registration datetime
     if (!userSnapshot.exists) {
       await FirebaseFirestore.instance
           .collection('Users')
-          .doc(userModel.id)
+          .doc(userModel.userId)
           .set({
         'email': userModel.email,
         'password': userModel.password,

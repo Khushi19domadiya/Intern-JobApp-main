@@ -394,7 +394,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
     // if (currentU ser != null) {
       await StoreData().addOrUpdateUserData(UserModel(
-          id: currentUser!.uid,
+        userId: currentUser!.uid,
           email: email,
           fname: fname,
           lname: lname,

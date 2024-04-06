@@ -411,9 +411,66 @@ class _HomePageState extends State<HomePage> {
   // }
 
 
+  // Widget _buildEightyEight(BuildContext context) {
+  //   return FutureBuilder<QuerySnapshot>(
+  //     future: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).get(),
+  //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //
+  //       if (snapshot.hasError) {
+  //         return Text('Something went wrong');
+  //       }
+  //
+  //       if (snapshot.data!.docs.isEmpty) {
+  //         return Center(child: Text('No jobs available'));
+  //       }
+  //
+  //       List<DocumentSnapshot> filteredJobs = snapshot.data!.docs;
+  //
+  //       if (userRole == 'e') {
+  //         // Filter jobs if user role is 'e' (employer)
+  //         filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
+  //       }
+  //
+  //       // Filter out jobs with deadlines that have already passed
+  //       final currentDate = DateTime.now();
+  //       filteredJobs = filteredJobs.where((job) {
+  //         final deadlineStr = job['deadline'] as String;
+  //         final deadlineDate = DateTime.parse(deadlineStr); // Convert string to DateTime
+  //         return deadlineDate.isAfter(currentDate);
+  //       }).toList();
+  //
+  //       if (filteredJobs.isEmpty) {
+  //         return Center(child: Text('No active jobs available'));
+  //       }
+  //
+  //       return ListView.separated(
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     shrinkWrap: true,
+  //                     separatorBuilder: (context, index) {
+  //                       return SizedBox(height: 16.v);
+  //                     },
+  //         itemCount: filteredJobs.length,
+  //                     itemBuilder: (context, index) {
+  //                       final DocumentSnapshot document = filteredJobs[index];
+  //                       Map<String, dynamic> data = document.data() as Map<
+  //                           String,
+  //                           dynamic>;
+  //                       if (data["isDelete"] != 1) {
+  //                         return EightyeightItemWidget(jobData: data);
+  //                       }
+  //                       return SizedBox();
+  //                     },
+  //       );
+  //     },
+  //   );
+  // }
+
   Widget _buildEightyEight(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).get(),
+      future: FirebaseFirestore.instance.collection('postJob').orderBy('createAt', descending: true).get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -435,11 +492,11 @@ class _HomePageState extends State<HomePage> {
         }
 
         // Filter out jobs with deadlines that have already passed
-        final currentDate = DateTime.now();
+        final currentDate = DateTime.now(); // Get the current datetime
         filteredJobs = filteredJobs.where((job) {
-          final deadlineStr = job['deadline'] as String;
-          final deadlineDate = DateTime.parse(deadlineStr); // Convert string to DateTime
-          return deadlineDate.isAfter(currentDate);
+          final createdAtString = job['createAt'] as String; // Get createAt string
+          final createdAt = DateTime.parse(createdAtString); // Parse string to DateTime
+          return createdAt.isAfter(currentDate); // Compare with current datetime
         }).toList();
 
         if (filteredJobs.isEmpty) {
@@ -447,26 +504,26 @@ class _HomePageState extends State<HomePage> {
         }
 
         return ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 16.v);
-                      },
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          separatorBuilder: (context, index) {
+            return SizedBox(height: 16.v);
+          },
           itemCount: filteredJobs.length,
-                      itemBuilder: (context, index) {
-                        final DocumentSnapshot document = filteredJobs[index];
-                        Map<String, dynamic> data = document.data() as Map<
-                            String,
-                            dynamic>;
-                        if (data["isDelete"] != 1) {
-                          return EightyeightItemWidget(jobData: data);
-                        }
-                        return SizedBox();
-                      },
+          itemBuilder: (context, index) {
+            final DocumentSnapshot document = filteredJobs[index];
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            if (data["isDelete"] != 1) {
+              return EightyeightItemWidget(jobData: data);
+            }
+            return SizedBox();
+          },
         );
       },
     );
   }
+
+
 
   // Widget _buildEightyEight(BuildContext context) {
   //   return Align(

@@ -96,17 +96,17 @@ class StoreData {
     CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
     // Check if the user document already exists
-    DocumentSnapshot userSnapshot = await users.doc(userModel.id).get();
+    DocumentSnapshot userSnapshot = await users.doc(userModel.userId).get();
 
     // Convert UserModel object to a map without null values
     Map<String, dynamic> userDataMap = userModel.toUpdateMap();
     log(("------userDataMap----->> ${userDataMap.toString()}"));
     if (userSnapshot.exists) {
       // User document exists, update the username field
-      await users.doc(userModel.id).update(userModel.toMap());
+      await users.doc(userModel.userId).update(userModel.toMap());
     } else {
       // User document doesn't exist, create a new document
-      await users.doc(userModel.id).set(userModel.toMap());
+      await users.doc(userModel.userId).set(userModel.toMap());
     }
     CommonMethod()
         .getXSnackBar("Success", "Profile upadate successfully", success);

@@ -83,7 +83,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           String currentStatus = "";
 
                           allUserList.forEach((element) {
-                            if (element.id == userId) {
+                            if (element.userId == userId) {
                               currentStatus = element.status ?? "";
                               token = element.token ?? "";
                             }
@@ -123,7 +123,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           String currentStatus = "";
 
                           allUserList.forEach((element) {
-                            if (element.id == userId) {
+                            if (element.userId == userId) {
                               currentStatus = element.status ?? "";
                               token = element.token ?? "";
                             }
