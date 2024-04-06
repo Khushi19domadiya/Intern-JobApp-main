@@ -204,7 +204,7 @@ class PostJobModel {
         highestsalary: data["highestsalary"],
         address: data["address"],
         experience: data["experience"],
-        about: data["about"],
+        about: data["about"] ?? "",
         isDelete: data["isDelete"],
         // postJobDate: data["postJobDate"],
         deadline: data["deadline"],

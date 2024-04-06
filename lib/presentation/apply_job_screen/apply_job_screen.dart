@@ -57,6 +57,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
 
         // Get a reference to the 'job_applications' collection
         CollectionReference jobApplications = FirebaseFirestore.instance.collection('job_applications');
+        CollectionReference jobApplicationsWithStatus = FirebaseFirestore.instance.collection('Applications');
 
         // Add a new document to the 'job_applications' collection
         DocumentReference docRef = await jobApplications.add({
@@ -69,6 +70,11 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'jobId':widget.jobId
         });
 
+        DocumentReference docRefStatus = await jobApplicationsWithStatus.add({
+          "status" : "P",
+          'userId': user?.uid,
+          'jobId':widget.jobId
+        });
 
         var docApplyCount = FirebaseFirestore.instance.collection('postJob').doc(widget.jobId);
 
@@ -117,6 +123,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         }
         // Now update the document with the job ID
         await docRef.update({'id': docRef.id});
+        // await docRefStatus.update({'id': docRefStatus.id});
 
         print('Job application data stored successfully');
 
