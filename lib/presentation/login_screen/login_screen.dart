@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saumil_s_application/aDMIN/admin_home_screen.dart';
 import 'package:saumil_s_application/admin/dashboard.dart';
+// import 'package:saumil_s_application/admin/dashboard.dart';
 import 'package:saumil_s_application/core/app_export.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_leading_image.dart';
 import 'package:saumil_s_application/widgets/app_bar/appbar_trailing_image.dart';
@@ -111,7 +112,7 @@ class LoginScreen extends StatelessWidget {
                                   // Navigator.push(
                                   print("-------------------${controller.emailController.text.toString()}-------------------");
                                   print("-------------------${controller.passwordController.text.toString()}-------------------");
-                                    Get.to(()=> MyApp());
+                                    Get.to(()=> Dashboard());
                                   // );
                                 } else {
                                   // For other users, perform the login operation

@@ -148,132 +148,132 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
-  // void _showFilterPopup(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Filter by Date'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             ElevatedButton(
-  //               onPressed: () async {
-  //                 final DateTime? picked = await showDatePicker(
-  //                   context: context,
-  //                   initialDate: DateTime.now(),
-  //                   firstDate: DateTime(2000),
-  //                   lastDate: DateTime(2101),
-  //                 );
-  //                 if (picked != null && picked != selectedDate) {
-  //                   setState(() {
-  //                     selectedDate = picked;
-  //                   });
-  //                 }
-  //               },
-  //               child: Text(selectedDate == null ? 'Select Date' : 'Change Date'),
-  //             ),
-  //             SizedBox(height: 10),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 // Add your filter functionality here
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: Text('Apply Now'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+// void _showFilterPopup(BuildContext context) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text('Filter by Date'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             ElevatedButton(
+//               onPressed: () async {
+//                 final DateTime? picked = await showDatePicker(
+//                   context: context,
+//                   initialDate: DateTime.now(),
+//                   firstDate: DateTime(2000),
+//                   lastDate: DateTime(2101),
+//                 );
+//                 if (picked != null && picked != selectedDate) {
+//                   setState(() {
+//                     selectedDate = picked;
+//                   });
+//                 }
+//               },
+//               child: Text(selectedDate == null ? 'Select Date' : 'Change Date'),
+//             ),
+//             SizedBox(height: 10),
+//             ElevatedButton(
+//               onPressed: () {
+//                 // Add your filter functionality here
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text('Apply Now'),
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
 
-  // TextEditingController selectFilterDate = TextEditingController();
+// TextEditingController selectFilterDate = TextEditingController();
 
-  // void _showFilterPopup(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Filter by Date'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             // ElevatedButton(
-  //             //   onPressed: () async {
-  //             //     final DateTime? picked = await showDatePicker(
-  //             //       context: context,
-  //             //       initialDate: DateTime.now(),
-  //             //       firstDate: DateTime(2000),
-  //             //       lastDate: DateTime.now(), // Set lastDate to today
-  //             //     );
-  //             //     if (picked != null && picked != selectedDate) {
-  //             //       setState(() {
-  //             //         selectedDate = picked;
-  //             //       });
-  //             //     }
-  //             //   },
-  //             //   style: ElevatedButton.styleFrom(
-  //             //     padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
-  //             //   ),
-  //             //   child: Text(
-  //             //     selectedDate == null ? 'Select Date' : 'Change Date',
-  //             //     style: TextStyle(fontSize: 18,color: Colors.white), // Increase text size
-  //             //   ),
-  //             // ),
-  //             SizedBox(
-  //               height: 45,
-  //               child: TextFormField(
-  //                 controller: selectFilterDate,
-  //                 decoration: InputDecoration(
-  //                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
-  //                     enabledBorder: OutlineInputBorder(
-  //                       borderSide: BorderSide(color: Colors.black),
-  //                     ),
-  //                     focusedBorder: OutlineInputBorder(
-  //                       borderSide: BorderSide(color: Colors.black),
-  //                     ),
-  //                     hintText: "Select Date",
-  //                     suffixIcon: IconButton(
-  //                       onPressed: () async {
-  //                         final DateTime? picked = await showDatePicker(
-  //                           context: context,
-  //                           initialDate: DateTime.now(),
-  //                           firstDate: DateTime(2000),
-  //                           lastDate: DateTime.now(), // Set lastDate to today
-  //                         );
-  //                         if (picked != null && picked != selectedDate) {
-  //                           setState(() {
-  //                             selectedDate = picked;
-  //                             selectFilterDate.text = (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
-  //                           });
-  //                         }
-  //                       },
-  //                       icon: Icon(Icons.date_range),
-  //                     )),
-  //               ),
-  //             ),
-  //             SizedBox(height: 20),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //
-  //                 if(selectInt.value == 0){
-  //
-  //                 }
-  //                 Navigator.of(context).pop();
-  //               },
-  //               style: ElevatedButton.styleFrom(
-  //                 padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
-  //               ),
-  //               child: Text(
-  //                 'Apply Now',
-  //                 style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+// void _showFilterPopup(BuildContext context) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text('Filter by Date'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // ElevatedButton(
+//             //   onPressed: () async {
+//             //     final DateTime? picked = await showDatePicker(
+//             //       context: context,
+//             //       initialDate: DateTime.now(),
+//             //       firstDate: DateTime(2000),
+//             //       lastDate: DateTime.now(), // Set lastDate to today
+//             //     );
+//             //     if (picked != null && picked != selectedDate) {
+//             //       setState(() {
+//             //         selectedDate = picked;
+//             //       });
+//             //     }
+//             //   },
+//             //   style: ElevatedButton.styleFrom(
+//             //     padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40), // Adjust padding as needed
+//             //   ),
+//             //   child: Text(
+//             //     selectedDate == null ? 'Select Date' : 'Change Date',
+//             //     style: TextStyle(fontSize: 18,color: Colors.white), // Increase text size
+//             //   ),
+//             // ),
+//             SizedBox(
+//               height: 45,
+//               child: TextFormField(
+//                 controller: selectFilterDate,
+//                 decoration: InputDecoration(
+//                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
+//                     enabledBorder: OutlineInputBorder(
+//                       borderSide: BorderSide(color: Colors.black),
+//                     ),
+//                     focusedBorder: OutlineInputBorder(
+//                       borderSide: BorderSide(color: Colors.black),
+//                     ),
+//                     hintText: "Select Date",
+//                     suffixIcon: IconButton(
+//                       onPressed: () async {
+//                         final DateTime? picked = await showDatePicker(
+//                           context: context,
+//                           initialDate: DateTime.now(),
+//                           firstDate: DateTime(2000),
+//                           lastDate: DateTime.now(), // Set lastDate to today
+//                         );
+//                         if (picked != null && picked != selectedDate) {
+//                           setState(() {
+//                             selectedDate = picked;
+//                             selectFilterDate.text = (selectedDate != null ? DateFormat("dd MMM,yyyy").format(selectedDate ?? DateTime.now()) : "");
+//                           });
+//                         }
+//                       },
+//                       icon: Icon(Icons.date_range),
+//                     )),
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: () {
+//
+//                 if(selectInt.value == 0){
+//
+//                 }
+//                 Navigator.of(context).pop();
+//               },
+//               style: ElevatedButton.styleFrom(
+//                 padding: EdgeInsets.symmetric(vertical: 22, horizontal: 40),
+//               ),
+//               child: Text(
+//                 'Apply Now',
+//                 style: TextStyle(fontSize: 18, color: Colors.white), // Increase text size
+//               ),
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
 }

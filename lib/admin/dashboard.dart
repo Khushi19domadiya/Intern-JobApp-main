@@ -1,34 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:saumil_s_application/aDMIN/admin_home_screen.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:saumil_s_application/admin/admin_employer_screen.dart';
+import 'package:saumil_s_application/admin/admin_job_screen.dart';
+import 'package:saumil_s_application/admin/admin_jobseeker_screen.dart';
 
-void main() {
-  runApp(MyApp());
-}
+import '../presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
+import 'admin_home_screen.dart';
 
-class MyApp extends StatelessWidget {
+class Dashboard extends StatefulWidget {
+  const Dashboard({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Admin Dashboard',
-      theme: ThemeData(
-        primaryColor: Colors.indigo, // Set primary color
-        hintColor: Colors.indigoAccent, // Change accent color
-        fontFamily: 'Roboto', // Change default font
-      ),
-      home: AdminDashboard(),
-    );
-  }
+  State<Dashboard> createState() => DashboardState(); // Renamed to DashboardState
 }
 
-class AdminDashboard extends StatefulWidget {
-  @override
-  _AdminDashboardState createState() => _AdminDashboardState();
-}
+class DashboardState extends State<Dashboard> { // Renamed to DashboardState
 
-class _AdminDashboardState extends State<AdminDashboard> {
   int totalEmployers = 0;
   int totalJobSeekers = 0;
   int totalPostedJobs = 0;
@@ -67,6 +57,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -88,6 +79,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
               Spacer(),
             ],
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                // Implement your logout logic here
+                Get.to(SignUpCreateAcountScreen());
+              },
+              icon: Icon(Icons.logout, color: Colors.white),
+            ),
+          ],
+
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -112,7 +113,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
         if (title == 'Total Employers') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+            MaterialPageRoute(builder: (context) => AdminEmployerScreen()),
+          );
+        }
+        if (title == 'Total Job Seekers') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AdminJobseekerScreen()),
+          );
+        }
+        if (title == 'Total Posted Jobs') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AdminJobScreen()),
           );
         }
       },
@@ -175,7 +188,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
     );
   }
-
 
   Widget _buildRoundGraph() {
     return Padding(

@@ -39,6 +39,9 @@ class _AdminJobseekerScreenState extends State<AdminJobseekerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Job Seekers List'),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {

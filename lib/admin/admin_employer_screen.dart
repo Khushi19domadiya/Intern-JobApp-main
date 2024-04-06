@@ -7,7 +7,6 @@ import 'package:saumil_s_application/models/user_model.dart';
 class AdminEmployerScreen extends StatefulWidget {
   const AdminEmployerScreen({super.key});
 
-
   @override
   State<AdminEmployerScreen> createState() => _AdminEmployerScreenState();
 }
@@ -36,6 +35,9 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Employers List'),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
