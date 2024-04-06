@@ -36,7 +36,7 @@ class UserModel {
   });
 
   UserModel.fromMap(data) {
-    id= data['id'];
+    id= data['userId'];
     email= data['email'];
     password=  data['password'];
     token= data['token'];
@@ -50,7 +50,7 @@ class UserModel {
     status = data['status'];
     skills = data['skills'] == null ? null : data['skills'].cast<String>();
     role  = data['role'];
-    about  = data['about'];
+    about  = data['profile'];
 
     // return UserModel(
     //   id: data['id'],
@@ -68,7 +68,7 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) "id": id,
+      if (id != null) "userId": id,
       if (email != null) "email": email,
       if (password != null) "password": password,
       if (fname != null) "fname": fname,
@@ -83,7 +83,7 @@ class UserModel {
       if (skills != null) "skills": skills,
       if (skills != null) "status": status,
 
-      if (about != null) "about": about,
+      if (about != null) "profile": about,
     };
   }
 

@@ -331,7 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 2.v),
               _buildSkills(
                 context,
-                skillsText: "About Me",
+                skillsText: "Profile",
                 onTapEditSquare: () {
                   onTapEditAbout(context);
                 },
@@ -573,6 +573,7 @@ class _ProfilePageState extends State<ProfilePage> {
   //           ),
   //         ),
   //       ],
+  //     ),
   //     ),
   //   );
   // }

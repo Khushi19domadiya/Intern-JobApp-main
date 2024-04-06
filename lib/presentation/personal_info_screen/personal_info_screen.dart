@@ -357,18 +357,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("About", style: theme.textTheme.titleSmall),
+        Text("Profile", style: theme.textTheme.titleSmall),
         SizedBox(height: 9.v),
         CustomTextFormField(
           controller: aboutController,
-          hintText: "Enter about you",
+          hintText: "Enter your profile",
           textInputAction: TextInputAction.done,
           maxLines: 6,
           contentPadding:
           EdgeInsets.symmetric(horizontal: 16.h, vertical: 20.v),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please fill about filed';
+              return 'Please fill profile filed';
             }
             return null;
           },
