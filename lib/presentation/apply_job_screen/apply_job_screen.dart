@@ -200,27 +200,63 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
     );
   }
 
+
+  // Widget _buildPersonalInfoFullName(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text("Full Name", style: theme.textTheme.titleSmall),
+  //       SizedBox(height: 9.0  ),
+  //       CustomTextFormField(
+  //         controller: fullNameController,
+  //         hintText: user!.displayName.toString(),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+
+
   Widget _buildPersonalInfoFullName(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Full Name", style: theme.textTheme.titleSmall),
-        SizedBox(height: 9.0),
-        CustomTextFormField(
-          controller: fullNameController,
-          hintText: "Enter Your Full Name",
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your full name';
-            } else if (!value.startsWith(RegExp(r'[A-Z]'))) {
-              return 'First character should start with a capital letter';
-            }
-            return null;
-          },
-        ),
-      ],
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('Users').doc(user?.uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show loading indicator while fetching data
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return Text('User data not found');
+        }
+
+        // Check if the 'fname' field exists in the document
+        bool fnameExists = snapshot.data!.get('fname') != null;
+
+        // Extract first name and last name from user data
+        String firstName = fnameExists ? snapshot.data!.get('fname') : 'Unknown';
+        String lastName = fnameExists ? snapshot.data!.get('lname') : 'Unknown';
+
+        // Combine first name and last name
+        String fullName = '$firstName $lastName';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Full Name", style: theme.textTheme.titleSmall),
+            SizedBox(height: 9.0),
+            CustomTextFormField(
+              controller: fullNameController,
+              readOnly: true,
+              hintText: fullName, // Set combined name as hint text
+            ),
+          ],
+        );
+      },
     );
   }
+
 
   Widget _buildPersonalInfoEmail(BuildContext context) {
     return Column(
@@ -230,17 +266,8 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         SizedBox(height: 9.0),
         CustomTextFormField(
           controller: emailController,
-          hintText: "xyz@gmail.com",
-          readOnly: false,
-          textInputType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your email';
-            } else if (!GetUtils.isEmail(value)) {
-              return 'Please enter a valid email address';
-            }
-            return null;
-          },
+          hintText: user!.email.toString(),
+          readOnly: true,
         ),
       ],
     );
