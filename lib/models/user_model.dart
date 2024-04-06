@@ -143,7 +143,7 @@ class PostJobModel {
   final String highestsalary;
   final String address;
   final String experience;
-  final String about;
+  final String description;
   final int? isDelete;
   // final String postJobDate;
   final String deadline;
@@ -164,7 +164,7 @@ class PostJobModel {
     required this.highestsalary,
     required this.address,
     required this.experience,
-    required this.about,
+    required this.description,
     // required this.postJobDate,
     required this.deadline,
     this.jobType,
@@ -184,7 +184,7 @@ class PostJobModel {
       'highestsalary': highestsalary,
       'address': address,
       'experience': experience,
-      'about': about,
+      'description': description,
       'isDelete': isDelete,
       // 'postJobDate': postJobDate,
       'deadline': deadline,
@@ -204,7 +204,7 @@ class PostJobModel {
         highestsalary: data["highestsalary"],
         address: data["address"],
         experience: data["experience"],
-        about: data["about"] ?? "",
+        description: data["description"] ?? "",
         isDelete: data["isDelete"],
         // postJobDate: data["postJobDate"],
         deadline: data["deadline"],

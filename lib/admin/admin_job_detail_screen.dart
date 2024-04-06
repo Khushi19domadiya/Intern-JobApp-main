@@ -25,7 +25,7 @@ class AdminJobDetailScreen extends StatelessWidget {
             SizedBox(height: 15),
             Text('Address: ${job.address}'),
             SizedBox(height: 15),
-            Text('Description: ${job.about}'),
+            Text('Description: ${job.description}'),
             SizedBox(height: 15),
             Text('Deadline: ${job.deadline}'),
             SizedBox(height: 15),

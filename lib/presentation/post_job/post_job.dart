@@ -450,6 +450,18 @@ class _PostJobState extends State<PostJob> {
                   Text('Female'),
                 ],
               ),
+              Row(
+                children: [
+                  Radio(
+                    value: 'Both', // Change value to string
+                    groupValue: _selectGender,
+                    onChanged: (value) {
+                      _handleGender(value.toString());
+                    },
+                  ),
+                  Text('Both'),
+                ],
+              ),
             ],
           ),
           if (_validateGender() != null)
@@ -501,11 +513,11 @@ class _PostJobState extends State<PostJob> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("About", style: theme.textTheme.titleSmall),
+          Text("Description", style: theme.textTheme.titleSmall),
           SizedBox(height: 9.v),
           CustomTextFormField(
             controller: aboutController,
-            hintText: "About",
+            hintText: "Description",
             textInputType: TextInputType.text,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -620,7 +632,7 @@ class _PostJobState extends State<PostJob> {
             highestsalary: hsalaryController.text,
             address: addressController.text,
             experience: experienceController.text,
-            about: aboutController.text,
+            description: aboutController.text,
             deadline: datePickerController.text,
             selectedSkills: _selectedItems,
             selectedOption: _selectedOption, // Pass the selected skills
@@ -640,7 +652,7 @@ class _PostJobState extends State<PostJob> {
     required String highestsalary,
     required String address,
     required String experience,
-    required String about,
+    required String description,
     required String deadline,
     required List<String> selectedSkills,
     required String? selectedOption, // Add selected option parameter
@@ -667,7 +679,7 @@ class _PostJobState extends State<PostJob> {
         address: address,
         isDelete: 0,
         experience: experience,
-        about: about,
+        description: description,
         // postJobDate: formattedDateTime,
         deadline: deadline,
         jobType: _selectedRadio,

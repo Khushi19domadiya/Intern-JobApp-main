@@ -63,7 +63,7 @@ class JobDetailsPageState extends State<JobDetailsPage>
                     width: 319.h,
                     margin: EdgeInsets.only(left: 31.h, right: 24.h),
                     child: Text(
-                        "${widget.postJobModel?.about  ?? ""}",
+                        "${widget.postJobModel?.description  ?? ""}",
                         maxLines: 10,
                         overflow: TextOverflow.ellipsis,
                         style: CustomTextStyles.titleSmallBluegray400
