@@ -65,15 +65,19 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
           'email': emailController.text,
           'website_portfolio': frameOneController.text,
           'cv_url': downloadURL,
+          'curDate': DateTime.now().toString(),
           'timestamp': FieldValue.serverTimestamp(),
           'userId': user?.uid,
+          "status" : "P",
           'jobId':widget.jobId
         });
 
         DocumentReference docRefStatus = await jobApplicationsWithStatus.add({
-          "status" : "P",
-          'userId': user?.uid,
+          'cv_url': downloadURL,
           'curDate': DateTime.now().toString(),
+          'timestamp': FieldValue.serverTimestamp(),
+          'userId': user?.uid,
+          "status" : "P",
           'jobId':widget.jobId
         });
 

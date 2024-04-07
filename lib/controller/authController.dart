@@ -399,7 +399,7 @@ class AuthController extends GetxController {
       if (userSnapshot.exists) {
         // User document exists, create a UserModel instance
         UserModel userData =
-        UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+        UserModel.fromSnapshot(userSnapshot.data() as Map<String, dynamic>);
         return userData;
       } else {
         // User document doesn't exist

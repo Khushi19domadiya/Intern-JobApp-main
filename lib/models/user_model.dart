@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserModel {
   String? userId;
@@ -35,36 +36,23 @@ class UserModel {
     this.profile,
   });
 
-  UserModel.fromMap(data) {
-    userId= data['userId'];
-    email= data['email'];
-    password=  data['password'];
-    token= data['token'];
-    fname= data['fname'];
-    registrationDateTime= data['registrationDateTime'] == null ? null : data['registrationDateTime'].toString() ;
-    lname= data['lname'];
-    npassowrd= data['npassowrd'];
-    phonenumber= data['phonenumber'];
-    address= data['address'];
-    profileUrl= data['profileUrl'];
-    status = data['status'];
-    skills = data['skills'] == null ? null : data['skills'].cast<String>();
-    role  = data['role'];
-    profile  = data['profile'];
-
-    // return UserModel(
-    //   id: data['id'],
-    //   email: data['email'],
-    //   password: data['password'] == null ? "" : data['password'],
-    //   token: data['token'],
-    //   fname: data['fname'],
-    //   lname: data['lname'],
-    //   phonenumber: data['phonenumber'],
-    //   address: data['address'],
-    //   profileUrl: data['profileUrl'],
-    //   role  : data['role'],
-    // );
-  }
+  factory UserModel.fromSnapshot(Map<String, dynamic> data) => UserModel(
+        userId: data['userId'],
+        email: data['email'],
+        password: data['password'],
+        token: data['token'],
+        fname: data['fname'],
+        registrationDateTime: data['registrationDateTime'] == null ? null : data['registrationDateTime'].toString(),
+        lname: data['lname'],
+        npassowrd: data['npassowrd'],
+        phonenumber: data['phonenumber'],
+        address: data['address'],
+        profileUrl: data['profileUrl'],
+        status: data['status'],
+        skills: data['skills'] == null ? null : data['skills'].cast<String>(),
+        role: data['role'],
+        profile: data['profile'],
+      );
 
   Map<String, dynamic> toMap() {
     return {
@@ -94,13 +82,12 @@ class UserModel {
 
   Map<String, dynamic> toUpdateMap() {
     Map<String, dynamic> map = toMap();
-    map.removeWhere(
-            (key, value) => value == null || value is List && value.isEmpty);
+    map.removeWhere((key, value) => value == null || value is List && value.isEmpty);
     return map;
   }
 }
 
-class educationModel{
+class educationModel {
   final String? id;
   final String clgname;
   final String degree;
@@ -110,26 +97,24 @@ class educationModel{
   final String grade;
   final String description;
 
-  educationModel({
-    this.id,
-    required this.clgname,
-    required this.degree,
-    required this.field,
-    required this.startdate,
-    required this.enddate,
-    required this.grade,
-    required this.description
-  });
-  toJson()
-  {
-    return{
-      "Collage" : clgname,
-      "Degree" : degree,
-      "Field" : field,
-      "Start Date" : startdate,
-      "End Date" : enddate,
-      "Grade" : grade,
-      "Description" : description,
+  educationModel(
+      {this.id,
+      required this.clgname,
+      required this.degree,
+      required this.field,
+      required this.startdate,
+      required this.enddate,
+      required this.grade,
+      required this.description});
+  toJson() {
+    return {
+      "Collage": clgname,
+      "Degree": degree,
+      "Field": field,
+      "Start Date": startdate,
+      "End Date": enddate,
+      "Grade": grade,
+      "Description": description,
     };
   }
 }
@@ -151,7 +136,8 @@ class PostJobModel {
   final String? gender;
   final List<dynamic> selectedSkills;
   final String? selectedOption;
-
+  final String? selectedSourceOption;
+  int applyCount = 0;
 
   PostJobModel({
     required this.id,
@@ -169,8 +155,9 @@ class PostJobModel {
     this.jobType,
     this.gender,
     required this.selectedSkills,
-    required  this.selectedOption,
-
+    required this.selectedOption,
+    required this.selectedSourceOption,
+    required this.applyCount,
   });
 
   Map<String, dynamic> toJson() {
@@ -191,10 +178,12 @@ class PostJobModel {
       'gender': gender,
       'selectedSkills': selectedSkills,
       'selectedOption': selectedOption,
+      'selectedSourceOption': selectedSourceOption,
+      'applyCount': applyCount
     };
   }
-  factory PostJobModel.fromSnapshot(Map<String, dynamic> data) =>
-      PostJobModel(
+
+  factory PostJobModel.fromSnapshot(Map<String, dynamic> data) => PostJobModel(
         id: data["id"],
         userId: data["userId"],
         title: data["title"],
@@ -211,5 +200,7 @@ class PostJobModel {
         gender: data["gender"],
         selectedSkills: data["selectedSkills"],
         selectedOption: data["selectedOption"],
+        selectedSourceOption: data["selectedSourceOption"],
+        applyCount: data['applyCount'] == null ? 0 : data['applyCount'],
       );
 }

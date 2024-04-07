@@ -142,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        UserModel userData = UserModel.fromMap(snapshot.data?.data() ?? {});
+        UserModel userData = UserModel.fromSnapshot(snapshot.data?.data() as Map<String, dynamic> ?? {});
         String firstName = userData.fname ?? 'Anonymous';
         String lastName = userData.lname ?? '';
         String displayName = '$firstName $lastName';
@@ -321,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
-          UserModel userData = UserModel.fromMap(snapshot.data?.data() ?? {});
+          UserModel userData = UserModel.fromSnapshot(snapshot.data?.data() as Map<String, dynamic> ?? {});
 
           return Column(
             mainAxisSize: MainAxisSize.min,
@@ -369,7 +369,7 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
-        UserModel userDeta = UserModel.fromMap(snapshot.data?.data() ?? {});
+        UserModel userDeta = UserModel.fromSnapshot(snapshot.data?.data() as Map<String, dynamic> ?? {});
         List<String>? skillsData = userDeta.skills;
         List<String> skills =
             skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>

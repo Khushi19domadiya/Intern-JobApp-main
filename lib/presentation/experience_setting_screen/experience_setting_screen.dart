@@ -368,7 +368,7 @@ class ExperienceSettingScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Display error if any
         }
-        UserModel userDeta = UserModel.fromMap(snapshot.data?.data() ?? {});
+        UserModel userDeta = UserModel.fromSnapshot(snapshot.data?.data() as Map<String, dynamic> ?? {});
         List<String>? skillsData = userDeta.skills;
         List<String> skills =
             skillsData?.map((e) => e.toString()).toList() ?? []; // Cast to List<String>

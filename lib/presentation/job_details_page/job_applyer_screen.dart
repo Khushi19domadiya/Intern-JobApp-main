@@ -256,7 +256,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
-      users.add(UserModel.fromMap(doc.data()));
+      users.add(UserModel.fromSnapshot(doc.data() as Map<String, dynamic>));
     });
     setState(() {
       allUserList = users;

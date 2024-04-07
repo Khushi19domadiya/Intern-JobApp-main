@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,47 +26,51 @@ class _ApplyerListScreenState extends State<ApplyerListScreen> {
     fetchDocumentList();
   }
 
-  Future<void> fetchDocumentList() async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("job_applications")
-          .get();
+  fetchDocumentList() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("job_applications").get();
 
-      List<Map<String, dynamic>> documentList = [];
+    List<Map<String, dynamic>> documentList = [];
 
-      for (DocumentSnapshot document in querySnapshot.docs) {
-        Map<String, dynamic> data =
-        document.data() as Map<String, dynamic>;
-        String documentId = document.id;
+    for (DocumentSnapshot document in querySnapshot.docs) {
+      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+      String documentId = document.id;
 
-
-        if(data['jobId']== widget.jobId){
-        documentList.add({...data, 'id': documentId});}
+      if (data['jobId'] == widget.jobId) {
+        documentList.add({...data, 'id': documentId});
       }
-
-      setState(() {
-        data = documentList;
-      });
-    } catch (e) {
-      print("Error fetching documents: $e");
     }
+
+    data = documentList;
+
+    data.forEach((element) async {
+      QuerySnapshot snap = await FirebaseFirestore.instance.collection("Users").where('userId', isEqualTo: element['userId']).get();
+      element['fullName'] = "${snap.docs.first['fname']} ${snap.docs.first['lname']}";
+      setState(() {
+
+      });
+    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+     print("-----------${data.length}");
     return Scaffold(
       appBar: AppBar(
-        title: Text('Applicants'),
+        title: Text('job_applications'),
       ),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
+          final fullName = data[index]['fullName'] as String?;
+          print("-----------${data}");
           return ListTile(
-            title: Text(data[index]['full_name']),
+            title: Text(data[index]['fullName'] ?? ""),
             onTap: () {
               Get.to(JobApplyerScreen(jobId: data[index]['id']));
             },
           );
+          return null;
         },
       ),
     );

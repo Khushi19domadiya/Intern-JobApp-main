@@ -1,3 +1,5 @@
+import 'package:saumil_s_application/models/user_model.dart';
+
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:saumil_s_application/core/app_export.dart';
@@ -5,7 +7,7 @@ import 'package:saumil_s_application/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class EightyeightItemWidget extends StatelessWidget {
-  final Map<String, dynamic> jobData; // Add this variable to hold job data
+  final PostJobModel jobData; // Add this variable to hold job data
   const EightyeightItemWidget({Key? key, required this.jobData})
       : super(key: key);
 
@@ -53,16 +55,16 @@ class EightyeightItemWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  jobData['title'], // Use job title from jobData
+                                  jobData.title, // Use job title from jobData
                                   style: CustomTextStyles.titleMediumBold_1,
                                 ),
                                 SizedBox(height: 5.v),
                                 Text(
-                                  "Applied Count : ${jobData['applyCount'].toString()}", // Use company name from jobData
+                                  "Applied Count : ${jobData.applyCount.toString()}", // Use company name from jobData
                                   style: CustomTextStyles.labelLargeGray500,
                                 ),
                                 Text(
-                                  "${jobData['about'].toString()}", // Use company name from jobData
+                                  "${jobData.description.toString()}", // Use company name from jobData
                                   style: CustomTextStyles.labelLargeGray500,
                                 ),
                               ],

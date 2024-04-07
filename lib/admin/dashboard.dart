@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:saumil_s_application/admin/admin_employer_screen.dart';
 import 'package:saumil_s_application/admin/admin_job_screen.dart';
 import 'package:saumil_s_application/admin/admin_jobseeker_screen.dart';
+import 'package:saumil_s_application/admin/reports.dart';
 
 import '../presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
 import 'admin_home_screen.dart';
@@ -46,7 +47,7 @@ class DashboardState extends State<Dashboard> { // Renamed to DashboardState
 
     // Fetch total posted jobs
     QuerySnapshot<Map<String, dynamic>> postedJobsSnapshot = await FirebaseFirestore.instance
-        .collection('postjob')
+        .collection('postJob')
         .get();
     int postedJobsCount = postedJobsSnapshot.docs.length;
 
@@ -189,71 +190,148 @@ class DashboardState extends State<Dashboard> { // Renamed to DashboardState
     );
   }
 
+  // Widget _buildRoundGraph() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(20), // Rounded corners
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.grey.withOpacity(0.5),
+  //             spreadRadius: 2,
+  //             blurRadius: 5,
+  //             offset: Offset(0, 3), // Shadow position
+  //           ),
+  //         ],
+  //       ),
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(20.0),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(
+  //               'Round Graph',
+  //               style: TextStyle(
+  //                 fontSize: 20,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Colors.indigo,
+  //               ),
+  //             ),
+  //             SizedBox(height: 10),
+  //             Container(
+  //               height: 200,
+  //               child: PieChart(
+  //                 PieChartData(
+  //                   sections: [
+  //                     if (totalEmployers > 0)
+  //                       PieChartSectionData(
+  //                         color: Colors.blue,
+  //                         value: totalEmployers.toDouble(),
+  //                         title: totalEmployers.toString(),
+  //                         radius: 50,
+  //                       ),
+  //                     if (totalJobSeekers > 0)
+  //                       PieChartSectionData(
+  //                         color: Colors.green,
+  //                         value: totalJobSeekers.toDouble(),
+  //                         title: totalJobSeekers.toString(),
+  //                         radius: 50,
+  //                       ),
+  //                     if (totalPostedJobs > 0)
+  //                       PieChartSectionData(
+  //                         color: Colors.orange,
+  //                         value: totalPostedJobs.toDouble(),
+  //                         title: totalPostedJobs.toString(),
+  //                         radius: 50,
+  //                       ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildRoundGraph() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3), // Shadow position
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Round Graph',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo,
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 200,
-                child: PieChart(
-                  PieChartData(
-                    sections: [
-                      if (totalEmployers > 0)
-                        PieChartSectionData(
-                          color: Colors.blue,
-                          value: totalEmployers.toDouble(),
-                          title: totalEmployers.toString(),
-                          radius: 50,
-                        ),
-                      if (totalJobSeekers > 0)
-                        PieChartSectionData(
-                          color: Colors.green,
-                          value: totalJobSeekers.toDouble(),
-                          title: totalJobSeekers.toString(),
-                          radius: 50,
-                        ),
-                      if (totalPostedJobs > 0)
-                        PieChartSectionData(
-                          color: Colors.orange,
-                          value: totalPostedJobs.toDouble(),
-                          title: totalPostedJobs.toString(),
-                          radius: 50,
-                        ),
-                    ],
-                  ),
-                ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Reports()), // Navigate to the Reports widget
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20), // Rounded corners
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3), // Shadow position
               ),
             ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Round Graph',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  height: 200,
+                  child: PieChart(
+                    PieChartData(
+                      sections: [
+                        if (totalEmployers > 0)
+                          PieChartSectionData(
+                            color: Colors.blue,
+                            value: totalEmployers.toDouble(),
+                            title: totalEmployers.toString(),
+                            radius: 50,
+                          ),
+                        if (totalJobSeekers > 0)
+                          PieChartSectionData(
+                            color: Colors.green,
+                            value: totalJobSeekers.toDouble(),
+                            title: totalJobSeekers.toString(),
+                            radius: 50,
+                          ),
+                        if (totalPostedJobs > 0)
+                          PieChartSectionData(
+                            color: Colors.orange,
+                            value: totalPostedJobs.toDouble(),
+                            title: totalPostedJobs.toString(),
+                            radius: 50,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+
 
 }

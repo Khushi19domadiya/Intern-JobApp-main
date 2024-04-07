@@ -462,49 +462,10 @@ class _HomePageState extends State<HomePage> {
   //   );
   // }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> fetchData() async {
-    // Get reference to your Firestore collection
-    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance.collection('postJob').get();
-    print(querySnapshot.docs.length);
-
-    // Convert date string to DateTime and add documents to a list
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> documents = querySnapshot.docs;
-    documents.forEach((doc) {
-      Map<String, dynamic>? data = doc.data();
-      if (data['createAt'] != null) {
-        data['createAt'] = DateTime.parse(data['createAt']);
-        // print("data['createAt'] ${data['createAt']}");
-      }
-    });
-    print("==========   ${documents.length}");
-
-    // Sort the documents based on the 'createAt' field
-    try {
-      documents.sort((a, b) {
-        // Access 'createAt' field and compare as DateTime
-        DateTime createAtA = DateTime.parse(a.data()['createAt']);
-        DateTime createAtB = DateTime.parse(b.data()['createAt']);
-        print("----");
-        return createAtB.compareTo(createAtA);
-      });
-    } catch (e) {
-      print("exception ${e}");
-    }
-
-    print("111111");
-    documents.forEach((element) {
-      Map<String, dynamic>? data = element.data();
-      print("data['createAt']   ${data['createAt']}");
-    });
-    print("22222");
-
-    return documents;
-  }
-
   Widget _buildEightyEight(BuildContext context) {
-    return FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-      future: fetchData(),
-      builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot<Map<String, dynamic>>>> snapshot) {
+    return FutureBuilder<List<PostJobModel>>(
+      future: userRole == 'j' ? controller.fetchJobDataFromFirestore(userRole!) : controller.fetchUserPostedJobs(userId),
+      builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
@@ -517,28 +478,13 @@ class _HomePageState extends State<HomePage> {
           return Center(child: Text('No jobs available'));
         }
 
-        List<DocumentSnapshot> filteredJobs = snapshot.data!;
+        List<PostJobModel> filteredJobs = snapshot.data!;
 
-        if (userRole == 'e') {
-          // Filter jobs if user role is 'e' (employer)
-          filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
-          print("fitr :${filteredJobs.length}");
-        }
+        filteredJobs.sort((a, b) {
+          return b.applyCount.compareTo(a.applyCount);
+        });
 
-        // Filter out jobs with deadlines that have already passed
-        try{
-          final currentDate = DateTime.now(); // Get the current datetime
-          filteredJobs = filteredJobs.where((job) {
-            // final createdAtString = job['createAt'] as String; // Get createAt string
-            DateTime createdAt = DateTime.parse(job['deadline']); // Parse string to DateTime
-            return createdAt.isAfter(currentDate); // Compare with current datetime
-          }).toList();
-        }
-        catch(e){
-          print("ksgdkjahskfjklasjhfkljasf ${e}");
-        }
 
-        print("fitr21 :${filteredJobs.length}");
 
         return (filteredJobs.isEmpty)
             ? Center(child: Text('No active jobs available'))
@@ -546,22 +492,15 @@ class _HomePageState extends State<HomePage> {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 separatorBuilder: (context, index) {
-                  print(" n nbbh :${filteredJobs.length}");
                   return SizedBox(height: 16.v);
                 },
                 itemCount: filteredJobs.length,
                 itemBuilder: (context, index) {
                   print(index);
-                  final DocumentSnapshot document = filteredJobs[index];
-                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                  try {
-                    print("index $index --document ${data['createAt']}");
-                  } catch (e) {
-                    print("kjhsdkhsdklfh ${e}");
-                  }
-                  if (data["isDelete"] != 1) {
-                    print("ajsbjsbcadb");
-                    return EightyeightItemWidget(jobData: data);
+                  final PostJobModel model = filteredJobs[index];
+
+                  if (model.isDelete != 1) {
+                    return EightyeightItemWidget(jobData: model);
                   }
                   return SizedBox();
                 },
@@ -808,6 +747,13 @@ class _HomePageState extends State<HomePage> {
             if (jobData == null || jobData.isEmpty) {
               return const Center(child: Text("No jobs available."));
             }
+
+            jobData.sort((a, b) {
+              // Access 'createAt' field and compare as DateTime
+              DateTime createAtA = DateTime.parse(a.createAt!);
+              DateTime createAtB = DateTime.parse(b.createAt!);
+              return createAtB.compareTo(createAtA);
+            });
 
             return Row(
               children: jobData.map((model) {

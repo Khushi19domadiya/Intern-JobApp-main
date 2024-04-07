@@ -17,7 +17,7 @@ class _AdminEmployerScreenState extends State<AdminEmployerScreen> {
     QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').where("role", isEqualTo: "e").get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
-      users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
+      users.add(UserModel.fromSnapshot(doc.data() as Map<String, dynamic>)); // Assuming UserModel.fromJson is your model constructor
     });
     setState(() {
       allUserList = users;

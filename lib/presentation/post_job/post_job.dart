@@ -43,6 +43,7 @@ class _PostJobState extends State<PostJob> {
   List<String> _selectedItems = [];
   DateTime? selectedDate;
   String? _selectedOption;
+  String? _selectedSourceOption;
 
   final userRepo = Get.put(UserRepository());
 
@@ -79,6 +80,8 @@ class _PostJobState extends State<PostJob> {
                     _buildInputField6(context),
                     SizedBox(height: 20.v),
                     _buildInputField(context),
+                    SizedBox(height: 20.v),
+                    _buildInputFieldSource(context),
                     SizedBox(height: 20.v),
                     _buildInputField7(context),
                     SizedBox(height: 20.v),
@@ -415,6 +418,38 @@ class _PostJobState extends State<PostJob> {
   }
 
 
+  Widget _buildInputFieldSource(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text("Select a source", style: theme.textTheme.titleSmall),
+          SizedBox(height: 9.0),
+          Container(
+            width: double.infinity, // Set the width to fill the available space
+            child: DropdownButton<String>(
+              value: _selectedSourceOption,
+              onChanged: (String? newSourceValue) {
+                setState(() {
+                  _selectedSourceOption = newSourceValue;
+                });
+              },
+              items: <String>['Newspaper', 'Social media', 'Application' , 'Poster'] // Replace with your options
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   Widget _buildInputField7(BuildContext context) {
     return Container(
@@ -636,6 +671,7 @@ class _PostJobState extends State<PostJob> {
             deadline: datePickerController.text,
             selectedSkills: _selectedItems,
             selectedOption: _selectedOption, // Pass the selected skills
+            selectedSourceOption: _selectedSourceOption, // Pass the selected skills
           );
 
           // Redirect to the settings page only if all fields are valid
@@ -656,6 +692,7 @@ class _PostJobState extends State<PostJob> {
     required String deadline,
     required List<String> selectedSkills,
     required String? selectedOption, // Add selected option parameter
+    required String? selectedSourceOption, // Add selected option parameter
   }) async {
     try {
       // Reference to the "postJob" collection
@@ -678,6 +715,7 @@ class _PostJobState extends State<PostJob> {
         highestsalary: highestsalary,
         address: address,
         isDelete: 0,
+        applyCount: 0,
         experience: experience,
         description: description,
         // postJobDate: formattedDateTime,
@@ -686,6 +724,7 @@ class _PostJobState extends State<PostJob> {
         gender: _selectGender,
         selectedSkills: selectedSkills,
         selectedOption: selectedOption, // Assign the selected option to the model
+        selectedSourceOption: selectedSourceOption, // Assign the selected option to the model
         userId: currentUser!.uid,
 
       );
@@ -739,7 +778,7 @@ class _PostJobState extends State<PostJob> {
     QuerySnapshot userDocs = await FirebaseFirestore.instance.collection('Users').get();
     List<UserModel> users = [];
     userDocs.docs.forEach((doc) {
-      users.add(UserModel.fromMap(doc.data())); // Assuming UserModel.fromJson is your model constructor
+      users.add(UserModel.fromSnapshot(doc.data() as Map<String, dynamic>)); // Assuming UserModel.fromJson is your model constructor
     });
     setState(() {
       allUserList = users;
