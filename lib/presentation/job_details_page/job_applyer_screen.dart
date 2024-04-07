@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -32,15 +33,23 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
   }
 
   Future<void> fetchDocumentList() async {
+    print("jobID ${widget.jobId}");
     try {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection("job_applications").doc(widget.jobId).get();
 
-      if (documentSnapshot.exists) {
-        jobData = documentSnapshot.data() as Map<String, dynamic>;
-        fullNameController.text = jobData!['full_name'];
-        emailController.text = jobData!['email'];
-        frameOneController.text = jobData!['website_portfolio'];
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("job_applications")
+          .where('id', isEqualTo: widget.jobId)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // print(jobData!['full_name']);
+        jobData = snapshot as Map<String, dynamic>;
+        // fullNameController.text = jobData!['full_name'];
+        // emailController.text = jobData!['email'];
+        // frameOneController.text = jobData!['website_portfolio'];
+        print("data: $jobData");
         userId = jobData?["userId"];
+        print("usr: $userId");
         setState(() {});
       } else {
         print('Document does not exist');
@@ -68,8 +77,8 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                 SizedBox(height: 18.0),
                 _buildPersonalInfoEmail(context),
                 SizedBox(height: 18.0),
-                _buildPersonalInfoWebsite(context),
-                SizedBox(height: 18.0),
+                // _buildPersonalInfoWebsite(context),
+                // SizedBox(height: 18.0),
                 _buildCvFields(),
                 SizedBox(height: 16.0),
                 Row(
@@ -90,14 +99,17 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                           });
 
                           if (currentStatus == 'A' || currentStatus == 'R') {
+                              print("current status ${currentStatus}");
+                              print("current user ${userId}");
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+
                                 content: Text('You have already been processed for this job application.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           } else {
-                            FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'A'});
+                            await FirebaseFirestore.instance.collection('Applications').doc(widget.jobId).update({'status': 'A'});
                             sendNotification(token, 'Your application has been approved. You will be notified about the next steps.');
                             Get.back();
                           }
@@ -137,7 +149,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                               ),
                             );
                           } else {
-                            FirebaseFirestore.instance.collection('Users').doc(userId).update({'status': 'R'});
+                            FirebaseFirestore.instance.collection('Applications').doc(widget.jobId).update({'status': 'R'});
                             sendNotification(token, 'You are rejected for the next process');
                             Get.back();
                           }
@@ -154,76 +166,104 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
     );
   }
 
-  Widget _buildPersonalInfoFullName(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Full Name", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-        SizedBox(height: 9.0),
-        Text(fullNameController.text, style: TextStyle(fontSize: 16.0)),
-      ],
-    );
-  }
-
-  Widget _buildPersonalInfoEmail(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Email", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-        SizedBox(height: 9.0),
-        Text(emailController.text, style: TextStyle(fontSize: 16.0)),
-      ],
-    );
-  }
-
-  bool isValidUrl = true; // Flag to track if URL is valid
-
-  // Widget _buildPersonalInfoWebsite(BuildContext context) {
+  // Widget _buildPersonalInfoFullName(BuildContext context) {
   //   return Column(
   //     crossAxisAlignment: CrossAxisAlignment.start,
   //     children: [
-  //       Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+  //       Text("Full Name", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
   //       SizedBox(height: 9.0),
-  //       TextFormField(
-  //         controller: frameOneController,
-  //         decoration: InputDecoration(
-  //           hintText: "Enter URL",
-  //           errorText: isValidUrl ? null : "Please enter a valid URL",
-  //         ),
-  //         onChanged: (value) {
-  //           setState(() {
-  //             isValidUrl = _isValidUrl(value); // Check URL validity on change
-  //           });
-  //         },
-  //       ),
+  //       Text(userId, style: TextStyle(fontSize: 16.0)),
   //     ],
   //   );
   // }
 
+  Widget _buildPersonalInfoFullName(BuildContext context) {
+    print("UserID: $userId");
+    if (userId.isEmpty) {
+      return Text("User ID is empty");
+    }
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('Users').doc(userId).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // or any loading indicator widget
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return Text('User not found');
+        }
 
-  Widget _buildPersonalInfoWebsite(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Website, Blog, or Portfolio", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-        SizedBox(height: 9.0),
-        Text(
-          frameOneController.text,
-          style: TextStyle(fontSize: 16.0),
-        ),
-      ],
+        // Extract first name and last name from user document
+        Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+        // String firstName = userData['fname'] ?? '';
+        // String lastName = userData['lname'] ?? '';
+        String fullName = '${userData['fname']} ${userData['lname']}';
+
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Full Name", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            SizedBox(height: 9.0),
+            Text(fullName, style: TextStyle(fontSize: 16.0)),
+          ],
+        );
+      },
     );
   }
 
 
-  bool _isValidUrl(String url) {
-    RegExp urlRegExp = RegExp(
-        r"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)\.[a-z]{2,5}(:[0-9]{1,5})?(\/.)?$",
-        caseSensitive: false,
-        multiLine: false);
 
-    return urlRegExp.hasMatch(url);
+  // Widget _buildPersonalInfoEmail(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text("Email", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+  //       SizedBox(height: 9.0),
+  //       Text(emailController.text, style: TextStyle(fontSize: 16.0)),
+  //     ],
+  //   );
+  // }
+
+  Widget _buildPersonalInfoEmail(BuildContext context) {
+    if (userId.isEmpty) {
+      return Text("User ID is empty");
+    }
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('Applications').doc(widget.jobId).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // or any loading indicator widget
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return Text('User not found');
+        }
+
+        // Extract email from user document
+        Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+        String email = userData['email'] ?? '';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Email", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            SizedBox(height: 9.0),
+            Text(email, style: TextStyle(fontSize: 16.0)),
+          ],
+        );
+      },
+    );
   }
+
+
+
+  bool isValidUrl = true; // Flag to track if URL is valid
+
 
   Widget _buildCvFields() {
     return Column(
@@ -250,6 +290,9 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
       ],
     );
   }
+
+
+
 
   List<UserModel> allUserList = [];
   fetchAllUsers() async {

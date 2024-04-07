@@ -358,7 +358,7 @@ class SettingsScreen extends StatelessWidget {
       }
 
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('Users').doc(currentUser.uid).get();
-      bool isPasswordSet = userSnapshot.exists && userSnapshot.get('npassword') != null;
+      bool isPasswordSet = userSnapshot.exists && userSnapshot.get('password') != null;
 
       if (!isPasswordSet) {
         // Redirect to forgot password screen

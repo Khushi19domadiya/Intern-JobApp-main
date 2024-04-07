@@ -41,6 +41,7 @@ class _ReportsState extends State<Reports> {
     print("${list3.length}");
     print("${list4.length}");
     print("${postJobs.length}");
+  setState(() {});
   }
 
   @override

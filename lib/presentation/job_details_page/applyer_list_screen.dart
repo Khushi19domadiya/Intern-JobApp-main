@@ -46,7 +46,6 @@ class _ApplyerListScreenState extends State<ApplyerListScreen> {
       QuerySnapshot snap = await FirebaseFirestore.instance.collection("Users").where('userId', isEqualTo: element['userId']).get();
       element['fullName'] = "${snap.docs.first['fname']} ${snap.docs.first['lname']}";
       setState(() {
-
       });
     });
     setState(() {});
@@ -54,18 +53,17 @@ class _ApplyerListScreenState extends State<ApplyerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-     print("-----------${data.length}");
     return Scaffold(
       appBar: AppBar(
-        title: Text('job_applications'),
+        title: Text('Job Applicants'),
       ),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          final fullName = data[index]['fullName'] as String?;
-          print("-----------${data}");
+          final fullName = data[index]['fullName'] ?? "";
+
           return ListTile(
-            title: Text(data[index]['fullName'] ?? ""),
+            title: Text(fullName),
             onTap: () {
               Get.to(JobApplyerScreen(jobId: data[index]['id']));
             },

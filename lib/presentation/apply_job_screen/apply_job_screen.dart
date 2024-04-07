@@ -75,7 +75,6 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         DocumentReference docRefStatus = await jobApplicationsWithStatus.add({
           'cv_url': downloadURL,
           'curDate': DateTime.now().toString(),
-          'timestamp': FieldValue.serverTimestamp(),
           'userId': user?.uid,
           "status" : "P",
           'jobId':widget.jobId
@@ -103,7 +102,6 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         });
 
         var userData = await FirebaseFirestore.instance.collection('Users').doc(widget.postUserId).get();
-        print("============{{}}}}${userData.data()!["token"]}}");
         Dio dio = Dio();
         var url = 'https://fcm.googleapis.com/fcm/send';
 //queryParameters will the parameter required by your API.
@@ -223,7 +221,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
 
   Widget _buildPersonalInfoFullName(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('Users').doc(user?.uid).get(),
+      future: user?.uid != null ? FirebaseFirestore.instance.collection('Users').doc(user?.uid).get() : null,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Show loading indicator while fetching data
