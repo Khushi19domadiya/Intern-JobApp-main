@@ -1,0 +1,833 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:job_app/controller/jobController.dart';
+import 'package:job_app/model/user_model.dart';
+import 'package:job_app/view/presentation/home_page/widgets/eightyeight_item_widget.dart';
+import 'package:job_app/view/presentation/home_page/widgets/frame_item_widget.dart';
+import 'package:job_app/view/presentation/post_job/post_job.dart';
+import 'package:job_app/core/app_export.dart';
+import 'package:job_app/widgets/app_bar/appbar_leading_circleimage.dart';
+import 'package:job_app/widgets/app_bar/appbar_subtitle.dart';
+import 'package:job_app/widgets/app_bar/appbar_subtitle_one.dart';
+import 'package:job_app/widgets/app_bar/custom_app_bar.dart';
+import 'package:job_app/widgets/custom_search_view.dart';
+import '../home_container_screen/home_container_screen.dart';
+import '../job_details_page/job_details_page.dart';
+import 'jobdetail_page_e.dart';
+
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  TextEditingController searchController = TextEditingController();
+  var controller = Get.put(JobController());
+  String? userId;
+  String? userRole;
+
+  List allResults = [];
+  List resultList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the current user's ID from Firebase Authentication
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userId = user.uid;
+    }
+    getClientStream();
+    searchController.addListener(_onSearchChanged);
+    fetchUserRole();
+  }
+
+  RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
+  fetchUserRole() async {
+    var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    setState(() {
+      userRole = userDoc['role'];
+    });
+    pOPJobs.value = await controller.fetchUserPostedJobs(userId);
+    // pOPJobs.sort((a, b) => a.applyCount.compareTo(b.name));
+  }
+
+  _onSearchChanged() {
+    print(searchController.text);
+    searchResultList();
+  }
+
+  searchResultList() {
+    var showResults = [];
+    if (searchController.text != "") {
+      for (var clientSnapShot in allResults) {
+        var title = clientSnapShot['title'].toString().toLowerCase();
+        if (title.contains(searchController.text.toLowerCase())) {
+          showResults.add(clientSnapShot);
+        }
+      }
+    } else {
+      showResults = List.from(allResults);
+    }
+    setState(() {
+      resultList = showResults;
+    });
+  }
+
+//   getClientStream() async {
+//     var currentTime = Timestamp.now();
+//     var data = await FirebaseFirestore.instance
+//         .collection('postJob')
+//         .orderBy('title')
+//         .get();
+//
+//     // Filter out records with a deadline that has already passed or equals the current date
+//     var validData = data.docs.where((doc) {
+//       // var deadline = doc['deadline'] as Timestamp;
+//
+//
+//       dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+//
+//       Timestamp deadlineTimestamp;
+//
+//       if (deadline is Timestamp) {
+//         // If the deadline is already a Timestamp, assign it directly
+//         deadlineTimestamp = deadline;
+//       } else if (deadline is String) {
+//         // If the deadline is a String, convert it to a Timestamp
+//         DateTime dateTime = DateTime.parse(deadline);
+//         deadlineTimestamp = Timestamp.fromDate(dateTime);
+//       } else {
+//         // Handle other types or null values as needed
+//         // For example, you can set a default value or throw an error
+//         // deadlineTimestamp = Timestamp.now();
+//         // Or handle the error accordingly
+//         throw ArgumentError('Unexpected deadline format');
+//       }
+//
+//
+// // Now you can compare the deadline DateTime with the current DateTime
+// //       return deadlineDateTime.isAfter(DateTime.now());
+//
+//     }).toList();
+//
+//     setState(() {
+//       allResults = validData;
+//     });
+//   }
+
+  // getClientStream() async {
+  //   var currentTime = DateTime.now();
+  //   var data = await FirebaseFirestore.instance
+  //       .collection('postJob')
+  //       .orderBy('title')
+  //       .get();
+  //
+  //   // Filter out records with a deadline that has already passed or equals the current date
+  //   var validData = data.docs.where((doc) {
+  //     dynamic deadline = doc['deadline']; // Retrieve the deadline from Firestore
+  //
+  //     Timestamp deadlineTimestamp;
+  //
+  //     if (deadline is Timestamp) {
+  //       // If the deadline is already a Timestamp, assign it directly
+  //       deadlineTimestamp = deadline;
+  //     } else if (deadline is String) {
+  //       // If the deadline is a String, convert it to a Timestamp
+  //       DateTime dateTime = DateTime.parse(deadline);
+  //       deadlineTimestamp = Timestamp.fromDate(dateTime);
+  //     } else {
+  //       // Handle other types or null values as needed
+  //       // For example, you can set a default value or throw an error
+  //       // deadlineTimestamp = Timestamp.now();
+  //       // Or handle the error accordingly
+  //       throw ArgumentError('Unexpected deadline format');
+  //     }
+  //
+  //     // Now you can compare the deadline Timestamp with the current DateTime
+  //     return deadlineTimestamp.toDate().isAfter(currentTime);
+  //   }).toList();
+  //
+  //   setState(() {
+  //     allResults = validData;
+  //   });
+  // }
+
+  getClientStream() async {
+    var currentTime = DateTime.now();
+    var data = await FirebaseFirestore.instance
+        .collection('postJob')
+        .orderBy('title')
+        .where('isDelete', isEqualTo: 0) // Filter jobs where isDelete is 0
+        .get();
+
+    var validData = data.docs.where((doc) {
+      dynamic deadline = doc['deadline'];
+      int isDelete = doc['isDelete']; // Add this line to get the value of isDelete
+
+      // Check if isDelete is 0
+      if (isDelete == 0) {
+        return false; // Exclude the job if isDelete is 0
+      }
+
+      DateTime deadlineDateTime;
+
+      if (deadline is Timestamp) {
+        deadlineDateTime = deadline.toDate();
+      } else if (deadline is String) {
+        deadlineDateTime = DateTime.parse(deadline);
+      } else {
+        throw ArgumentError('Unexpected deadline format');
+      }
+
+      return deadlineDateTime.isAfter(DateTime.now());
+    }).toList();
+
+    setState(() {
+      allResults = validData;
+    });
+  }
+  // getClientStream() async {
+  //   var currentTime = Timestamp.now();
+  //   var data = await FirebaseFirestore.instance
+  //       .collection('postJob')
+  //       .where('deadline', isGreaterThan: currentTime) // Only fetch recommendations with a deadline after the current date
+  //       .orderBy('title')
+  //       .get();
+  //   setState(() {
+  //     allResults = data.docs;
+  //   });
+  // }
+
+  // @override
+  // void dispose() {
+  //   searchController.removeListener(_onSearchChanged);
+  //   // searchController.dispose();
+  //   // super.dispose();
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: _buildAppBar(context),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 30.v),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.h),
+                          child: CustomSearchView(
+                            // controller: searchController,
+                            onTap: () {
+                              setState(() {
+                                currentIndex.value = 2;
+                              });
+                            },
+                            isRead: true,
+                            autofocus: false,
+                            hintText: "Search...",
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15.v),
+                      if (userRole == 'e' || userRole == null)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(horizontal: 24.h),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PostJob(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 25.h),
+                              ),
+                              child: Text(
+                                "Post Job",
+                                style: TextStyle(fontSize: 15.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      SizedBox(height: 25.v),
+                      GestureDetector(
+                        onTap: () {
+                          controller.fetchJobDataFromFirestore(userRole!);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 24.h),
+                          child: Text(
+                            "Recommendation",
+                            style: CustomTextStyles.titleMedium18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 17.v),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: _buildFrame(context),
+                      ),
+                      SizedBox(height: 22.v),
+                      Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text(
+                          "Most Trending Jobs",
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
+                      SizedBox(height: 15.v),
+                      _buildEightyEight(context),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        // floatingActionButton: GestureDetector(
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => NotificationsGeneralPage(),
+        //       ),
+        //     );
+        //   },
+        //   child: Container(
+        //     margin: EdgeInsets.only(bottom: 20), // Adjust margin as needed
+        //     padding: EdgeInsets.all(12),
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       color: Colors.black87,
+        //     ),
+        //     child: Icon(
+        //       Icons.notifications,
+        //       color: Colors.white, // Change color to black or any other dark color
+        //       size: 30,
+        //     ),
+        //   ),
+        // ),
+      ),
+    );
+  }
+
+  // Widget _buildEightyEight(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.center,
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 24.h),
+  //       child: StreamBuilder<QuerySnapshot>(
+  //         stream: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).snapshots(),
+  //         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //           if (snapshot.hasError) {
+  //             return Text('Something went wrong');
+  //           }
+  //
+  //           if (snapshot.connectionState == ConnectionState.waiting) {
+  //             return Center(child: CircularProgressIndicator());
+  //           }
+  //
+  //           if (snapshot.data!.docs.isEmpty) {
+  //             return Center(child: Text('No jobs available'));
+  //           }
+  //
+  //           List<DocumentSnapshot> filteredJobs = snapshot.data!.docs;
+  //
+  //           if (userRole == 'e') {
+  //             // Filter jobs if user role is 'e' (employer)
+  //             filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
+  //           }
+  //
+  //           // Filter out jobs with deadlines that have already passed
+  //           final currentDate = DateTime.now();
+  //           filteredJobs = filteredJobs.where((job) {
+  //             final deadlineStr = job['deadline'] as String;
+  //             final deadlineDate = DateTime.parse(deadlineStr); // Convert string to DateTime
+  //             return deadlineDate.isAfter(currentDate);
+  //           }).toList();
+  //
+  //           if (filteredJobs.isEmpty) {
+  //             return Center(child: Text('No active jobs available'));
+  //           }
+  //
+  //           return ListView.separated(
+  //             physics: NeverScrollableScrollPhysics(),
+  //             shrinkWrap: true,
+  //             separatorBuilder: (context, index) {
+  //               return SizedBox(height: 16.v);
+  //             },
+  //             itemCount: snapshot.data!.docs.length,
+  //             itemBuilder: (context, index) {
+  //               final DocumentSnapshot document = snapshot.data!.docs[index];
+  //               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  //               if(data["isDelete"] != 1){
+  //                 return EightyeightItemWidget(jobData: data);
+  //               }
+  //              return SizedBox();
+  //             },
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildEightyEight(BuildContext context) {
+  //   return FutureBuilder<QuerySnapshot>(
+  //     future: FirebaseFirestore.instance.collection('postJob').orderBy('applyCount', descending: true).get(),
+  //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //
+  //       if (snapshot.hasError) {
+  //         return Text('Something went wrong');
+  //       }
+  //
+  //       if (snapshot.data!.docs.isEmpty) {
+  //         return Center(child: Text('No jobs available'));
+  //       }
+  //
+  //       List<DocumentSnapshot> filteredJobs = snapshot.data!.docs;
+  //
+  //       if (userRole == 'e') {
+  //         // Filter jobs if user role is 'e' (employer)
+  //         filteredJobs = filteredJobs.where((job) => job['userId'] == userId).toList();
+  //       }
+  //
+  //       // Filter out jobs with deadlines that have already passed
+  //       final currentDate = DateTime.now();
+  //       filteredJobs = filteredJobs.where((job) {
+  //         final deadlineStr = job['deadline'] as String;
+  //         final deadlineDate = DateTime.parse(deadlineStr); // Convert string to DateTime
+  //         return deadlineDate.isAfter(currentDate);
+  //       }).toList();
+  //
+  //       if (filteredJobs.isEmpty) {
+  //         return Center(child: Text('No active jobs available'));
+  //       }
+  //
+  //       return ListView.separated(
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     shrinkWrap: true,
+  //                     separatorBuilder: (context, index) {
+  //                       return SizedBox(height: 16.v);
+  //                     },
+  //         itemCount: filteredJobs.length,
+  //                     itemBuilder: (context, index) {
+  //                       final DocumentSnapshot document = filteredJobs[index];
+  //                       Map<String, dynamic> data = document.data() as Map<
+  //                           String,
+  //                           dynamic>;
+  //                       if (data["isDelete"] != 1) {
+  //                         return EightyeightItemWidget(jobData: data);
+  //                       }
+  //                       return SizedBox();
+  //                     },
+  //       );
+  //     },
+  //   );
+  // }
+
+  Widget _buildEightyEight(BuildContext context) {
+    return FutureBuilder<List<PostJobModel>>(
+      future: userRole == 'j' ? controller.fetchJobDataFromFirestore(userRole!) : controller.fetchUserPostedJobs(userId),
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.data!.isEmpty) {
+          return Center(child: Text('No jobs available'));
+        }
+
+        List<PostJobModel> filteredJobs = snapshot.data!;
+
+        filteredJobs.sort((a, b) {
+          return b.applyCount.compareTo(a.applyCount);
+        });
+
+
+
+        return (filteredJobs.isEmpty)
+            ? Center(child: Text('No active jobs available'))
+            : ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 16.v);
+                },
+                itemCount: filteredJobs.length,
+                itemBuilder: (context, index) {
+                  print(index);
+                  final PostJobModel model = filteredJobs[index];
+
+                  if (model.isDelete != 1) {
+                    return EightyeightItemWidget(jobData: model);
+                  }
+                  return SizedBox();
+                },
+              );
+      },
+    );
+  }
+
+  // Widget _buildEightyEight(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.center,
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 24.h),
+  //       child: StreamBuilder<QuerySnapshot>(
+  //         stream: FirebaseFirestore.instance.collection('postJob').snapshots(),
+  //         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //           if (snapshot.hasError) {
+  //             return Text('Something went wrong');
+  //           }
+  //
+  //           if (snapshot.connectionState == ConnectionState.waiting) {
+  //             return Center(child: CircularProgressIndicator());
+  //           }
+  //
+  //           if (snapshot.data!.docs.isEmpty) {
+  //             return Center(child: Text('No jobs available'));
+  //           }
+  //
+  //           // Filter out jobs posted by the user when their role is "j"
+  //           List<DocumentSnapshot> filteredJobs = snapshot.data!.docs.where((job) {
+  //             if (userRole == 'j') {
+  //               // Check if the job was posted by the current user
+  //               return job['userId'] == userId;
+  //             } else {
+  //               return true; // Show all jobs for other roles
+  //             }
+  //           }).toList();
+  //
+  //           return ListView.separated(
+  //             physics: NeverScrollableScrollPhysics(),
+  //             shrinkWrap: true,
+  //             separatorBuilder: (context, index) {
+  //               return SizedBox(height: 16.v);
+  //             },
+  //             itemCount: filteredJobs.length,
+  //             itemBuilder: (context, index) {
+  //               final DocumentSnapshot document = filteredJobs[index];
+  //               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  //               return EightyeightItemWidget(jobData: data);
+  //             },
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return CustomAppBar(
+      leadingWidth: 74.h,
+      height: 85.h,
+      leading: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('Users').doc(userId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: AppbarLeadingCircleimage(
+                imagePath: ImageConstant.imgImage50x50, // Placeholder image
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: AppbarLeadingCircleimage(
+                imagePath: ImageConstant.imgImage50x50, // Placeholder image
+              ),
+            );
+          }
+          if (snapshot.hasData) {
+            var userImage =
+                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // User image or default image
+
+            if (snapshot.data!.exists) {
+              var data = snapshot.data!.data() as Map<String, dynamic>?;
+              if (data != null && data.containsKey('profileUrl')) {
+                userImage = data['profileUrl'];
+                // Use fname here
+              } else {
+                // Handle case where 'fname' field does not exist
+              }
+            } else {
+              // Handle case where document does not exist
+            }
+
+            // var userImage = snapshot.data!['profileUrl'] ?? ImageConstant.imgImage50x50; // User image or default image
+            return Padding(
+              padding: EdgeInsets.only(left: 24.h),
+              child: CircleAvatar(
+                radius: 20.h, // Adjust the size as needed
+                backgroundImage: NetworkImage(userImage),
+              ),
+            );
+          }
+          return Padding(
+            padding: EdgeInsets.only(left: 24.h),
+            child: AppbarLeadingCircleimage(
+              imagePath: ImageConstant.imgImage50x50, // Placeholder image
+            ),
+          );
+        },
+      ),
+      title: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('Users').doc(userId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          if (snapshot.hasError) {
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          if (snapshot.hasData) {
+            String userName = ''; // User name or default name
+
+            if (snapshot.data!.exists) {
+              var data = snapshot.data!.data() as Map<String, dynamic>?;
+              if (data != null && data.containsKey('fname')) {
+                var fname = data['fname'];
+                userName = fname;
+                // Use fname here
+              } else {
+                // Handle case where 'fname' field does not exist
+              }
+            } else {
+              // Handle case where document does not exist
+            }
+
+            // String userName = snapshot.data!['fname'] ?? "User"; // User name or default name
+            return Column(
+              children: [
+                AppbarSubtitle(
+                  text: "Welcome, $userName! 👋",
+                ),
+                SizedBox(height: 9.v),
+                AppbarSubtitleOne(
+                  text: "Find your dream job",
+                  margin: EdgeInsets.only(right: 33.h),
+                ),
+              ],
+            );
+          }
+          return Column(
+            children: [
+              AppbarSubtitle(
+                text: "Welcome! 👋",
+              ),
+              SizedBox(height: 9.v),
+              AppbarSubtitleOne(
+                text: "Find your dream job",
+                margin: EdgeInsets.only(right: 33.h),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget _buildFrame(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: FutureBuilder<List<PostJobModel>>(
+  //       future: controller.fetchUserPostedJobs(userId), // Pass userId to fetch only user's posted jobs
+  //       builder: (context, AsyncSnapshot snapshot) {
+  //         if (snapshot.hasData) {
+  //           return Row(
+  //             children: [
+  //               ...List.generate(
+  //                 snapshot.data!.length,
+  //                     (index) => Padding(
+  //                   padding: const EdgeInsets.only(left: 20),
+  //                   child: GestureDetector(
+  //                     onTap: () {
+  //                       PostJobModel model = snapshot.data[index];
+  //                       if (userRole == "e") {
+  //                         Get.to(() => ApplyerListScreen());
+  //                       } else {
+  //                         Get.to(() => ApplyJobScreen(jobId: model.id,));
+  //                       }
+  //                     },
+  //                     child: FrameItemWidget(
+  //                       model: snapshot.data[index],
+  //                       searchQuery: searchController.text,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           );
+  //         } else {
+  //           return const Center(child: CircularProgressIndicator());
+  //         }
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFrame(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: FutureBuilder<List<PostJobModel>>(
+        future: userRole == 'j' ? controller.fetchJobDataFromFirestore(userRole!) : controller.fetchUserPostedJobs(userId),
+        builder: (context, AsyncSnapshot<List<PostJobModel>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final List<PostJobModel>? jobData = snapshot.data;
+
+            if (jobData == null || jobData.isEmpty) {
+              return const Center(child: Text("No jobs available."));
+            }
+
+            jobData.sort((a, b) {
+              // Access 'createAt' field and compare as DateTime
+              DateTime createAtA = DateTime.parse(a.createAt!);
+              DateTime createAtB = DateTime.parse(b.createAt!);
+              return createAtB.compareTo(createAtA);
+            });
+
+            return Row(
+              children: jobData.map((model) {
+                if (model.isDelete != 1) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                        if (userRole == "e") {
+                          // Get.to(() => ApplyerListScreen(jobId: model.id));
+                          Get.to(() => JobDetailsPageE(
+                                postJobModel: model,
+                              ));
+                        } else {
+                          // Get.to(() => ApplyJobScreen(jobId: model.id,postUserId: model.userId, jobTitle:model.title,));
+                          Get.to(() => JobDetailsPage(
+                                postJobModel: model,
+                              ));
+                        }
+                      },
+                      child: FrameItemWidget(
+                        model: model,
+                        searchQuery: searchController.text,
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox();
+              }).toList(),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+// Widget _buildTrendingJobs() {
+//   return StreamBuilder<QuerySnapshot>(
+//     stream: FirebaseFirestore.instance.collection('postJob').snapshots(),
+//     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//       if (snapshot.hasError) {
+//         return Text('Something went wrong');
+//       }
+//
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return Center(child: CircularProgressIndicator());
+//       }
+//
+//       if (snapshot.data!.docs.isEmpty) {
+//         return Center(child: Text('No jobs available'));
+//       }
+//
+//       return Column(
+//         children: snapshot.data!.docs.map((DocumentSnapshot document) {
+//           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+//           return EightyeightItemWidget(jobData: data);
+//         }).toList(),
+//       );
+//     },
+//   );
+// }
+
+// Widget _buildTrendingJobs() {
+//   return StreamBuilder<QuerySnapshot>(
+//     stream: FirebaseFirestore.instance.collection('trendingJobs').snapshots(),
+//     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//       if (snapshot.hasError) {
+//         return Text('Something went wrong');
+//       }
+//
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return Center(child: CircularProgressIndicator());
+//       }
+//
+//       if (snapshot.data!.docs.isEmpty) {
+//         return Center(child: Text('No trending jobs available'));
+//       }
+//
+//       return Column(
+//         children: snapshot.data!.docs.map((DocumentSnapshot document) {
+//           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+//           return EightyeightItemWidget(jobData: data);
+//         }).toList(),
+//       );
+//     },
+//   );
+// }
+}

@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:914831420083:android:a5a84b2560646f72c51ec6",
         "android_client_info": {
-          "package_name": "com.saumilsapplication.app"
+          "package_name": "com.job.app"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "914831420083-1e0omckcclbh87kaqkug03054p1qubfa.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.saumilsapplication.app",
+            "package_name": "com.job.app",
             "certificate_hash": "8a39dc094df818a21613a32f24d0643e8c80f166"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "914831420083-5tbpm7r6v8j5jef0c88ms1uin4lrota8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.saumilsapplication.app",
+            "package_name": "com.job.app",
             "certificate_hash": "93f851d9cdc1c4635fc008c75584fa6cbc924708"
           }
         },
@@ -34,7 +34,7 @@
           "client_id": "914831420083-aou2vlprqmgk5c4ucnr0q84vpjj0m8u2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.saumilsapplication.app",
+            "package_name": "com.job.app",
             "certificate_hash": "3345998335ef9db411e69c7fbbed273fa7306a71"
           }
         },
@@ -42,7 +42,7 @@
           "client_id": "914831420083-nc86331r24nm2hlrcunl1d9b1vl0mvam.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.saumilsapplication.app",
+            "package_name": "com.job.app",
             "certificate_hash": "c2097891928bdb928e693b65347b819048d78a30"
           }
         },
@@ -50,7 +50,7 @@
           "client_id": "914831420083-sig26rh63o7sc9h9iadrgreol1bo1tfk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.saumilsapplication.app",
+            "package_name": "com.job.app",
             "certificate_hash": "d6fb75ca74342fbe403891a2b2f5e19eb11f8e58"
           }
         },

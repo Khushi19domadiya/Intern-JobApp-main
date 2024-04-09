@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
           theme: theme,
-          title: 'saumil_s_application',
+          title: 'job_app',
           onInit: (){
             FirebaseNotificationService.initializeService();
           },

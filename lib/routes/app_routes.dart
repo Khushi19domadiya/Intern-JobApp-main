@@ -1,29 +1,28 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:saumil_s_application/presentation/splash_screen/splash_screen.dart';
-import 'package:saumil_s_application/presentation/onboarding_three_screen/onboarding_three_screen.dart';
-import 'package:saumil_s_application/presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
-import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
-import 'package:saumil_s_application/presentation/job_type_screen/job_type_screen.dart';
-import 'package:saumil_s_application/presentation/speciallization_screen/speciallization_screen.dart';
-import 'package:saumil_s_application/presentation/select_a_country_screen/select_a_country_screen.dart';
-import 'package:saumil_s_application/presentation/login_screen/login_screen.dart';
-import 'package:saumil_s_application/presentation/enter_otp_tab_container_screen/enter_otp_tab_container_screen.dart';
-import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
-import 'package:saumil_s_application/presentation/search_screen/search_screen.dart';
-import 'package:saumil_s_application/presentation/job_details_tab_container_screen/job_details_tab_container_screen.dart';
-import 'package:saumil_s_application/presentation/message_action_screen/message_action_screen.dart';
-import 'package:saumil_s_application/presentation/chat_screen/chat_screen.dart';
-import 'package:saumil_s_application/presentation/apply_job_screen/apply_job_screen.dart';
-import 'package:saumil_s_application/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
-import 'package:saumil_s_application/presentation/settings_screen/settings_screen.dart';
-import 'package:saumil_s_application/presentation/personal_info_screen/personal_info_screen.dart';
-import 'package:saumil_s_application/presentation/experience_setting_screen/experience_setting_screen.dart';
-import 'package:saumil_s_application/presentation/new_position_screen/new_position_screen.dart';
-import 'package:saumil_s_application/presentation/add_new_education_screen/add_new_education_screen.dart';
-import 'package:saumil_s_application/presentation/privacy_screen/privacy_screen.dart';
-import 'package:saumil_s_application/presentation/language_screen/language_screen.dart';
-import 'package:saumil_s_application/presentation/notifications_screen/notifications_screen.dart';
-import 'package:saumil_s_application/presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:job_app/view/presentation/add_new_education_screen/add_new_education_screen.dart';
+import 'package:job_app/view/presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:job_app/view/presentation/chat_screen/chat_screen.dart';
+import 'package:job_app/view/presentation/enter_otp_tab_container_screen/enter_otp_tab_container_screen.dart';
+import 'package:job_app/view/presentation/experience_setting_screen/experience_setting_screen.dart';
+import 'package:job_app/view/presentation/home_container_screen/home_container_screen.dart';
+import 'package:job_app/view/presentation/job_type_screen/job_type_screen.dart';
+import 'package:job_app/view/presentation/language_screen/language_screen.dart';
+import 'package:job_app/view/presentation/login_screen/login_screen.dart';
+import 'package:job_app/view/presentation/message_action_screen/message_action_screen.dart';
+import 'package:job_app/view/presentation/new_position_screen/new_position_screen.dart';
+import 'package:job_app/view/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
+import 'package:job_app/view/presentation/notifications_screen/notifications_screen.dart';
+import 'package:job_app/view/presentation/onboarding_three_screen/onboarding_three_screen.dart';
+import 'package:job_app/view/presentation/personal_info_screen/personal_info_screen.dart';
+import 'package:job_app/view/presentation/privacy_screen/privacy_screen.dart';
+import 'package:job_app/view/presentation/search_screen/search_screen.dart';
+import 'package:job_app/view/presentation/select_a_country_screen/select_a_country_screen.dart';
+import 'package:job_app/view/presentation/settings_screen/settings_screen.dart';
+import 'package:job_app/view/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
+import 'package:job_app/view/presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
+import 'package:job_app/view/presentation/splash_screen/splash_screen.dart';
 
 class AppRoutes {
   static const String splashScreen = '/splash_screen';

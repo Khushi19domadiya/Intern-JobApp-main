@@ -4,13 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:saumil_s_application/presentation/home_container_screen/home_container_screen.dart';
-import 'package:saumil_s_application/presentation/job_type_screen/job_type_screen.dart';
-import 'package:saumil_s_application/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
-
-import '../models/user_model.dart';
-import '../presentation/login_screen/login_screen.dart';
-import '../presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
+import 'package:job_app/view/presentation/job_type_screen/job_type_screen.dart';
+import 'package:job_app/view/presentation/login_screen/login_screen.dart';
+import 'package:job_app/view/presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
+import '../model/user_model.dart';
 import '../user_repository/user_repository.dart';
 import '../util/colors.dart';
 import '../util/common_methos.dart';

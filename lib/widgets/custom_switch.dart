@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saumil_s_application/core/app_export.dart';
+import 'package:job_app/core/app_export.dart';
 
 class CustomSwitch extends StatelessWidget {
   CustomSwitch({

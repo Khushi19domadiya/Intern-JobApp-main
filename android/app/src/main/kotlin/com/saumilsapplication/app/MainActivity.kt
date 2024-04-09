@@ -1,4 +1,4 @@
-package com.saumilsapplication.app
+package com.job.app
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
