@@ -93,7 +93,6 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
 
                           allUserList.forEach((element) {
                             if (element.userId == userId) {
-                              currentStatus = element.status ?? "";
                               token = element.token ?? "";
                             }
                           });
@@ -136,7 +135,6 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
 
                           allUserList.forEach((element) {
                             if (element.userId == userId) {
-                              currentStatus = element.status ?? "";
                               token = element.token ?? "";
                             }
                           });

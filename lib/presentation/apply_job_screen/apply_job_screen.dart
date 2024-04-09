@@ -30,7 +30,7 @@ class ApplyJobScreen extends StatefulWidget {
 class _ApplyJobScreenState extends State<ApplyJobScreen> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController frameOneController = TextEditingController();
+  // TextEditingController frameOneController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -63,7 +63,7 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
         DocumentReference docRef = await jobApplications.add({
           'full_name': fullNameController.text,
           'email': emailController.text,
-          'website_portfolio': frameOneController.text,
+          // 'website_portfolio': frameOneController.text,
           'cv_url': downloadURL,
           'curDate': DateTime.now().toString(),
           'timestamp': FieldValue.serverTimestamp(),
@@ -173,8 +173,8 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
                       _buildPersonalInfoFullName(context),
                       SizedBox(height: 18.0),
                       _buildPersonalInfoEmail(context),
-                      SizedBox(height: 18.0),
-                      _buildPersonalInfoWebsite(context),
+                      // SizedBox(height: 18.0),
+                      // _buildPersonalInfoWebsite(context),
                       SizedBox(height: 18.0),
                       _buildCvFields(context),
                       SizedBox(height: 16.0),
@@ -295,33 +295,33 @@ class _ApplyJobScreenState extends State<ApplyJobScreen> {
   //   );
   // }
 
-  Widget _buildPersonalInfoWebsite(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Website, Blog, or Portfolio", style: theme.textTheme.titleSmall),
-        SizedBox(height: 9.0),
-        CustomTextFormField(
-          controller: frameOneController,
-          hintText: "Website, Blog, or Portfolio",
-          // validator: (value) {
-          //   if (value == null || value.isEmpty) {
-          //     return 'Please enter your Website, Blog, or Portfolio name';
-          //   }
-          //
-          //   bool isValidUrl = RegExp(
-          //     r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
-          //     r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
-          //   ).hasMatch(value);
-          //   if (!isValidUrl) {
-          //     return 'Please enter a valid website URL';
-          //   }
-          //   return null;
-          // },
-        ),
-      ],
-    );
-  }
+  // Widget _buildPersonalInfoWebsite(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text("Website, Blog, or Portfolio", style: theme.textTheme.titleSmall),
+  //       SizedBox(height: 9.0),
+  //       CustomTextFormField(
+  //         controller: frameOneController,
+  //         hintText: "Website, Blog, or Portfolio",
+  //         // validator: (value) {
+  //         //   if (value == null || value.isEmpty) {
+  //         //     return 'Please enter your Website, Blog, or Portfolio name';
+  //         //   }
+  //         //
+  //         //   bool isValidUrl = RegExp(
+  //         //     r'^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?'
+  //         //     r'[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}(?:\/[^\s]*)?$',
+  //         //   ).hasMatch(value);
+  //         //   if (!isValidUrl) {
+  //         //     return 'Please enter a valid website URL';
+  //         //   }
+  //         //   return null;
+  //         // },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildCvFields(BuildContext context) {
     return Column(

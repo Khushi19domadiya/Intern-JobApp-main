@@ -36,7 +36,6 @@ class _ReportsState extends State<Reports> {
         list4.add(element);
       }
     });
-    print("--------------->>>>>>>>>${list1.length}");
     print("${list2.length}");
     print("${list3.length}");
     print("${list4.length}");

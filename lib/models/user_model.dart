@@ -15,7 +15,6 @@ class UserModel {
   List<String>? skills;
   String? registrationDateTime;
   String? token;
-  String? status;
   String? profile;
 
   UserModel({
@@ -31,7 +30,6 @@ class UserModel {
     this.phonenumber,
     this.address,
     this.profileUrl,
-    this.status,
     this.role,
     this.profile,
   });
@@ -48,7 +46,6 @@ class UserModel {
         phonenumber: data['phonenumber'],
         address: data['address'],
         profileUrl: data['profileUrl'],
-        status: data['status'],
         skills: data['skills'] == null ? null : data['skills'].cast<String>(),
         role: data['role'],
         profile: data['profile'],
@@ -69,7 +66,6 @@ class UserModel {
       if (profileUrl != null) "profileUrl": profileUrl,
       if (role != null) "role": role,
       if (skills != null) "skills": skills,
-      if (skills != null) "status": status,
       if (profile != null) "profile": profile,
     };
   }
