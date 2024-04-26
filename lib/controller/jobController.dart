@@ -28,9 +28,11 @@ class JobController extends GetxController{
   Future<List<PostJobModel>> getJobsFuture() async {
     if (userRole == 'e') {
       // Fetch only current user's posted jobs
+      print("here---------------------------");
       return fetchUserPostedJobs(user!.uid);
     } else {
       // Fetch all jobs
+      print("Get Data fethc jov data");
       return fetchJobDataFromFirestore(userRole!);
     }
   }
@@ -111,7 +113,11 @@ class JobController extends GetxController{
 
   Future<List<PostJobModel>>  fetchJobDataFromFirestore(String role) async {
     try {
+      print("Get Data fethc jov data in -----");
+
       log('----fetchJobDataFromFirestore----');
+      // jobList.clear();
+      // tempSearchJob.clear();
       final snapshot = await FirebaseFirestore.instance.collection('postJob')
           .get();
       print("------------ ${snapshot.docs} ----------");
@@ -123,7 +129,8 @@ class JobController extends GetxController{
         var deadlineDateTime = DateTime.parse(job.deadline);
         return deadlineDateTime.isAfter(DateTime.now());
       }).toList();
-
+      tempSearchJob.value = jobData;
+      jobList.value = jobData;
       return jobData;
     } catch (e) {
       print('Error fetching job data: $e');
@@ -134,6 +141,7 @@ class JobController extends GetxController{
   Future<List<PostJobModel>> fetchUserPostedJobs(String? userId) async {
     try {
       var currentTime = DateTime.now();
+      List<PostJobModel> list = [];
       var querySnapshot = await FirebaseFirestore.instance
           .collection('postJob')
           .where('userId', isEqualTo: userId)
@@ -162,9 +170,13 @@ class JobController extends GetxController{
         }
       }).toList();
 
-      return validData
-          .map((doc) => PostJobModel.fromSnapshot(doc.data() as Map<String, dynamic>))
+
+      list = validData
+          .map((doc) => PostJobModel.fromSnapshot(doc.data()))
           .toList();
+      tempSearchJob.value = list;
+      jobList.value = list;
+      return list;
     } catch (e) {
       print('Error fetching user posted jobs: $e');
       return [];

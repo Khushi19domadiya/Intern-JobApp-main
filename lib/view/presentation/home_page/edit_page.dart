@@ -64,7 +64,7 @@ class _EditPage extends State<EditPage> {
           hsalaryController.text = data['highestsalary'] ?? '';
           addressController.text = data['address'] ?? '';
           experienceController.text = data['experience'] ?? '';
-          aboutController.text = data['about'] ?? '';
+          aboutController.text = data['description'] ?? '';
           datePickerController.text = data['deadline'] ?? '';
           _selectedRadio = data['jobType'] ?? '';
           _selectGender = data['gender'] ?? '';

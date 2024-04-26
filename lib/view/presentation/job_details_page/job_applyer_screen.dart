@@ -80,7 +80,7 @@ class _ApplyJobScreenState extends State<JobApplyerScreen> {
                                   status: 2);
                               await getModelValues();
                             },
-                            child: Text('Edit Status',
+                            child: Text('Edit',
                             style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),),
                           ),
                         ],

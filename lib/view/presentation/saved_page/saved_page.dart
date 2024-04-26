@@ -35,12 +35,13 @@ class _SavedPageState extends State<SavedPage> {
   @override
   void initState() {
     super.initState();
-
+    print("------------------------------init------------------------------");
     fetchUserRole();
 
   }
 
   void fetchUserRole() async {
+    print("------------------------------fetch data------------------------------");
     final userDoc = await FirebaseFirestore.instance.collection('Users').doc(jobController.user!.uid).get();
     setState(() {
       jobController.userRole = userDoc['role'];
@@ -49,8 +50,10 @@ class _SavedPageState extends State<SavedPage> {
   }
 
   getData() async {
-    jobController.tempSearchJob.value = await jobController.getJobsFuture();
-    jobController.jobList.value = jobController.tempSearchJob;
+    // jobController.tempSearchJob.value =
+    print("Get Data Init");
+    await jobController.getJobsFuture();
+    // jobController.jobList.value = jobController.tempSearchJob;
     jobController.isLoading.refresh();
   }
 
@@ -82,6 +85,7 @@ class _SavedPageState extends State<SavedPage> {
                                   .where((element) =>
                                   element.selectedSkills
                                       .toString()
+                                  .trim()
                                       .toLowerCase()
                                       .contains(text.toLowerCase()))
                                   .toList();
@@ -92,6 +96,7 @@ class _SavedPageState extends State<SavedPage> {
                                   .where((element) =>
                                   element.title
                                       .toString()
+                                  .trim()
                                       .toLowerCase()
                                       .contains(text.toLowerCase()))
                                   .toList();
@@ -134,6 +139,7 @@ class _SavedPageState extends State<SavedPage> {
                           itemCount: jobController.jobList.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
+                            print("index: $index");
                             PostJobModel model = jobController.jobList[index];
                             if(model.isDelete != 1){
                               return SavedItemWidget(

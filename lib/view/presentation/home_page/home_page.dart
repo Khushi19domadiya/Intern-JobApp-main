@@ -49,7 +49,8 @@ class _HomePageState extends State<HomePage> {
   RxList<PostJobModel> pOPJobs = <PostJobModel>[].obs;
   fetchUserRole() async {
     var userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    setState(() {
+    if(mounted)
+      setState(() {
       userRole = userDoc['role'];
     });
     pOPJobs.value = await controller.fetchUserPostedJobs(userId);

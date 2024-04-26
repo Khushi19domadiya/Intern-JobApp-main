@@ -252,53 +252,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
 
-  // Widget _buildJobApplied(BuildContext context) {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: 24.h),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Expanded(
-  //           child: Container(
-  //             padding: EdgeInsets.symmetric(horizontal: 40.h, vertical: 12.v),
-  //             decoration: AppDecoration.fillGray.copyWith(
-  //               borderRadius: BorderRadiusStyle.roundedBorder24,
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               crossAxisAlignment: CrossAxisAlignment.end,
-  //               children: [
-  //                 Padding(
-  //                   padding: EdgeInsets.only(top: 2.v),
-  //                   child: Text(
-  //                     "25",
-  //                     style: CustomTextStyles.titleMediumBold_1,
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: EdgeInsets.only(top: 5.v),
-  //                   child: Text(
-  //                     "Applied",
-  //                     style: theme.textTheme.labelLarge,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: CustomElevatedButton(
-  //             height: 48.v,
-  //             text: "10",
-  //             margin: EdgeInsets.only(left: 19.h),
-  //             buttonStyle: CustomButtonStyles.fillGrayTL241,
-  //             buttonTextStyle: CustomTextStyles.titleMediumBold_1,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildAboutMe(BuildContext context) {
     return Container(
